@@ -4,10 +4,10 @@ Requirements: npm, git, and being a collaborator on the b5-uberelectric Firebase
 development Setup:  
 Make a fork of this repo. Then, on your computer:  
   
-git clone https://github.com/Deathtanium/UberElectricFirebase  
+git clone https://github.com/B5Rules/FirebaseBackend  
 cd UberElectricFirebase  
 git init  
-git remote add origin https://github.com/[YOURUSERNAME]/UberElectricFirebase  
+git remote add origin https://github.com/[YOURUSERNAME]/FirebaseBackend  
 git pull origin master  
   
 npm install firebase firebase-cli --save  
