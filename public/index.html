@@ -41,10 +41,6 @@
                 <button id="btnSubmitCarData">Submit Car data</button>
             </form>
         </div>
-        <div v-scope="{ count: 0 }">
-            {{ count }}
-            <button @click="count++">inc</button>
-        </div>
     </div>
     <div class="requireSignOut">
         <span>Nu esti logat.</p>
@@ -68,6 +64,11 @@
             <input type="email" id="signInFieldEmail" name="signUpFieldEmail" placeholder="Email"><br>
             <input type="password" id="signInFieldPassword" name="signUpFieldPassword" placeholder="Password"><br>
             <button id="btnSignIn">Sign In</button>    <br>
+        </div>
+        <div>
+            Forgot password?<br>
+            <input type="email" id="forgotPasswordEmailField" placeholder="Email">
+            <button id="btnForgotPassword">Reset Password</button>
         </div>
     </div>
     <script src="bundle.js"></script>

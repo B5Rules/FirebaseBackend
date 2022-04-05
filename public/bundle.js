@@ -70,6 +70,16 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
+/***/ "./src/auth_reset_password.js":
+/*!************************************!*\
+  !*** ./src/auth_reset_password.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var firebase_auth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! firebase/auth */ \"./node_modules/firebase/auth/dist/index.esm.js\");\n\n\nconst auth=(0,firebase_auth__WEBPACK_IMPORTED_MODULE_0__.getAuth)();\n\ndocument.getElementById('btnForgotPassword').onclick = () => {\n    let email = document.getElementById(\"forgotPasswordEmailField\").value;\n    (0,firebase_auth__WEBPACK_IMPORTED_MODULE_0__.sendPasswordResetEmail)(auth,email)\n    .then(() => {\n        alert(\"Email sent\");\n    })\n    .catch((error) => {\n        const errorCode = error.code;\n        const errorMessage = error.message;\n        if(errorCode === 'auth/invalid-email'){\n            alert('Invalid email');\n        }else if(errorCode === 'auth/user-not-found'){\n            alert('User not found');\n        }\n        console.log(errorCode)\n    });\n\n}\n\n//# sourceURL=webpack://firebase2/./src/auth_reset_password.js?");
+
+/***/ }),
+
 /***/ "./src/auth_signin_google.js":
 /*!***********************************!*\
   !*** ./src/auth_signin_google.js ***!
@@ -136,7 +146,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var fire
   \**********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! firebase/app */ \"./node_modules/firebase/app/dist/index.esm.js\");\n\n\n// Initializare Firebase\nconst app = (0,firebase_app__WEBPACK_IMPORTED_MODULE_0__.initializeApp)({\n    apiKey: \"AIzaSyDc8GTACXcWMILMmLk9-pUaWowtGHvPdo4\",\n    authDomain: \"b5uberelectric-bacbb.firebaseapp.com\",\n    projectId: \"b5uberelectric-bacbb\",\n    storageBucket: \"b5uberelectric-bacbb.appspot.com\",\n    messagingSenderId: \"1053866920657\",\n    appId: \"1:1053866920657:web:1db10f617e6e7b639dd3f0\"\n});\n\n//importam modulele javascript\nvar auth_signout = __webpack_require__(/*! ./auth_signout */ \"./src/auth_signout.js\");\nvar auth_signup_password = __webpack_require__(/*! ./auth_signup_password */ \"./src/auth_signup_password.js\");\nvar auth_signin_google = __webpack_require__(/*! ./auth_signin_google */ \"./src/auth_signin_google.js\");\nvar auth_signin_password = __webpack_require__(/*! ./auth_signin_password */ \"./src/auth_signin_password.js\");\nvar auth_state_handler = __webpack_require__(/*! ./auth_state_handler */ \"./src/auth_state_handler.js\");\nvar auth_verif_check = __webpack_require__(/*! ./auth_verif_check */ \"./src/auth_verif_check.js\");\n\n\n//# sourceURL=webpack://firebase2/./src/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! firebase/app */ \"./node_modules/firebase/app/dist/index.esm.js\");\n\n\n// Initializare Firebase\nconst app = (0,firebase_app__WEBPACK_IMPORTED_MODULE_0__.initializeApp)({\n    apiKey: \"AIzaSyDc8GTACXcWMILMmLk9-pUaWowtGHvPdo4\",\n    authDomain: \"b5uberelectric-bacbb.firebaseapp.com\",\n    projectId: \"b5uberelectric-bacbb\",\n    storageBucket: \"b5uberelectric-bacbb.appspot.com\",\n    messagingSenderId: \"1053866920657\",\n    appId: \"1:1053866920657:web:1db10f617e6e7b639dd3f0\"\n});\n\n//importam modulele javascript\nvar auth_signout = __webpack_require__(/*! ./auth_signout */ \"./src/auth_signout.js\");\nvar auth_signup_password = __webpack_require__(/*! ./auth_signup_password */ \"./src/auth_signup_password.js\");\nvar auth_signin_google = __webpack_require__(/*! ./auth_signin_google */ \"./src/auth_signin_google.js\");\nvar auth_signin_password = __webpack_require__(/*! ./auth_signin_password */ \"./src/auth_signin_password.js\");\nvar auth_state_handler = __webpack_require__(/*! ./auth_state_handler */ \"./src/auth_state_handler.js\");\nvar auth_verif_check = __webpack_require__(/*! ./auth_verif_check */ \"./src/auth_verif_check.js\");\nvar auth_reset_password = __webpack_require__(/*! ./auth_reset_password */ \"./src/auth_reset_password.js\");\n\n\n//# sourceURL=webpack://firebase2/./src/index.js?");
 
 /***/ }),
 
