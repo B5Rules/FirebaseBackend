@@ -1,7 +1,6 @@
 import {getAuth,signInWithEmailAndPassword} from "firebase/auth"
 
-const auth = getAuth();
-
+const auth=getAuth();
 async function emailSignIn(email,password){
     await signInWithEmailAndPassword(auth,email, password)
     .then((userCredential) => {
