@@ -1,36 +1,21 @@
 # FirebaseBackend 
-Requirements: npm, git, and being a collaborator on the b5-uberelectric Firebase project  
- 
-development Setup:  
-Make a fork of this repo. Then, on your computer:  
-  
-git init  
-git remote add origin https://github.com/YOURUSERNAME/FirebaseBackend  (replace YOURUSERNAME with your github username)  
-git pull origin BRANCHNAME
-  
+Instalati unealta de commandline git sau aplicatia Github
+Instalati Node.JS. Daca a fost instalat corect, comanda "npm -v" rulata de oriunde in terminal ar trebui sa arate un numar de versiune
+
+Faceti fork la acest repository
+Deschideti folderul unde vreti sa lucrati la proiect
+
+rulati, avand terminalul deschis pe acel folder:
+git init
+git remote add origin LINK_GITHUB_FORK      (inlocuiti cu link-ul forkului vostru)
+git pull origin NUME_BRANCH         (inlocuiti cu numele branch-ului, in functie de ce vreti sa lucrati; le puteti vedea pe Github)
+
 npm install -g firebase-tools
-npm install firebase firebase-cli --save  
-npm install webpack webpack-cli -D  
-  
-firebase login  
-firebase init  
- -authenticate with Firebase,  
- -select firestore and hosting without github deploys,  
- -use an existing project,  
- -b5-uberelectric,  
- -enter  
- -enter  
- -enter  
- -type "n" then enter  
- -type "n" then enter  
-DONE  
-  
-Now write your code. To test it, run "npm run build" and access access localhost:5000 in a browser to see your work of art  
-When you want to commit, do:  
-  
-git add src  
-git add public  
-git add package.json  
-git add webpack.config.js  
-git commit  
-git push origin BRANCHNAME  
+npm install --save
+firebase login
+firebase init     (folosind sagetile si spacebar, selectati functions, firestore si hosting; dati enter pana la capat)
+
+De fiecare data cand vreti sa faceti modificari, dati
+
+git commit (apoi urmati instructiunile)
+git push origin NUME

@@ -1,4 +1,3 @@
-import {collection, setDoc, getDocs, getFirestore, query, where, doc} from "firebase/firestore"
 import { initializeApp } from "firebase/app"
 import { getAuth } from "firebase/auth"
 import { connectFunctionsEmulator, getFunctions, httpsCallable } from 'firebase/functions';
@@ -13,7 +12,6 @@ const app = initializeApp({
 });
 
 const auth = getAuth();
-const db = getFirestore(app);
 const functions = getFunctions(app);
 
 functions.region = "europe-west1";
