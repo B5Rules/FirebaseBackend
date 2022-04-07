@@ -5,7 +5,7 @@ development Setup:
 Make a fork of this repo. Then, on your computer:  
   
 git init  
-git remote add origin https://github.com/YOURUSERNAME/FirebaseBackend  (replace YOURUSERNAME with your github username)
+git remote add origin https://github.com/YOURUSERNAME/FirebaseBackend  (replace YOURUSERNAME with your github username)  
 git pull origin BRANCHNAME
   
 npm install -g firebase-tools
