@@ -22,6 +22,6 @@ firebase serve   (ca sa deschida un server local pe care sa testati schimbarile)
   
 iar cand terminati:  
   
-git add *
+git add *  
 git commit (apoi urmati instructiunile)  
 git push origin NUME_BRANCH  
