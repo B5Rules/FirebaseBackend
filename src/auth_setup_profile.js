@@ -48,7 +48,7 @@ document.getElementById('btnSubmitProfile').onclick = async function() {
             };
             
             setDoc(doc(db,'userdata',username),userData).then(()=>{
-                document.getElementById('signUpProfileSetup').classList.add('w3-hide');
+                document.getElementById('setupProfileForm').classList.add('w3-hide');
             });
         }
 

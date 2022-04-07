@@ -15,49 +15,5 @@ const db = getFirestore(app);
 const gAuthProvider = new GoogleAuthProvider();
 
 document.getElementById('btnGoogleSignIn').onclick = async function() {
-    await signInWithPopup(auth,gAuthProvider).then(async function(userCredential) {
-        // Signed in 
-        const user = userCredential.user;
-        const email = user.email;
-        const querySnapshot = await getDocs(query(collection(db,'userdata'),where("email","==",email)));
-        if(querySnapshot.size == 0){
-            document.getElementsByClassName('GoogleRegisterPrompt')[0].classList.remove('w3-hide');
-            document.getElementById('GsignUpFieldEmail').value = email;
-        }else{
-            signOut(auth);
-            deleteUser(user);
-            alert("You already have an account with this email");
-        }
-    });
+    signInWithPopup(auth,gAuthProvider);
 }
-
-document.getElementById('btnGoogleRegister').onclick = async function() {
-    let username = document.getElementById("GsignUpFieldUser").value;
-    let phone = document.getElementById("GsignUpFieldPhone").value;
-    let fName = document.getElementById("GsignUpFieldFirstName").value;
-    let country = document.getElementById("GsignUpFieldCountry").value;
-    let lName = document.getElementById("GsignUpFieldLastName").value;
-    let email = document.getElementById('GsignUpFieldEmail').value;
-
-    //first check if account with this username exists already
-    const querySnapshot = getDocs(query(collection(db,'userdata'),where("username","==",username)));
-    if(querySnapshot.size>0){
-        alert('Account with this username already exists');
-    }else {
-        signInWithPopup(auth,gAuthProvider)
-        .then((userCredential) => {
-            // Signed in, add user to database
-            setDoc(doc(collection(db, "userdata"),username),{
-                username: username,
-                email: email,
-                phone: phone,
-                fName: fName,
-                country: country,
-                lName: lName
-            });
-            document.getElementsByClassName('GoogleRegisterPrompt')[0].classList.add('w3-hide');
-        });
-        
-    }
-}
-

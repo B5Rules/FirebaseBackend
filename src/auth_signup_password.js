@@ -17,12 +17,6 @@ const db = getFirestore(app);
 
 async function emailSignUp(email,password){
     createUserWithEmailAndPassword(auth,email, password)
-    .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        
-        // ...
-    })
     .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -37,32 +31,12 @@ async function emailSignUp(email,password){
     });
 }
 
-/*document.getElementById('btnSignUp').onclick = async function() {
-    const username = 'serbanstein';
-    const querySnapshot = await getDocs(query(collection(db,'userdata'),where("username","==",username)));
-    querySnapshot.forEach(doc => {
-        console.log(doc.data());
-    });
-}*/
-
 
 document.getElementById('btnSignUp').onclick = async function() {
-    let username = document.getElementById("signUpFieldUser").value;
     let password = document.getElementById("signUpFieldPassword").value;
     let passwordConfirm = document.getElementById("signUpFieldPasswordConfirm").value;
     let email = document.getElementById("signUpFieldEmail").value;
-    let phone = document.getElementById("signUpFieldPhone").value;
-    let fName = document.getElementById("signUpFieldFirstName").value;
-    let country = document.getElementById("signUpFieldCountry").value;
-    let lName = document.getElementById("signUpFieldLastName").value;
-    //first check if account with this username exists already
-
-    //query database to see if user with this username exists
-    
-    const querySnapshot = await getDocs(query(collection(db,'userdata'),where("username","==",username)));
-    if(querySnapshot.size>0){
-        alert('Account with this username already exists');
-    }else if(password != passwordConfirm){
+    if(password != passwordConfirm){
         alert("Passwords do not match");
     }else {
         createUserWithEmailAndPassword(auth,email, password)

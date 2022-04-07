@@ -22,4 +22,5 @@ var auth_signin_password = require('./auth_signin_password');
 var auth_state_handler = require('./auth_state_handler');
 var auth_verif_check = require('./auth_verif_check');
 var auth_reset_password = require('./auth_reset_password');
+var auth_setup_profile = require('./auth_setup_profile');
 //var auth_signin_facebook = require('./auth_signin_facebook');
