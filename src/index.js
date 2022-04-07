@@ -13,14 +13,13 @@ const app = initializeApp({
 
 const auth = getAuth();
 
-
 //importam modulele javascript
-var auth_signout = require('./auth_signout');
-var auth_signup_password = require('./auth_signup_password');
-var auth_signin_google = require('./auth_signin_google');
-var auth_signin_password = require('./auth_signin_password');
-var auth_state_handler = require('./auth_state_handler');
-var auth_verif_check = require('./auth_verif_check');
-var auth_reset_password = require('./auth_reset_password');
-var auth_setup_profile = require('./auth_setup_profile');
-//var auth_signin_facebook = require('./auth_signin_facebook');
+var auth_signout = require('./auth/auth_signout');
+var auth_signup_password = require('./auth/auth_signup_password');
+var auth_signin_google = require('./auth/auth_signin_google');
+var auth_signin_password = require('./auth/auth_signin_password');
+var auth_state_handler = require('./auth/auth_state_handler');
+var auth_verif_check = require('./auth/auth_verif_check');
+var auth_reset_password = require('./auth/auth_reset_password');
+var auth_setup_profile = require('./auth/auth_setup_profile');
+//var auth_signin_facebook = require('./auth/auth_signin_facebook');

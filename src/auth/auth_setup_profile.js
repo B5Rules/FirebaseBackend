@@ -1,6 +1,7 @@
 import {collection, setDoc, getDocs, getFirestore, query, where, doc} from "firebase/firestore"
 import { initializeApp } from "firebase/app"
 import { getAuth } from "firebase/auth"
+import { connectFunctionsEmulator, getFunctions, httpsCallable } from 'firebase/functions';
 
 const app = initializeApp({
     apiKey: "AIzaSyDc8GTACXcWMILMmLk9-pUaWowtGHvPdo4",
@@ -13,6 +14,12 @@ const app = initializeApp({
 
 const auth = getAuth();
 const db = getFirestore(app);
+const functions = getFunctions(app);
+
+functions.region = "europe-west1";
+
+const insertProfile = httpsCallable(functions,'insertProfile');
+connectFunctionsEmulator(functions, "localhost", 5001);
 
 document.getElementById('btnSubmitProfile').onclick = async function() {
     if(!!auth.currentUser){
@@ -21,8 +28,6 @@ document.getElementById('btnSubmitProfile').onclick = async function() {
         let fName = document.getElementById('signUpFieldFirstName').value;
         let country = document.getElementById('signUpFieldCountry').value;
         let lName = document.getElementById('signUpFieldLastName').value;
-        let email = auth.currentUser.email;
-        let uid=auth.currentUser.uid;
 
         //todo use regex matching server-side to santize the above fields
         //todo use Google Cloud Function as intermediary to ensure users can only change their own profile
@@ -31,26 +36,21 @@ document.getElementById('btnSubmitProfile').onclick = async function() {
         cloud function will check if the to-be-changed data belongs to the requesting user
         cloud function will do regex matching to ensure the data is valid
         */
-
-        let userRef = collection(db,'userdata');
-
-        if((await getDocs(query(userRef,where('username',"==",username)))).size>0){
-            alert('Username already exists');
-        }else{           
-            let userData = {
-                username: username,
-                phone: phone,
-                fName: fName,
-                country: country,
-                lName: lName,
-                email: email,
-                uid: uid
-            };
-            
-            setDoc(doc(db,'userdata',username),userData).then(()=>{
-                document.getElementById('setupProfileForm').classList.add('w3-hide');
-            });
+        
+        let response = await insertProfile({
+            username: username,
+            lName: lName,
+            fName: fName,
+            country: country,
+            phone: phone
+        }).catch((error) => {
+            console.log(error);
+        });
+        if(response.data.status === 0){
+            alert('Profile successfully updated!');
+            document.getElementById('setupProfileForm').classList.add('w3-hide');
+        }else{
+            alert(response.data.message);
         }
-
     }
 };

@@ -1,5 +1,5 @@
 import {getAuth,onAuthStateChanged} from 'firebase/auth'
-import { collection, getDocs, getFirestore, query, where } from 'firebase/firestore';
+import { connectFunctionsEmulator, getFunctions, httpsCallable } from 'firebase/functions'
 import { initializeApp } from 'firebase/app';
 
 const app = initializeApp({
@@ -10,8 +10,14 @@ const app = initializeApp({
     messagingSenderId: "1053866920657",
     appId: "1:1053866920657:web:1db10f617e6e7b639dd3f0"
 });
+const functions = getFunctions(app);
 const auth = getAuth();
-const db = getFirestore(app);
+
+functions.region = "europe-west1";
+connectFunctionsEmulator(functions,'localhost',5001);
+const queryEmail = httpsCallable(functions,'queryEmail');
+const getProfileData = httpsCallable(functions,'getProfileData');
+
 
 const requireSignIn = document.getElementsByClassName('requireSignIn');
 const requireSignOut = document.getElementsByClassName('requireSignOut');
@@ -25,16 +31,18 @@ onAuthStateChanged(auth,async function(user){
         }else{
             document.getElementById('btnSendVerificationEmail').classList.add('w3-hide');
         }
-        let docs = await getDocs(query(collection(db, 'userdata'), where('uid', '==', user.uid)));
-        if(docs.size===0){
+        let response = await queryEmail({email:auth.currentUser.email});
+        if(response.data['result'] === 0){
             document.getElementById('setupProfileForm').classList.remove('w3-hide');
+            document.getElementById('profileInfo').classList.add('w3-hide');
         }else{
-            document.getElementById('profileInfoUsername').innerHTML = docs.docs[0].data()['username'];
-            document.getElementById('profileInfoEmail').innerHTML = docs.docs[0].data()['email'];
-            document.getElementById('profileInfoPhone').innerHTML = docs.docs[0].data()['phone'];
-            document.getElementById('profileInfoFirstName').innerHTML = docs.docs[0].data()['fName'];
-            document.getElementById('profileInfoLastName').innerHTML = docs.docs[0].data()['lName'];
-            document.getElementById('profileInfoCountry').innerHTML = docs.docs[0].data()['country'];
+            let profileData = await getProfileData({email:auth.currentUser.email});
+            document.getElementById('profileInfoUsername').innerHTML = profileData.data['result']['username'];
+            document.getElementById('profileInfoEmail').innerHTML = profileData.data['result'].email;
+            document.getElementById('profileInfoPhone').innerHTML = profileData.data['result']['phone'];
+            document.getElementById('profileInfoFirstName').innerHTML = profileData.data['result']['fName'];
+            document.getElementById('profileInfoLastName').innerHTML = profileData.data['result']['lName'];
+            document.getElementById('profileInfoCountry').innerHTML = profileData.data['result']['country'];
             document.getElementById('profileInfo').classList.remove('w3-hide');
         }
     }else{
