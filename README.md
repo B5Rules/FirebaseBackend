@@ -5,14 +5,14 @@ development Setup:
 Make a fork of this repo. Then, on your computer:  
   
 git init  
-git remote add origin https://github.com/YOURUSERNAME/FirebaseBackend  (replace YOURUSERNAME with your github username)
-git pull origin main  
+git remote add origin https://github.com/YOURUSERNAME/FirebaseBackend  (replace YOURUSERNAME with your github username)  
+git pull origin BRANCHNAME
   
 npm install -g firebase-tools
 npm install firebase firebase-cli --save  
-npm install react --save  
 npm install webpack webpack-cli -D  
   
+firebase login  
 firebase init  
  -authenticate with Firebase,  
  -select firestore and hosting without github deploys,  
@@ -33,4 +33,4 @@ git add public
 git add package.json  
 git add webpack.config.js  
 git commit  
-git push --set-upstream origin master  
+git push origin BRANCHNAME  
