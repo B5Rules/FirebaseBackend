@@ -1,4 +1,5 @@
 # FirebaseBackend 
+Cereti-mi (serbanstein#8859 pe discord) sa va adaug ca si colaboratori pe Firebase inainte de a incepe
 Instalati unealta de commandline git sau aplicatia Github  
 Instalati Node.JS. Daca a fost instalat corect, comanda "npm -v" rulata de oriunde in terminal ar trebui sa arate un numar de versiune  
   
