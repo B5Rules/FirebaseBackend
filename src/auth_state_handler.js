@@ -1,10 +1,9 @@
 import {getAuth,onAuthStateChanged} from 'firebase/auth'
 
-const auth = getAuth();
-
 const requireSignIn = document.getElementsByClassName('requireSignIn');
 const requireSignOut = document.getElementsByClassName('requireSignOut');
-onAuthStateChanged(auth,user=>{    
+const auth = getAuth();
+onAuthStateChanged(getAuth(),user=>{    
     //if user is signed in, show the sign out button and the other signed-in-only elements
     if(!!auth.currentUser){
         for(let element of requireSignIn){element.classList.remove('w3-hide');}
