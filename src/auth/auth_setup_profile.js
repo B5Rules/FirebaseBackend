@@ -15,9 +15,10 @@ const auth = getAuth();
 const functions = getFunctions(app);
 
 functions.region = "europe-west1";
-
-const insertProfile = httpsCallable(functions,'insertProfile');
 connectFunctionsEmulator(functions, "localhost", 5001);
+const insertProfile = httpsCallable(functions,'insertProfile');
+const getProfileData = httpsCallable(functions,'getProfileData');
+
 
 document.getElementById('btnSubmitProfile').onclick = async function() {
     if(!!auth.currentUser){
@@ -47,6 +48,15 @@ document.getElementById('btnSubmitProfile').onclick = async function() {
         if(response.data.status === 0){
             alert('Profile successfully updated!');
             document.getElementById('setupProfileForm').classList.add('w3-hide');
+            let profileData = await getProfileData({email:auth.currentUser.email});
+            console.log(profileData.data);
+            document.getElementById('profileInfoUsername').innerHTML = profileData.data['result']['username'];
+            document.getElementById('profileInfoEmail').innerHTML = profileData.data['result'].email;
+            document.getElementById('profileInfoPhone').innerHTML = profileData.data['result']['phone'];
+            document.getElementById('profileInfoFirstName').innerHTML = profileData.data['result']['firstName'];
+            document.getElementById('profileInfoLastName').innerHTML = profileData.data['result']['lastName'];
+            document.getElementById('profileInfoCountry').innerHTML = profileData.data['result']['country'];
+            document.getElementById('profileInfo').classList.remove('w3-hide');
         }else{
             alert(response.data.message);
         }

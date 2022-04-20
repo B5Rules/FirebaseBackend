@@ -32,16 +32,18 @@ onAuthStateChanged(auth,async function(user){
             document.getElementById('btnSendVerificationEmail').classList.add('w3-hide');
         }
         let response = await queryEmail({email:auth.currentUser.email});
+        console.log(response.data);
         if(response.data['result'] === 0){
             document.getElementById('setupProfileForm').classList.remove('w3-hide');
             document.getElementById('profileInfo').classList.add('w3-hide');
         }else{
             let profileData = await getProfileData({email:auth.currentUser.email});
+            console.log(profileData.data);
             document.getElementById('profileInfoUsername').innerHTML = profileData.data['result']['username'];
             document.getElementById('profileInfoEmail').innerHTML = profileData.data['result'].email;
             document.getElementById('profileInfoPhone').innerHTML = profileData.data['result']['phone'];
-            document.getElementById('profileInfoFirstName').innerHTML = profileData.data['result']['fName'];
-            document.getElementById('profileInfoLastName').innerHTML = profileData.data['result']['lName'];
+            document.getElementById('profileInfoFirstName').innerHTML = profileData.data['result']['firstName'];
+            document.getElementById('profileInfoLastName').innerHTML = profileData.data['result']['lastName'];
             document.getElementById('profileInfoCountry').innerHTML = profileData.data['result']['country'];
             document.getElementById('profileInfo').classList.remove('w3-hide');
         }
