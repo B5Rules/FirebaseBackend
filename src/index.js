@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import testGetProfileData from './unit_test/test_get_profile_data';
-import testInsertProfile from './unit_test/test_insert_profile';
+import testDriver from './unit_test/test_driver';
 
 const app = initializeApp({
     apiKey: "AIzaSyDc8GTACXcWMILMmLk9-pUaWowtGHvPdo4",
@@ -22,5 +21,4 @@ var auth_reset_password = require('./auth/auth_reset_password');
 var auth_setup_profile = require('./auth/auth_setup_profile');
 //var auth_signin_facebook = require('./auth/auth_signin_facebook');
 
-testInsertProfile();
-testGetProfileData();
+testDriver();

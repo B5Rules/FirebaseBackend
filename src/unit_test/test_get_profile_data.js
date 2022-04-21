@@ -22,19 +22,19 @@ const insertProfile = httpsCallable(functions,'insertProfile');
 const testGetProfileData = async function() {
     //insert dummy profile via firestore
     await insertProfile({
-        username: 'testuser1',
+        username: 'profiledatatestuser1',
         lName: 'lName',
         fName: 'fName',
         country: 'Italy',
         phone: '00000',
-        email: 'testuser1@mail.fr',
-        uid: 'testuid1'
+        email: 'profiledatatestuser1@mail.fr',
+        uid: 'profiledatatestuid1'
     }).catch((error) => {
         console.log(error);
     });
     
     //no1
-    await getProfileData({uid: 'testuid1'}).then((response) => {
+    await getProfileData({uid: 'profiledatatestuid1'}).then((response) => {
         if(response.data['result'] == 0){
             //retrieval failed; test failed
             console.log('getProfileData test no1: "retrieval failed" failure');
@@ -46,7 +46,7 @@ const testGetProfileData = async function() {
     });
     
     //no2
-    await getProfileData({uid: 'testuid2'}).then((response) => {
+    await getProfileData({uid: 'profiledatatestuid2'}).then((response) => {
         if(response.data['result'] == 0){
             //retrieval failed; test successful
             console.log('getProfileData test no2: "retrieval failed" succesful');
