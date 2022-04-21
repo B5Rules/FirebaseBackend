@@ -56,8 +56,7 @@ const testGetProfileData = async function() {
             console.log(response.data);
         }
     });
-    deleteDoc(doc(db,'userdata','testuid1'));
-    deleteDoc(doc(db,'userdata','testuid2'));
+    deleteDoc(doc(db,'userdata','profiledatatestuid1'));
 }
 
 export default testGetProfileData;
