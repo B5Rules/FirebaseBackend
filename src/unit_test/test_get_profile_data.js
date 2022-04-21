@@ -53,7 +53,6 @@ const testGetProfileData = async function() {
         }else{
             //retrieval successful; test failed
             console.log('getProfileData test no2: "retrieval failed" failure');
-            console.log(response.data);
         }
     });
     deleteDoc(doc(db,'userdata','profiledatatestuid1'));

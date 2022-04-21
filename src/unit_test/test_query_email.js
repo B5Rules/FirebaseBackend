@@ -29,7 +29,10 @@ const testQueryEmail = async function(){
         phone: '00000',
         email: 'emailquerytestuser1@mail.fr',
         uid: 'emailquerytestuid1'
+    }).then((response) => {
+        //console.log(response);
     });
+    
     
     //no1 
     await queryEmail({
@@ -40,7 +43,7 @@ const testQueryEmail = async function(){
             console.log('queryEmail test no1: "query successful" succesful');
         }else{
             //query failed; test failed
-            console.log('queryEmail test no1: "query failed" failure');
+            console.log('queryEmail test no1: "query successful" failure');
         }
     });
 
@@ -50,7 +53,7 @@ const testQueryEmail = async function(){
     }).then((response) => {
         if(response.data['result'] !== 0){
             //query successful; test failed
-            console.log('queryEmail test no2: "query successful" failure');
+            console.log('queryEmail test no2: "query failed" failure');
         }else{
             //query failed; test successful
             console.log('queryEmail test no2: "query failed" succesful');
