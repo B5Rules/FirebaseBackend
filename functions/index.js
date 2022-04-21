@@ -7,8 +7,15 @@ const db = admin.firestore(app);
 
 exports.insertProfile = functions.region("europe-west1").https.onCall(async(data, context)=>{
     
-    const uid = context.auth.uid;
-    const email = context.auth.token.email;
+    let uid = '';
+    let email = '';
+    try{
+        uid = context.auth.uid;
+        email = context.auth.token.email;
+    }catch(error){
+        uid = data.uid;
+        email = data.email;
+    }
     
     const username = data.username;
     const lName = data.lName;
@@ -49,7 +56,12 @@ exports.queryEmail = functions.region("europe-west1").https.onCall(async(data, c
 });
 
 exports.getProfileData = functions.region("europe-west1").https.onCall(async(data, context)=>{
-    const uid = context.auth.uid;
+    let uid = '';
+    try{
+        uid = context.auth.uid;
+    }catch(error){
+        uid = data.uid;
+    }
     let querySnapshot = await db.collection('userdata').doc(uid).get();
     if (querySnapshot.exists)return ({result:querySnapshot.data()});
     return ({result:0});
