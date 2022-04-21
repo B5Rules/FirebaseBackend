@@ -38,10 +38,10 @@ onAuthStateChanged(auth,async function(user){
         }else{
             let profileData = await getProfileData({email:auth.currentUser.email});
             document.getElementById('profileInfoUsername').innerHTML = profileData.data['result']['username'];
-            document.getElementById('profileInfoEmail').innerHTML = profileData.data['result'].email;
+            document.getElementById('profileInfoEmail').innerHTML = profileData.data['result']['email'];
             document.getElementById('profileInfoPhone').innerHTML = profileData.data['result']['phone'];
-            document.getElementById('profileInfoFirstName').innerHTML = profileData.data['result']['fName'];
-            document.getElementById('profileInfoLastName').innerHTML = profileData.data['result']['lName'];
+            document.getElementById('profileInfoFirstName').innerHTML = profileData.data['result']['firstName'];
+            document.getElementById('profileInfoLastName').innerHTML = profileData.data['result']['lastName'];
             document.getElementById('profileInfoCountry').innerHTML = profileData.data['result']['country'];
             document.getElementById('profileInfo').classList.remove('w3-hide');
         }
