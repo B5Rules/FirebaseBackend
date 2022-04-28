@@ -23,3 +23,5 @@ var auth_verif_check = require('./auth/auth_verif_check');
 var auth_reset_password = require('./auth/auth_reset_password');
 var auth_setup_profile = require('./auth/auth_setup_profile');
 //var auth_signin_facebook = require('./auth/auth_signin_facebook');
+
+var test_get_stations = require('./test/test_get_stations');

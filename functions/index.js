@@ -54,3 +54,10 @@ exports.getProfileData = functions.region("europe-west1").https.onCall(async(dat
     if (querySnapshot.exists)return ({result:querySnapshot.data()});
     return ({result:0});
 });
+
+exports.getAllStations = functions.region("europe-west1").https.onCall(async(data, context)=>{
+    let querySnapshot = await db.collection('chargingstations').get();
+
+    return ({result:querySnapshot.docs});
+
+});
