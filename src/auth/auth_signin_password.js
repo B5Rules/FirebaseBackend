@@ -1,7 +1,6 @@
 import {getAuth,signInWithEmailAndPassword} from "firebase/auth"
 
-const auth = getAuth();
-
+const auth=getAuth();
 async function emailSignIn(email,password){
     await signInWithEmailAndPassword(auth,email, password)
     .then((userCredential) => {
@@ -21,4 +20,18 @@ async function emailSignIn(email,password){
         }
         console.log(errorCode);
     });
+};
+
+export default {
+    emailSignIn
+};
+
+
+//rewrite this to use the React fields
+/*
+document.getElementById('btnSignIn').onclick = async () => {
+    let email = document.getElementById("signInFieldEmail").value;
+    let password = document.getElementById("signInFieldPassword").value;
+    await emailSignIn(email,password);
 }
+*/

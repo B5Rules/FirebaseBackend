@@ -2,8 +2,7 @@ import {getAuth,sendPasswordResetEmail} from 'firebase/auth'
 
 const auth = getAuth();
 
-document.getElementById('btnForgotPassword').onclick = () => {
-    let email = document.getElementById("forgotPasswordEmailField").value;
+function resetPassword (email) {
     sendPasswordResetEmail(auth,email)
     .then(() => {
         alert("Email sent");
@@ -26,3 +25,7 @@ document.getElementById('btnForgotPassword').onclick = () => {
     });
 
 }
+
+export default {
+    resetPassword
+};

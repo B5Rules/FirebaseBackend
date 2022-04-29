@@ -1,22 +1,25 @@
 {
-  "name": "firebase2",
+  "name": "reactorbase",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "firebase": "^9.6.10",
-    "firebaseui": "^6.0.1",
-    "react": "^18.0.0"
+    "expo": "~44.0.0",
+    "expo-status-bar": "~1.2.0",
+    "firebase": "^9.7.0",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "react-native": "0.64.3",
+    "react-native-web": "0.17.1"
   },
   "devDependencies": {
-    "webpack": "^5.71.0",
-    "webpack-cli": "^4.9.2"
-  }
+    "@babel/core": "^7.12.9"
+  },
+  "private": true
 }
