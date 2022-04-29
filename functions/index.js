@@ -4,6 +4,7 @@ const Countries = require("countries-api");
 
 const app = admin.initializeApp();
 const db = admin.firestore(app);
+const auth = admin.auth(app);
 
 exports.insertProfile = functions.region("europe-west1").https.onCall(async(data, context)=>{
     
@@ -60,4 +61,20 @@ exports.getAllStations = functions.region("europe-west1").https.onCall(async(dat
 
     return ({result:querySnapshot.docs});
 
+});
+
+exports.deleteAccount = functions.region("europe-west1").https.onCall(async(data, context)=>{
+    let uid = '';
+    try{
+        uid = context.auth.uid;
+    }catch(e){
+        return ({code:1,message:'not logged in'});
+    }
+    await db.collection('userdata').doc(uid).delete();
+    let querySnapshot2 = await db.collection('chargingstations').where('owner_uid', '==', uid).get();
+    for(let i = 0; i< querySnapshot2.docs.length;i++){
+        await db.collection('chargingstations').doc(querySnapshot2.docs[i].id).delete();
+    }
+    auth.deleteUser(uid);
+    return ({code:0});
 });
