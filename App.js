@@ -1,48 +1,46 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import {initializeApp} from 'firebase/app'
-import { getAuth } from 'firebase/auth';
-
-// Initializare Firebase
-const app = initializeApp({
-    apiKey: "AIzaSyDc8GTACXcWMILMmLk9-pUaWowtGHvPdo4",
-    authDomain: "b5uberelectric-bacbb.firebaseapp.com",
-    projectId: "b5uberelectric-bacbb",
-    storageBucket: "b5uberelectric-bacbb.appspot.com",
-    messagingSenderId: "1053866920657",
-    appId: "1:1053866920657:web:1db10f617e6e7b639dd3f0"
-});
-
-const auth = getAuth();
-
-//importam modulele javascript
-let authUtils = require('./src/auth/index').default;
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
-let signOutUser = authUtils.signOutUser;
-let googleSignIn = authUtils.googleSignIn;
-let emailSignIn = authUtils.emailSignIn;
-let sendVerif = authUtils.sendVerif;
-let resetPassword = authUtils.resetPassword;
-let submitProfile = authUtils.submitProfile;
-let deleteAccount = authUtils.deleteAccount;
-let testExports = authUtils.testExports;
+
+import SignIn from './Pages/Sign_In'
+import SignUp from './Pages/Sign_Up'
+import ViewProfile from './Pages/Profile/View_Profile'
+import EditProfile from './Pages/Profile/Edit_Profile'
+import DeleteAccount from './Pages/Profile/Delete_Account'
+
+const Stack = createNativeStackNavigator();
+
+import {fireAuth} from './firebase';
+
+
 
 export default function App() {
-  testExports();
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  if(!!fireAuth.currentUser){
+    //user is authenticated
+  }else{
+    //user is not authenticated
+  }
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="SignIn"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "transparent"
+          },
+          headerTintColor: "#f1f1f1",
+          headerTransparent: true,
+          headerTitle: ""
+        }}>
+        <Stack.Screen name="SignIn" component={SignIn} />
+        <Stack.Screen options={{headerTintColor: "#f1f1f1"}} name="SignUp" component={SignUp} />
+        <Stack.Screen name="ViewProfile" component={ViewProfile} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
+        <Stack.Screen name="DeleteAccount" component={DeleteAccount} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  )
+}
