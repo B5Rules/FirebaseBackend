@@ -3,13 +3,22 @@ import React, { useState } from 'react';
 import { useValidation } from 'react-native-form-validator';
 
 import {fireFunc,fireAuth} from '../firebase';
-import { signInWithEmailAndPassword, signOut } from '@firebase/auth';
+import { signInWithEmailAndPassword, signOut,onAuthStateChanged  } from '@firebase/auth';
 import { httpsCallable } from '@firebase/functions';  
 
 const helloWorld = httpsCallable(fireFunc, 'helloWorld');
 
 export default function Login({ navigation }) {
-
+  //if user signed in, navigate to ViewProfile
+  onAuthStateChanged(fireAuth, user => {
+    if (user != null) {
+      navigation.navigate('ViewProfile');
+    }else{
+      //console.log('We are not authenticated now!');
+    }
+  
+    // Do other things
+  });  
   const [email, setEmail] = useState("");
   const [passwd, setPasswd] = useState("");
 
@@ -25,9 +34,6 @@ export default function Login({ navigation }) {
     });
 
     if( !isFieldInError('email') && email != "" && passwd != "") {
-      
-      console.log("Email: " + email);
-      console.log("Password: " + passwd);
       signInWithEmailAndPassword(fireAuth,email,passwd).then(() => {
         console.log("Successfully signed in with email and password");
       });

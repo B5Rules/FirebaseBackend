@@ -21,13 +21,13 @@ const fireDB = getFirestore(fireApp);
 const fireFunc = getFunctions(fireApp);
 
 fireFunc.region = 'europe-west1';
-connectFunctionsEmulator(fireFunc,'localhost',5001);
+connectFunctionsEmulator(fireFunc,'localhost',5000);
 
 onAuthStateChanged(fireAuth, user => {
     if (user != null) {
       console.log('We are authenticated now!');
     }else{
-        console.log('We are not authenticated now!');
+      console.log('We are not authenticated now!');
     }
   
     // Do other things

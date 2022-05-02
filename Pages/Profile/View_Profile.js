@@ -1,5 +1,11 @@
 import { StatusBar, StyleSheet, Text, TextInput, SafeAreaView, Image, View, Pressable, ScrollView } from 'react-native';
 import React from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { fireAuth ,fireFunc} from '../../firebase';
+import { httpsCallable } from 'firebase/functions';
+import { useState } from 'react/cjs/react.development';
+
+const getProfileData = httpsCallable(fireFunc, 'getProfileData');
 
 let getName = () => { return 'Iulian Manole'; }
 let getEmail = () => { return 'iulian.manole@gmail.com'; }
@@ -7,8 +13,44 @@ let getPhoneNumber = () => { return '0758 660 127'; }
 let getCountry = () => { return 'Romania'; }
 let getLastTransaction = () => { return '⪢Last transaction: 25/04/2022 - Loc: Mihai\'s House' }
 
-export default function ViewProfile({ navigation }) {
+let returnData;
 
+export default function ViewProfile({ navigation }) {
+  
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  //const [country, setCountry] = useState('');
+  const [lastTransaction, setLastTransaction] = useState('');
+
+
+
+  onAuthStateChanged(fireAuth, user => {
+    
+    if (user != null) {
+      //navigation.navigate('ViewProfile');
+      getProfileData().then(data => {
+        
+        returnData = data.data['result'];
+        setFirstName(returnData['firstName']);
+        
+        setLastName(returnData['lastName']);
+        setEmail(returnData['email']);
+        setPhoneNumber(returnData['phoneNumber']);
+        //setCountry(returnData['country']);
+      });
+    }else{
+      //console.log('oh no');
+      navigation.navigate('SignIn');
+      
+    }
+    
+  
+    // Do other things
+  });
+  console.log(firstName);
+  //while(!firstName){console.log('waiting');}
   return (
     <ScrollView
         showsVerticalScrollIndicator={false}
@@ -30,7 +72,7 @@ export default function ViewProfile({ navigation }) {
                 <TextInput 
                 editable={false} 
                 textAlign={'center'} 
-                defaultValue= {''.concat('Hey ', getName(), '!')}
+                defaultValue= {''.concat('Hey ', firstName," ",lastName, '!')}
                 style={{
                   alignSelf: 'flex-start',
                   marginLeft: '5%',
@@ -118,7 +160,9 @@ export default function ViewProfile({ navigation }) {
 
           </Pressable>
 
-          <Pressable style={styles.buttonLogOut} onPress={() => navigation.navigate("SignIn")}>
+          <Pressable style={styles.buttonLogOut} onPress={() => {
+            fireAuth.signOut();
+            }}>
 
             <View style={{flexDirection: 'row', justifyContent: 'center'}}>
               <Text style={styles.buttonText}> Log Out </Text>

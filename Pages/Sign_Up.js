@@ -8,7 +8,22 @@ import {  StatusBar,
 
 import { useValidation } from 'react-native-form-validator';
 
+import { fireAuth,fireFunc } from '../firebase';
+import {httpsCallable} from "firebase/functions";
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
+const createAccount = httpsCallable(fireFunc,'createAccount');
+
 function afiseaza(nume, prenume, porecla, mail, tel, parola, parola2) {
+  onAuthStateChanged(fireAuth, user => {
+    if (user != null) {
+      navigation.navigate('ViewProfile');
+    }else{
+      //console.log('We are not authenticated now!');
+    }
+  
+    // Do other things
+  });
 
   console.log('First Name: ' + prenume + 
               '\nLast Name: ' + nume + 
@@ -20,7 +35,7 @@ function afiseaza(nume, prenume, porecla, mail, tel, parola, parola2) {
 }
 
 const SignUp = ({ navigation }) => {
-
+  
   const [selectedValue, setSelectedValue] = useState("Romania");
 
   const [fName, setFName] = useState("");
@@ -53,7 +68,27 @@ const SignUp = ({ navigation }) => {
         !isFieldInError('email') && email != "" &&
         !isFieldInError('number') && number != "" &&
         !isFieldInError('password') && password != "" &&
-        !isFieldInError('confirmPassword') && confirmPassword != "") afiseaza(lName, fName, username, email, number, password, confirmPassword);
+        !isFieldInError('confirmPassword') && confirmPassword != "") {
+
+          createAccount({
+            fName: fName,
+            lName: lName,
+            username: username,
+            email: email,
+            phone: number,
+            password: password,
+            confirmPassword: confirmPassword
+          }).then(result => {
+            console.log(result);
+            signInWithEmailAndPassword(fireAuth,email, password).then(result => {
+              console.log(result);
+              navigation.navigate('ViewProfile');
+            }).catch(error => {
+              console.log(error);
+            });
+          });
+
+        }//afiseaza(lName, fName, username, email, number, password, confirmPassword);
   };
 
   return(
