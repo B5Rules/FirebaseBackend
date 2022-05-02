@@ -21,6 +21,7 @@ export default function ViewProfile({ navigation }) {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [username, setUsername] = useState('');
   //const [country, setCountry] = useState('');
   const [lastTransaction, setLastTransaction] = useState('');
 
@@ -30,16 +31,7 @@ export default function ViewProfile({ navigation }) {
     
     if (user != null) {
       //navigation.navigate('ViewProfile');
-      getProfileData().then(data => {
-        
-        returnData = data.data['result'];
-        setFirstName(returnData['firstName']);
-        
-        setLastName(returnData['lastName']);
-        setEmail(returnData['email']);
-        setPhoneNumber(returnData['phoneNumber']);
-        //setCountry(returnData['country']);
-      });
+      
     }else{
       //console.log('oh no');
       navigation.navigate('SignIn');
@@ -49,8 +41,27 @@ export default function ViewProfile({ navigation }) {
   
     // Do other things
   });
-  console.log(firstName);
-  //while(!firstName){console.log('waiting');}
+
+  //acest if inlatura apeluri inutile
+  if(returnData == undefined){
+    getProfileData().then(data => {
+          
+      returnData = data.data['result'];
+      setFirstName(returnData['firstName']);
+      setLastName(returnData['lastName']);
+      setEmail(returnData['email']);
+      setPhoneNumber(returnData['phoneNumber']);
+      setUsername(returnData['username']);
+      //setCountry(returnData['country']);
+
+    });
+    console.log(returnData);
+  }
+  
+  if(undefined == returnData){
+    return null;
+  }
+  else
   return (
     <ScrollView
         showsVerticalScrollIndicator={false}
@@ -72,7 +83,7 @@ export default function ViewProfile({ navigation }) {
                 <TextInput 
                 editable={false} 
                 textAlign={'center'} 
-                defaultValue= {''.concat('Hey ', firstName," ",lastName, '!')}
+                defaultValue= {''.concat('Hey ', returnData.username, '!')}
                 style={{
                   alignSelf: 'flex-start',
                   marginLeft: '5%',
@@ -84,19 +95,19 @@ export default function ViewProfile({ navigation }) {
 
           <View style={styles.card}>
             <Text style={styles.attachLabel}> Name </Text>
-            <TextInput editable={false} defaultValue={getName()} style={styles.dataLabel}/>
+            <TextInput editable={false} defaultValue={returnData.username} style={styles.dataLabel}/>
             <View style={styles.line} />
           </View>
 
           <View style={styles.card}>
             <Text style={styles.attachLabel}> Email address </Text>
-            <TextInput editable={false} defaultValue={getEmail()} style={styles.dataLabel}/>
+            <TextInput editable={false} defaultValue={returnData.email} style={styles.dataLabel}/>
             <View style={styles.line} />
           </View>
           
           <View style={styles.card}>
             <Text style={styles.attachLabel}> Phone Number </Text>
-            <TextInput editable={false} defaultValue={getPhoneNumber()} style={styles.dataLabel}/>
+            <TextInput editable={false} defaultValue={returnData.phone} style={styles.dataLabel}/>
             <View style={styles.line} />
           </View>
           
