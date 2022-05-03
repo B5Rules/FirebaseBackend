@@ -1,9 +1,29 @@
 import { StatusBar, StyleSheet, Text, TextInput, SafeAreaView, Image, View, Pressable, ScrollView } from 'react-native';
-import React from 'react';
+import React ,{useState}from 'react';
+import { fireFunc,fireAuth } from '../../firebase';
+import { httpsCallable } from 'firebase/functions';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { Alert } from 'react-native';
+import { setGlobalState,useGlobalState } from '../../state';
 
-let getUsername = () => { return 'Iulian'; }
+const deleteAccount = httpsCallable(fireFunc, 'deleteAccount');
 
 export default function DeleteAccount({ navigation }) {
+  onAuthStateChanged(fireAuth, user => {
+    if (user != null) {
+      //navigation.navigate('ViewProfile');
+    }else{
+      //console.log('oh no');
+      navigation.navigate('SignIn'); 
+    }
+    // Do other things
+  });
+
+  const [username, setUsername] = useState('');
+
+  if(useGlobalState('data')[0].username==''){
+    navigation.navigate('ViewProfile');
+  }
 
   return (
     <ScrollView
@@ -14,39 +34,26 @@ export default function DeleteAccount({ navigation }) {
 
         <StatusBar barStyle="default"/>
         <View style={styles.container}>
-        
-          <View style={{flexDirection:'row', alignItems:'center', justifyContent: 'center', top: 30, position: 'absolute', width: '100%'}}>
-              <Image
-                  style={styles.profileImage}
-                  source={require('../../Images/Profile_Picture.jpg')}  
-              />
-
-            <View style={{flexDirection: 'column', alignItems:'flex-start', maxWidth: '60%'}}>
-                <Text style={{fontSize: 22, color: 'grey'}}> Delete profile </Text>
-                <TextInput 
-                editable={false} 
-                textAlign={'center'} 
-                defaultValue= {''.concat('Hey ', getUsername(), '!')} 
-                style={{
-                  alignSelf: 'flex-start',
-                  marginLeft: '5%',
-                  color: '#fff',
-                  fontSize: 28,
-                  maxWidth: '100%'}}/>
-            </View>
-          </View>
               
           <Text style={{fontSize: 32, color: 'red', fontWeight: 'bold', marginTop: '40%'}}>WARNING!</Text>
           <Text style={{display: 'flex', fontSize: 22, color: 'red', textAlign: 'center', margin: 10}}> 
-          This action cannot be reversed. Within a few minutes, your request will be placed to our task queue, and your account will be cancelled automatically and permanently.
+          This action is permanent, irreversible and normally takes effect immediately.
           </Text>
 
           
-          <Pressable style={styles.buttonEdit} onPress={() => navigation.navigate("SignIn")}>
+          <Pressable style={styles.buttonEdit} onPress={() => {
+
+            deleteAccount().then(() => {
+              signOut(fireAuth).then(() => {
+                Alert.alert("Notice","Account deleted successfully");
+                navigation.navigate('Login');
+              });
+            });
+        }}>
               <Text style={styles.buttonText}> Confirm deletion </Text>
           </Pressable>
 
-          <Pressable style={styles.buttonLogOut} onPress={() => navigation.navigate("ViewProfile")}>
+          <Pressable style={styles.buttonLogOut} onPress={() => navigation.navigate("EditProfile")}>
               <Text style={styles.buttonText}> Cancel </Text>
           </Pressable>
 

@@ -13,6 +13,9 @@ inainte de a testa Firebase functions, rulati:
 firebase init functions  
 
 Si dati enter pana la final  
-Pentru a porni mediul de development, rulati, in doua terminale separate
-firebase serve --only functions
-expo start
+  
+Inainte de a porni mediul de development, rulati ifconfig(pe Linux) sau ipconfig(pe Windows) si treceti adresa locala in variabila origin din firebase.js  
+  
+Pentru a porni mediul de development, rulati, in doua terminale separate  
+firebase serve --only functions -o \[adresa locala gasita mai sus\]  
+expo start  

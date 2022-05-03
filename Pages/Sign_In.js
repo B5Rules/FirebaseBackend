@@ -1,7 +1,7 @@
 import { StatusBar, StyleSheet, Text, SafeAreaView, TextInput, Picker, Button, ImageBackground, TouchableOpacity, Dimensions, Alert, Linking, View, Image, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { useValidation } from 'react-native-form-validator';
-
+import {useGlobalState, setGlobalState} from '../state';
 import {fireFunc,fireAuth} from '../firebase';
 import { signInWithEmailAndPassword, signOut,onAuthStateChanged  } from '@firebase/auth';
 import { httpsCallable } from '@firebase/functions';  
@@ -36,7 +36,8 @@ export default function Login({ navigation }) {
     if( !isFieldInError('email') && email != "" && passwd != "") {
       signInWithEmailAndPassword(fireAuth,email,passwd).then(() => {
         console.log("Successfully signed in with email and password");
-      });
+      }).catch(error => {
+        Alert.alert('Authentication failure','The authentication process failed\n'+error.code);});
     }
 
   };
@@ -50,7 +51,7 @@ export default function Login({ navigation }) {
         <StatusBar barStyle="default"/>
         <ImageBackground source={require("../Images/streets02.png")} resizeMode="cover" style={styles.image}>
           
-          <Image source={require("../Images/Logo.svg")} style={styles.logo} resizeMode="center">
+          <Image source={require("../Images/Logo.png")} style={styles.logo} resizeMode="center">
 
           </Image>
           
@@ -79,6 +80,7 @@ export default function Login({ navigation }) {
                 style={styles.button1} 
                 onPress={()=>{
                   onPressButton();
+
                   /*helloWorld().then(response=>{
                     console.log(response.data['result']);
                   });*/
@@ -87,8 +89,11 @@ export default function Login({ navigation }) {
               </TouchableOpacity>
 
               <Text style={styles.forget}
-                onPress={() => Linking.openURL('http://google.com')}>
-                Did you forget your password?
+                onPress={() => {
+                  sendPasswordResetEmail(fireAuth,email);
+                  Alert.alert('Email sent','Please check your email for password reset instructions');
+                }}>
+                Forgot password?
               </Text>
               
             </View>
@@ -101,18 +106,17 @@ export default function Login({ navigation }) {
               <View style={{flex: 1, height: 2, backgroundColor: 'white', marginRight: 30}} />
             </View>
 
-            <TouchableOpacity style={styles.button2}>
-              <Image source={require("../Images/google.svg")} style={styles.google} resizeMode="center"></Image>
-              <Text style={styles.textButton2}>
-                Continue with Google
-              </Text>
-              
-            </TouchableOpacity>
-
             <TouchableOpacity 
               style={styles.button2}
               onPress={() => navigation.navigate("SignUp")}>
               <Text style={styles.textButton2}>Sign up</Text>
+            </TouchableOpacity>
+              
+            <TouchableOpacity style={[styles.button2,{backgroundColor:"gray"}]}>
+              <Text style={styles.textButton2}>
+                Continue with Google
+              </Text>
+              
             </TouchableOpacity>
 
           </View>
@@ -189,7 +193,7 @@ const styles = StyleSheet.create({
     },
     textButton2: {
       color: "#f1f1f1",   
-      fontSize: 28,
+      fontSize: 22,
       fontWeight: "bold",
     },
     input: {
