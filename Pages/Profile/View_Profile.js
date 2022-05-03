@@ -15,6 +15,8 @@ let getLastTransaction = () => { return '⪢Last transaction: 25/04/2022 - Loc: 
 
 let returnData;
 
+const getAllStations = httpsCallable(fireFunc, 'getAllStations');
+
 export default function ViewProfile({ navigation }) {
   
   const [firstName, setFirstName] = useState('');
@@ -41,9 +43,16 @@ export default function ViewProfile({ navigation }) {
   
     // Do other things
   });
-
+  
   //acest if inlatura apeluri inutile
   if(returnData == undefined){
+    
+    /*getAllStations().then(result => {
+      //console.log(result);
+    }).catch(error => {
+      console.log(error);
+    });
+    */
     getProfileData().then(data => {
           
       returnData = data.data['result'];
@@ -54,6 +63,8 @@ export default function ViewProfile({ navigation }) {
       setUsername(returnData['username']);
       //setCountry(returnData['country']);
 
+    }).catch(error => {
+      console.log("function failed");
     });
     console.log(returnData);
   }
@@ -61,139 +72,140 @@ export default function ViewProfile({ navigation }) {
   if(undefined == returnData){
     return null;
   }
-  else
-  return (
-    <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}>
-      <SafeAreaView style={{backgroundColor: '#000000', minHeight: '100%'}}>
+  else{
+    return (
+      <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}>
+        <SafeAreaView style={{backgroundColor: '#000000', minHeight: '100%'}}>
 
-        <StatusBar barStyle="default"/>
-        <View style={styles.container}>
-        
-          <View style={{flexDirection:'row', alignItems:'center', justifyContent:"flex-start", marginTop: 60, marginLeft: '10%', width: '100%'}}>
-              <Image
-                  style={styles.profileImage}
-                  source={require('../../Images/Profile_Picture.jpg')}  
-              />
-
-            <View style={{flexDirection: 'column', alignItems:'flex-start', maxWidth: '60%'}}>
-                <Text style={{fontSize: 22, color: 'grey'}}> Personal profile </Text>
-                <TextInput 
-                editable={false} 
-                textAlign={'center'} 
-                defaultValue= {''.concat('Hey ', returnData.username, '!')}
-                style={{
-                  alignSelf: 'flex-start',
-                  marginLeft: '5%',
-                  color: '#fff',
-                  fontSize: 28,
-                  maxWidth: '100%'}}/>
-            </View>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.attachLabel}> Name </Text>
-            <TextInput editable={false} defaultValue={returnData.username} style={styles.dataLabel}/>
-            <View style={styles.line} />
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.attachLabel}> Email address </Text>
-            <TextInput editable={false} defaultValue={returnData.email} style={styles.dataLabel}/>
-            <View style={styles.line} />
-          </View>
+          <StatusBar barStyle="default"/>
+          <View style={styles.container}>
           
-          <View style={styles.card}>
-            <Text style={styles.attachLabel}> Phone Number </Text>
-            <TextInput editable={false} defaultValue={returnData.phone} style={styles.dataLabel}/>
-            <View style={styles.line} />
-          </View>
-          
-          <View style={styles.card}>
-            <Text style={styles.attachLabel}> Country </Text>
-            <TextInput editable={false} defaultValue={getCountry()} style={styles.dataLabel}/>
-            <View style={styles.line} />
-          </View>
+            <View style={{flexDirection:'row', alignItems:'center', justifyContent:"flex-start", marginTop: 60, marginLeft: '10%', width: '100%'}}>
+                <Image
+                    style={styles.profileImage}
+                    source={require('../../Images/Profile_Picture.jpg')}  
+                />
 
-          <View style={styles.paymentJournal}>
-            <Text style={{
-              fontSize: 28,
-              color: '#fff',
-              textShadowColor: '#fff',
-              textShadowRadius: 2,
-              marginLeft: 10,
-            }}> 
-              Payment Journal 
-            </Text>
-            
-            <View style={styles.line} />
-            
-            <TextInput 
-            editable={false} 
-            defaultValue={getLastTransaction()}
-            multiline={true}
-            style={{
-              fontSize: 20,
-              color: '#05CAAD',
-              height: '90%',
-              marginLeft: 10,
-            }}/>
-
-            <Image
-              source={require('../../Images/Journal_Icon.svg')}  
-              style={{
-                width: 30,
-                height: 30,
-                marginTop: 15,
-                position: 'absolute',
-                bottom: 10,
-                right: '45%',
-              }}
-            />
-
-          </View>
-
-          <Pressable style={styles.buttonEdit} onPress={() => navigation.navigate("EditProfile")}>
-            
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-              <Text style={styles.buttonText}> Edit Profile </Text>
-              <Image
-                  source={require('../../Images/Edit_Button.svg')}  
+              <View style={{flexDirection: 'column', alignItems:'flex-start', maxWidth: '60%'}}>
+                  <Text style={{fontSize: 22, color: 'grey'}}> Personal profile </Text>
+                  <TextInput 
+                  editable={false} 
+                  textAlign={'center'} 
+                  defaultValue= {''.concat('Hey ', returnData.username, '!')}
                   style={{
-                    width: 20,
-                    height: 20,
-                    marginTop: 15,
-                  }}
-              />
+                    alignSelf: 'flex-start',
+                    marginLeft: '5%',
+                    color: '#fff',
+                    fontSize: 28,
+                    maxWidth: '100%'}}/>
+              </View>
             </View>
 
-          </Pressable>
-
-          <Pressable style={styles.buttonLogOut} onPress={() => {
-            fireAuth.signOut();
-            }}>
-
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-              <Text style={styles.buttonText}> Log Out </Text>
-              <Image
-                  source={require('../../Images/Logout_Icon.svg')}  
-                  style={{
-                    width: 20,
-                    height: 20,
-                    marginTop: 15
-                  }}
-              />
+            <View style={styles.card}>
+              <Text style={styles.attachLabel}> Name </Text>
+              <TextInput editable={false} defaultValue={returnData.username} style={styles.dataLabel}/>
+              <View style={styles.line} />
             </View>
+
+            <View style={styles.card}>
+              <Text style={styles.attachLabel}> Email address </Text>
+              <TextInput editable={false} defaultValue={returnData.email} style={styles.dataLabel}/>
+              <View style={styles.line} />
+            </View>
+            
+            <View style={styles.card}>
+              <Text style={styles.attachLabel}> Phone Number </Text>
+              <TextInput editable={false} defaultValue={returnData.phone} style={styles.dataLabel}/>
+              <View style={styles.line} />
+            </View>
+            
+            <View style={styles.card}>
+              <Text style={styles.attachLabel}> Country </Text>
+              <TextInput editable={false} defaultValue={getCountry()} style={styles.dataLabel}/>
+              <View style={styles.line} />
+            </View>
+
+            <View style={styles.paymentJournal}>
+              <Text style={{
+                fontSize: 28,
+                color: '#fff',
+                textShadowColor: '#fff',
+                textShadowRadius: 2,
+                marginLeft: 10,
+              }}> 
+                Payment Journal 
+              </Text>
               
-          </Pressable>
+              <View style={styles.line} />
+              
+              <TextInput 
+              editable={false} 
+              defaultValue={getLastTransaction()}
+              multiline={true}
+              style={{
+                fontSize: 20,
+                color: '#05CAAD',
+                height: '90%',
+                marginLeft: 10,
+              }}/>
 
-        </View>
+              <Image
+                source={require('../../Images/Journal_Icon.svg')}  
+                style={{
+                  width: 30,
+                  height: 30,
+                  marginTop: 15,
+                  position: 'absolute',
+                  bottom: 10,
+                  right: '45%',
+                }}
+              />
 
-      </SafeAreaView>
-     </ScrollView>
-  );
+            </View>
+
+            <Pressable style={styles.buttonEdit} onPress={() => navigation.navigate("EditProfile")}>
+              
+              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <Text style={styles.buttonText}> Edit Profile </Text>
+                <Image
+                    source={require('../../Images/Edit_Button.svg')}  
+                    style={{
+                      width: 20,
+                      height: 20,
+                      marginTop: 15,
+                    }}
+                />
+              </View>
+
+            </Pressable>
+
+            <Pressable style={styles.buttonLogOut} onPress={() => {
+              fireAuth.signOut();
+              }}>
+
+              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <Text style={styles.buttonText}> Log Out </Text>
+                <Image
+                    source={require('../../Images/Logout_Icon.svg')}  
+                    style={{
+                      width: 20,
+                      height: 20,
+                      marginTop: 15
+                    }}
+                />
+              </View>
+                
+            </Pressable>
+
+          </View>
+
+        </SafeAreaView>
+      </ScrollView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

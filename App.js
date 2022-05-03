@@ -1,6 +1,7 @@
+import {fireAuth} from './firebase';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 
 
 import SignIn from './Pages/Sign_In'
@@ -11,7 +12,7 @@ import DeleteAccount from './Pages/Profile/Delete_Account'
 
 const Stack = createNativeStackNavigator();
 
-import {fireAuth} from './firebase';
+
 
 export default function App() {
 /*

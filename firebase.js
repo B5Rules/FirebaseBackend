@@ -1,8 +1,16 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import firebase from "firebase/app";
 import {getFirestore} from "firebase/firestore";
 import {getFunctions,connectFunctionsEmulator} from "firebase/functions";
 import {getAuth,connectAuthEmulator,onAuthStateChanged} from "firebase/auth";
+import Constants from "expo-constants";
+import * as FirebaseCore from "expo-firebase-core";
+
+console.ignoredYellowBox = [
+  "Setting a timer",
+  'AsyncStorage'
+];
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -20,8 +28,16 @@ const fireAuth = getAuth(fireApp);
 const fireDB = getFirestore(fireApp);
 const fireFunc = getFunctions(fireApp);
 
+if (__DEV__) {
+  console.log("Switching to local Firebase instance...");
+  const origin = "192.168.28.1";
+
+  //firebase.auth().useEmulator(`http://${origin}:9099/`);
+  //firebase.firestore().useEmulator(origin, 8080);
+  connectFunctionsEmulator(fireFunc,origin,5000);
+}
+
 fireFunc.region = 'europe-west1';
-connectFunctionsEmulator(fireFunc,'localhost',5000);
 
 onAuthStateChanged(fireAuth, user => {
     if (user != null) {
