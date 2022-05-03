@@ -1,15 +1,15 @@
 Requirements: Node.JS  
   
-Rulati pentru instalare globala:
+Rulati pentru instalare globala:  
 npm install -g yarn firebase-tools expo expo-cli
 
-Dupa clonarea fork-ului vostru, rulati in folderul local:
+Dupa clonarea fork-ului vostru, rulati in folderul local:  
 yarn install
 
-Pentru instalarea de pachete noi, rulati
+Pentru instalarea de pachete noi, rulati  
 expo install \[nume_pachet\]
 
-inainte de a testa Firebase functions, rulati:
-firebase init functions
+inainte de a testa Firebase functions, rulati:  
+firebase init functions  
 
-Si dati enter pana la final
+Si dati enter pana la final  
