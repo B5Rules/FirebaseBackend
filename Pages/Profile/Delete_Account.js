@@ -46,7 +46,7 @@ export default function DeleteAccount({ navigation }) {
             deleteAccount().then(() => {
               signOut(fireAuth).then(() => {
                 Alert.alert("Notice","Account deleted successfully");
-                navigation.navigate('Login');
+                navigation.navigate('SignIn');
               });
             });
         }}>
