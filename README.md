@@ -1,38 +1,15 @@
-# FirebaseBackend 
-Requirements: npm, git, and being a collaborator on the b5-uberelectric Firebase project  
- 
-development Setup:  
-Make a fork of this repo. Then, on your computer:  
+Requirements: Node.JS  
   
-git init  
-git remote add origin https://github.com/YOURUSERNAME/FirebaseAuthentication  (replace YOURUSERNAME with your github username)
-git pull origin main  
-  
-npm install -g firebase-tools
-npm install firebase firebase-cli --save  
-npm install react --save  
-npm install webpack webpack-cli -D  
-  
-firebase init  
- -authenticate with Firebase,  
- -select firestore and hosting without github deploys,  
- -use an existing project,  
- -b5-uberelectric,  
- -enter  
- -enter  
- -enter  
- -type "n" then enter  
- -type "n" then enter  
-DONE  
-  
-Now write your code. To test it, run "npm run build" and access access localhost:5000 in a browser to see your work of art  
-When you want to commit, do:  
-  
-git add src  
-git add public  
-git add package.json  
-git add webpack.config.js  
-git commit  
-git push --set-upstream origin master 
+Rulati pentru instalare globala:
+npm install -g yarn firebase-tools expo expo-cli
 
---The End-- 
+Dupa clonarea fork-ului vostru, rulati in folderul local:
+yarn install
+
+Pentru instalarea de pachete noi, rulati
+expo install \[nume_pachet\]
+
+inainte de a testa Firebase functions, rulati:
+firebase init functions
+
+Si dati enter pana la final
