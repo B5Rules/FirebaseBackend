@@ -13,3 +13,6 @@ inainte de a testa Firebase functions, rulati:
 firebase init functions  
 
 Si dati enter pana la final  
+Pentru a porni mediul de development, rulati, in doua terminale separate
+firebase serve --only functions
+expo start
