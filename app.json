@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "reactfire",
+    "slug": "reactfire",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.serbanstein.spotlightcharging",
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "config":{
+        "firebase":{
+          "apiKey": "AIzaSyDc8GTACXcWMILMmLk9-pUaWowtGHvPdo4",
+          "authDomain": "b5uberelectric-bacbb.firebaseapp.com",
+          "projectId": "b5uberelectric-bacbb",
+          "storageBucket": "b5uberelectric-bacbb.appspot.com",
+          "messagingSenderId": "1053866920657",
+          "appId": "1:1053866920657:web:1db10f617e6e7b639dd3f0"
+        }
+      }
+    }
+  }
+}
