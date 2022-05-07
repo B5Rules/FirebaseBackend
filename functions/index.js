@@ -1,22 +1,16 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const Countries = require("countries-api");
 
 const app = admin.initializeApp();
 const db = admin.firestore(app);
 const auth = admin.auth(app);
 
 exports.insertProfile = functions.region('europe-west1').https.onCall(async(data,context)=>{
-    let uid;
-    if(context.auth){
-        uid = context.auth.uid;
-    }else{
-        uid = data.uid;
-    }
-    
-    /*if(!context.auth){
+    let uid= context.auth.uid;
+
+    if(!context.auth){
         throw new functions.https.HttpsError('unauthenticated','You must be authenticated to use this function');
-    }*/
+    }
 
     let querySnapshot = await db.collection('userdata').where('username', '==', data.username).get();
     if(querySnapshot.size>0){
@@ -57,26 +51,16 @@ exports.insertProfile = functions.region('europe-west1').https.onCall(async(data
 
 exports.getProfileData = functions.region("europe-west1").https.onCall(async(data, context)=>{
     
-    let uid;
-    if(context.auth){
-        uid = context.auth.uid;
-    }else{
-        uid = data.uid;
-    }
-    /*if(!context.auth){
+    let uid= context.auth.uid;
+    if(!context.auth){
         throw new functions.https.HttpsError('unauthenticated','You must be authenticated to use this function');
-    }*/
+    }
     let querySnapshot = await db.collection('userdata').doc(uid).get();
     return {result:querySnapshot.data()};
 });
 
 exports.deleteAccount = functions.region("europe-west1").https.onCall(async(data, context)=>{
-    let uid;
-    if(context.auth){
-        uid = context.auth.uid;
-    }else{
-        uid = data.uid;
-    }
+    let uid = context.auth.uid;
     if(!context.auth){
         throw new functions.https.HttpsError('unauthenticated','You must be authenticated to use this function');
     }

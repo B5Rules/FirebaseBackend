@@ -1,11 +1,10 @@
 import { StyleSheet, Text, View,TextInput,TouchableHighlight,Alert,BackHandler } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground'
-import { fireAuth,fireFunc } from '../firebase';
+import { fireAuth,fireFunc } from '../globals/firebase';
 import { signOut, updatePassword } from 'firebase/auth';
-import { useEffect, useState } from 'react/cjs/react.development';
 import { httpsCallable } from 'firebase/functions';
-import {getGlobalState,setGlobalState} from '../global';
+import {getGlobalState,setGlobalState} from '../globals/profiledata';
 
 const deleteAccount = httpsCallable(fireFunc, 'deleteAccount');
 

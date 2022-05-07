@@ -4,23 +4,17 @@ import { KeyboardAvoidingView, TextInput, TouchableHighlight,TouchableOpacity } 
 import { useValidation,customValidationMessages } from 'react-native-form-validator';
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground';
 import HidewithKeyboard from 'react-native-hide-with-keyboard';
-import {fireAuth,fireFunc} from '../firebase';
-import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import {fireAuth,fireFunc} from '../globals/firebase';
+import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
-
-
-import { setGlobalState } from '../global';
+import { setGlobalState } from '../globals/profiledata';
+import Logo from '../components/Logo';
 
 const getProfileData = httpsCallable(fireFunc,'getProfileData');
 
 const AuthHandler = ({navigation}) => {
     useEffect(() => {
         const back = BackHandler.addEventListener('hardwareBackPress', ()=>{handleBackButton();});
-        /*onAuthStateChanged(fireAuth,user => {
-            if(!!user){
-                
-            }
-        });*/
         return () => {
             back.remove();
         };
@@ -108,12 +102,12 @@ const AuthHandler = ({navigation}) => {
         <ImageBackground source={require('../images/streets.png')} style={styles.backgroundImage}>
             <KeyboardAvoidingView
             style={styles.container}
-            behavior="padding"
+            behavior="height"
             >
-                <HidewithKeyboard><Image source={require('../images/Logo.png')} style={styles.logo} /></HidewithKeyboard>
-    
+                <HidewithKeyboard><Logo></Logo></HidewithKeyboard>
                 <View style={styles.inputContainer}>
                     <TextInput
+                    keyboardType='email-address'
                     placeholder="Email"
                     placeholderTextColor={'#bababa'}
                     //value={''}
@@ -123,9 +117,10 @@ const AuthHandler = ({navigation}) => {
                     {isFieldInError('email') && getErrorsInField('email').map(errorMessage => <Text style={styles.error}>{errorMessage}</Text>)}
 
                     <TextInput
+                    keyboardType='default'
                     placeholder="Password"
                     placeholderTextColor={'#bababa'}
-                    secureTextEntry
+                    //secureTextEntry
                     //value={''}
                     onChangeText={setPassword}
                     style={styles.input}
@@ -202,11 +197,10 @@ const styles = StyleSheet.create({
         marginTop: 10,
         borderWidth:2,
         borderColor:'#22e6ab',
-        
     },
     inputContainer: {
         width:'80%',
-        paddingTop:100
+        paddingTop:10,
     },
     buttonContainer: {
         width:"60%",
@@ -235,6 +229,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 16,
         alignSelf: 'center',
+        width: 130,
         marginBottom:60
     },
     error: {

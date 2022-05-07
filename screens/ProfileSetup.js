@@ -1,9 +1,8 @@
 import { StyleSheet, Text, View,KeyboardAvoidingView, TextInput,TouchableHighlight,Alert,BackHandler } from 'react-native'
-import React from 'react'
-import { useEffect, useState } from 'react/cjs/react.development'
+import React,{ useEffect, useState } from 'react'
 import { useValidation } from 'react-native-form-validator';
-import {getGlobalState,setGlobalState} from '../global';
-import { fireFunc } from '../firebase';
+import {getGlobalState,setGlobalState} from '../globals/profiledata';
+import { fireFunc } from '../globals/firebase';
 import { httpsCallable } from 'firebase/functions';
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground';
 
