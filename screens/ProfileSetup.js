@@ -5,6 +5,7 @@ import {getGlobalState,setGlobalState} from '../globals/profiledata';
 import { fireFunc } from '../globals/firebase';
 import { httpsCallable } from 'firebase/functions';
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground';
+import * as NavigationBar from 'expo-navigation-bar';
 
 const insertProfile = httpsCallable(fireFunc, 'insertProfile');
 
@@ -12,7 +13,7 @@ const ProfileSetup = ({navigation}) => {
   
   const handleBackButton = () => {
     if(getGlobalState('needUpdate')){
-      navigation.navigate('AuthHandler');
+      navigation.navigate('SignInHandler');
     }else{
       navigation.navigate('HomeScreen');
     }
@@ -20,6 +21,7 @@ const ProfileSetup = ({navigation}) => {
   }
 
   useEffect(() => {
+    NavigationBar.setBackgroundColorAsync('#182724')
     const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
     return () => {
       back.remove();
@@ -138,7 +140,7 @@ export default ProfileSetup
 const styles = StyleSheet.create({
   backgroundImage:{
       height: '100%',
-      backgroundColor:'#203b38'
+      backgroundColor:'#182724'
   },
   logo:{
       height:120,
@@ -160,7 +162,7 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       marginTop: 10,
       borderWidth:2,
-      borderColor:'#22e6ab',
+      borderColor:'#05CAAD',
       fontSize:20,
       width:'100%',
       
@@ -183,8 +185,8 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       alignItems: 'center',
       marginTop: 15,
-      borderColor: '#22e6ab',
-      borderWidth: 2,
+      borderColor: '#05CAAD',
+      borderWidth: 0,
   },
   buttonText: {
       color: '#e6e6e6',

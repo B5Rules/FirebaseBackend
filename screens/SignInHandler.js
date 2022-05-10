@@ -9,11 +9,13 @@ import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmail
 import { httpsCallable } from 'firebase/functions';
 import { setGlobalState } from '../globals/profiledata';
 import Logo from '../components/Logo';
+import * as NavigationBar from 'expo-navigation-bar';
 
 const getProfileData = httpsCallable(fireFunc,'getProfileData');
 
-const AuthHandler = ({navigation}) => {
+const SignInHandler = ({navigation}) => {
     useEffect(() => {
+        NavigationBar.setBackgroundColorAsync('#05CAAD')
         const back = BackHandler.addEventListener('hardwareBackPress', ()=>{handleBackButton();});
         return () => {
             back.remove();
@@ -103,80 +105,104 @@ const AuthHandler = ({navigation}) => {
             <KeyboardAvoidingView
             style={styles.container}
             behavior="height"
+            keyboardVerticalOffset={'0'}
             >
                 <HidewithKeyboard><Logo></Logo></HidewithKeyboard>
-                <View style={styles.inputContainer}>
-                    <TextInput
-                    keyboardType='email-address'
-                    placeholder="Email"
-                    placeholderTextColor={'#bababa'}
-                    //value={''}
-                    onChangeText={setEmail}
-                    style={styles.input}
-                    />
-                    {isFieldInError('email') && getErrorsInField('email').map(errorMessage => <Text style={styles.error}>{errorMessage}</Text>)}
+                <View style={{
+                        backgroundColor:'#05CAAD',
+                        width:"100%",
+                        alignItems:'center',
+                        flex:1,
+                        borderTopLeftRadius:30,
+                        borderTopRightRadius:30,
+                    }}>
+                    <View style={styles.inputContainer}>
+                        <TextInput
+                        placeholder="Email"
+                        placeholderTextColor={'#bababa'}
+                        keyboardType='visible-password'
+                        //value={''}
+                        onChangeText={setEmail}
+                        style={styles.input}
+                        />
+                        {isFieldInError('email') && getErrorsInField('email').map(errorMessage => <Text style={styles.error}>{errorMessage}</Text>)}
 
-                    <TextInput
-                    keyboardType='default'
-                    placeholder="Password"
-                    placeholderTextColor={'#bababa'}
-                    //secureTextEntry
-                    //value={''}
-                    onChangeText={setPassword}
-                    style={styles.input}
-                    />
-                    {isFieldInError('password') && getErrorsInField('password').map(errorMessage => <Text style={styles.error}>{errorMessage}</Text>)}
+                        <TextInput
+                        placeholder="Password"
+                        placeholderTextColor={'#bababa'}
+                        secureTextEntry
+                        keyboardType='default'
+                        //value={''}
+                        onChangeText={setPassword}
+                        style={styles.input}
+                        />
+                        {isFieldInError('password') && getErrorsInField('password').map(errorMessage => <Text style={styles.error}>{errorMessage}</Text>)}
+                    </View>
+                    
+                    <View
+                    style={styles.buttonContainer}
+                    >   
+                        <View style={
+                            {
+                                width:"140%",
+                                height:10,
+                                backgroundColor: '#05BAAD'
+                            }
+                        }></View>
+                        <TouchableHighlight
+                        onPress={()=>{handleSignIn()}}
+                        style={styles.button}
+                        underlayColor={'#22e6ab'}
+                        >
+                            <Text
+                            style={styles.buttonText}
+                            >Login</Text>
+                        </TouchableHighlight>
+
+                        <TouchableOpacity
+                        onPress={()=>{
+                            navigation.navigate('SignUpHandler')
+                        }}>
+                            <Text
+                            style={[styles.hyperlink,{
+                                margin:20,
+                                marginBottom:0,
+                                width:170,
+                                justifyContent: 'center'
+                            }]}>Don't have an account? Sign Up</Text>
+                        </TouchableOpacity>
+
+                    </View>
+                    <TouchableOpacity
+                    onPress={()=>{
+                        if(validate({email: { required: true, email: true }})) {
+                            sendPasswordResetEmail(fireAuth,email)
+                            .then(()=>{
+                                Alert.alert("Email sent", "Check your email for a password reset link");
+                            });
+                        }
+                    }}
+                    >
+                        <Text
+                        style={[styles.hyperlink,
+                        {
+                            marginTop:60,
+                        }]}
+                        >Forgot password?</Text>
+                    </TouchableOpacity>
                 </View>
                 
-                <View
-                style={styles.buttonContainer}
-                >
-                    <TouchableHighlight
-                    onPress={()=>{handleSignIn()}}
-                    style={styles.button}
-                    underlayColor={'#22e6ab'}
-                    >
-                        <Text
-                        style={styles.buttonText}
-                        >Login</Text>
-                    </TouchableHighlight>
-
-                    <TouchableHighlight
-                    onPress={()=>{handleSignUp()}}
-                    style={styles.button}
-                    underlayColor={'#22e6ab'}
-                    >
-                        <Text
-                        style={styles.buttonText}
-                        >Register</Text>
-                    </TouchableHighlight>
-
-                </View>
             </KeyboardAvoidingView>
-            <TouchableOpacity
-            onPress={()=>{
-                if(validate({email: { required: true, email: true }})) {
-                    sendPasswordResetEmail(fireAuth,email)
-                    .then(()=>{
-                        Alert.alert("Email sent", "Check your email for a password reset link");
-                    });
-                }
-            }}
-            >
-                <Text
-                style={styles.hyperlink}
-                >Forgot password?</Text>
-            </TouchableOpacity>
         </ImageBackground>
     );
 }
 
-export default AuthHandler
+export default SignInHandler
 
 const styles = StyleSheet.create({
     backgroundImage:{
         height: '100%',
-        backgroundColor:'#203b38'
+        backgroundColor:'#182724'
     },
     logo:{
         height:120,
@@ -194,13 +220,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 15,
         borderRadius: 10,
-        marginTop: 10,
-        borderWidth:2,
+        marginTop: 20,
+        borderWidth:0,
         borderColor:'#22e6ab',
     },
     inputContainer: {
         width:'80%',
-        paddingTop:10,
+        paddingTop:30,
     },
     buttonContainer: {
         width:"60%",
@@ -217,7 +243,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 15,
         borderColor: '#22e6ab',
-        borderWidth: 2,
+        borderWidth: 0,
     },
     buttonText: {
         color: '#e6e6e6',
@@ -225,7 +251,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     hyperlink: {
-        color: '#086dcc',
+        color: '#182724',
         fontWeight: '700',
         fontSize: 16,
         alignSelf: 'center',

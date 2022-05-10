@@ -5,6 +5,8 @@ import { fireAuth,fireFunc } from '../globals/firebase';
 import { signOut, updatePassword } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
 import {getGlobalState,setGlobalState} from '../globals/profiledata';
+import * as NavigationBar from 'expo-navigation-bar';
+
 
 const deleteAccount = httpsCallable(fireFunc, 'deleteAccount');
 
@@ -18,6 +20,7 @@ const HomeScreen = ({navigation}) => {
   }
 
   useEffect(()=>{
+    NavigationBar.setBackgroundColorAsync('#182724')
     const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
     return () => {
       back.remove();  
@@ -28,7 +31,7 @@ const HomeScreen = ({navigation}) => {
 
   const handleSignOut = () => {
     signOut(fireAuth).then(()=>{
-      navigation.navigate('AuthHandler');
+      navigation.navigate('SignInHandler');
       setGlobalState('userData',{
         username: '',
         firstName: '',
@@ -43,7 +46,7 @@ const HomeScreen = ({navigation}) => {
     updatePassword(fireAuth.currentUser,password).then(()=>{
       Alert.alert('Password Updated','Please login with your new password');
       signOut(fireAuth).then(()=>{
-        navigation.navigate('AuthHandler');
+        navigation.navigate('SignInHandler');
       });
     });
   }
@@ -107,7 +110,7 @@ const HomeScreen = ({navigation}) => {
               {text: 'OK', onPress: () => {
                 deleteAccount().then(()=>{
                   fireAuth.signOut().then(()=>{
-                    navigation.navigate('AuthHandler')
+                    navigation.navigate('SignInHandler')
                     setGlobalState('userData',{
                       username: '',
                       firstName: '',
@@ -144,7 +147,7 @@ export default HomeScreen
 const styles = StyleSheet.create({
   backgroundImage:{
       height: '100%',
-      backgroundColor:'#203b38'
+      backgroundColor:'#182724'
   },
   logo:{
       height:120,
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       marginTop: 10,
       borderWidth:2,
-      borderColor:'#22e6ab',
+      borderColor:'#05CAAD',
       fontSize:20,
       width:'100%'
   },
@@ -184,8 +187,8 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       alignItems: 'center',
       marginTop: 15,
-      borderColor: '#22e6ab',
-      borderWidth: 2,
+      borderColor: '#a1a1a1',
+      borderWidth: 0,
   },
   buttonText: {
       color: '#e6e6e6',
