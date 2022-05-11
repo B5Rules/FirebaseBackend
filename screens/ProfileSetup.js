@@ -84,7 +84,7 @@ const ProfileSetup = ({navigation}) => {
   };
 
   return (
-    <ImageBackground source={require('../images/streets.png')} style={styles.backgroundImage}>
+    <View style={{height:'100%'}}>
       <KeyboardAvoidingView
       style={styles.container}
       >
@@ -221,7 +221,7 @@ const ProfileSetup = ({navigation}) => {
           </TouchableHighlight>
         </View>
       </KeyboardAvoidingView>
-   </ImageBackground>
+   </View>
   )
 }
 

@@ -103,7 +103,7 @@ const SignInHandler = ({navigation}) => {
     }
     
     return (
-        <ImageBackground source={require('../images/streets.png')} style={styles.backgroundImage}>
+        <View style={{height:'100%'}}>
             <KeyboardAvoidingView
             style={styles.container}
             behavior="height"
@@ -193,7 +193,7 @@ const SignInHandler = ({navigation}) => {
                 </View>
                 
             </KeyboardAvoidingView>
-        </ImageBackground>
+        </View>
     );
 }
 

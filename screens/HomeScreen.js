@@ -6,6 +6,7 @@ import { signOut, updatePassword } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
 import {getGlobalState,setGlobalState} from '../globals/profiledata';
 import * as NavigationBar from 'expo-navigation-bar';
+import EditButton from '../images/editButton'
 
 
 const deleteAccount = httpsCallable(fireFunc, 'deleteAccount');
@@ -52,22 +53,47 @@ const HomeScreen = ({navigation}) => {
   }
   
   return (
-    <ImageBackground source={require('../images/streets.png')} style={styles.backgroundImage}>
-      <View style={styles.container}>
+    <View style={{height:'100%'}}>
+      <View style={[styles.container,{
+        borderWidth:1,
+        borderColor:'#05CAAD',
+        height:'90%',
+        padding:0,
+        margin:10,
+        marginTop:50,
+        backgroundColor:'#0A1613'
+      }]}>
           <Text 
           style={styles.buttonText}>
           Welcome, {getGlobalState('userData').firstName.concat(" ",getGlobalState('userData').lastName,"!")}</Text>
-        <Text
-        style={styles.fieldLabel}
-        >Change password</Text>
-
-        <TextInput
-        style={styles.input}
-        secureTextEntry
-        onChangeText={setPassword}
-        placeholder={'New password'}
-        placeholderTextColor={'#aaaaaa'}
-        />
+          <View
+          style={[styles.input,{
+            flexWrap: 'wrap', 
+            alignItems: 'flex-start',
+            flexDirection:'row',
+            paddingRight:10
+          }]}
+          >
+            <Text
+            style={{
+              width: '100%',
+              color:'#ababab',
+              fontSize:15,
+            }}
+            >Change password</Text>
+            <TextInput
+            style={{
+              fontSize: 20, 
+              color: '#fff',
+              width: '92%',
+            }}
+            defaultValue={''}
+            onChangeText={setPassword}
+            placeholder={'New password'}
+            placeholderTextColor={'#aaaaaa'}
+            />
+            <EditButton/>
+          </View>
 
         <TouchableHighlight
         onPress={handleChangePassword}
@@ -138,7 +164,7 @@ const HomeScreen = ({navigation}) => {
         </TouchableHighlight>
 
       </View>
-    </ImageBackground>
+    </View>
   )
 }
 
