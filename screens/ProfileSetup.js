@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,KeyboardAvoidingView, TextInput,TouchableHighlight,Alert,BackHandler } from 'react-native'
+import { StyleSheet, Text, View,KeyboardAvoidingView, TextInput,TouchableHighlight,Alert,BackHandler,Image } from 'react-native'
 import React,{ useEffect, useState } from 'react'
 import { useValidation } from 'react-native-form-validator';
 import {getGlobalState,setGlobalState} from '../globals/profiledata';
@@ -6,6 +6,7 @@ import { fireFunc } from '../globals/firebase';
 import { httpsCallable } from 'firebase/functions';
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground';
 import * as NavigationBar from 'expo-navigation-bar';
+import EditButton from '../images/editButton';
 
 const insertProfile = httpsCallable(fireFunc, 'insertProfile');
 
@@ -88,37 +89,126 @@ const ProfileSetup = ({navigation}) => {
       style={styles.container}
       >
         <View style={styles.inputContainer}>
-          <TextInput
-          style={styles.input}
-          defaultValue={username}
-          onChangeText={setUsername}
-          placeholder={'Username'}
-          placeholderTextColor={'#aaaaaa'}
-          />
+          
+          <View
+          style={[styles.input,{
+            flexWrap: 'wrap', 
+            alignItems: 'flex-start',
+            flexDirection:'row',
+            paddingRight:10
+          }]}
+          >
+            <Text
+            style={{
+              width: '100%',
+              color:'#ababab',
+              fontSize:15,
+            }}
+            >Username</Text>
+            <TextInput
+            style={{
+              fontSize: 20, 
+              color: '#fff',
+              width: '92%',
+            }}
+            defaultValue={username}
+            onChangeText={setUsername}
+            placeholder={''}
+            placeholderTextColor={'#aaaaaa'}
+            />
+            <EditButton/>
+          </View>
           {isFieldInError('username') && <Text style={styles.error}>*Username must be between 3 and 20 characters!</Text>}
-          <TextInput
-          style={styles.input}
-          defaultValue={firstName}
-          onChangeText={setFirstName}
-          placeholder={'First Name'}
-          placeholderTextColor={'#aaaaaa'}
-          />
+          
+          <View
+          style={[styles.input,{
+            flexWrap: 'wrap', 
+            alignItems: 'flex-start',
+            flexDirection:'row',
+            paddingRight:10
+          }]}
+          >
+            <Text
+            style={{
+              width: '100%',
+              color:'#ababab',
+              fontSize:15,
+            }}
+            >First Name</Text>
+            <TextInput
+            style={{
+              fontSize: 20, 
+              color: '#fff',
+              width: '92%',
+            }}
+            defaultValue={firstName}
+            onChangeText={setFirstName}
+            placeholder={''}
+            placeholderTextColor={'#aaaaaa'}
+            />
+            <EditButton/>
+          </View>
           {isFieldInError('firstName') && <Text style={styles.error}>*First Name must be between 3 and 15 characters!</Text>}
-          <TextInput
-          style={styles.input}
-          defaultValue={lastName}
-          onChangeText={setLastName}
-          placeholder={'Last Name'}
-          placeholderTextColor={'#aaaaaa'}
-          />
+          
+          <View
+          style={[styles.input,{
+            flexWrap: 'wrap', 
+            alignItems: 'flex-start',
+            flexDirection:'row',
+            paddingRight:10
+          }]}
+          >
+            <Text
+            style={{
+              width: '100%',
+              color:'#ababab',
+              fontSize:15,
+            }}
+            >Last Name</Text>
+            <TextInput
+            style={{
+              fontSize: 20, 
+              color: '#fff',
+              width: '92%',
+            }}
+            defaultValue={lastName}
+            onChangeText={setLastName}
+            placeholder={''}
+            placeholderTextColor={'#aaaaaa'}
+            />
+            <EditButton/>
+          </View>
           {isFieldInError('lastName') && <Text style={styles.error}>*Last Name must be between 3 and 15 characters!</Text>}
-          <TextInput
-          style={styles.input}
-          defaultValue={phone}
-          onChangeText={setPhone}
-          placeholder={'Phone number'}
-          placeholderTextColor={'#aaaaaa'}
-          />
+          
+          <View
+          style={[styles.input,{
+            flexWrap: 'wrap', 
+            alignItems: 'flex-start',
+            flexDirection:'row',
+            paddingRight:10
+          }]}
+          >
+            <Text
+            style={{
+              width: '100%',
+              color:'#ababab',
+              fontSize:15,
+            }}
+            >Phone number</Text>
+            <TextInput
+            style={{
+              fontSize: 20, 
+              color: '#fff',
+              width: '92%',
+            }}
+            defaultValue={phone}
+            keyboardType={'phone-pad'}
+            onChangeText={setPhone}
+            placeholder={''}
+            placeholderTextColor={'#aaaaaa'}
+            />
+            <EditButton/>
+          </View>
           {isFieldInError('phone') && <Text style={styles.error}>*Phone number must have 10 digits!</Text>}
           <TouchableHighlight
           onPress={()=>{handleSubmit();}}
@@ -140,7 +230,7 @@ export default ProfileSetup
 const styles = StyleSheet.create({
   backgroundImage:{
       height: '100%',
-      backgroundColor:'#182724'
+      backgroundColor:'#0A1613',
   },
   logo:{
       height:120,
@@ -150,19 +240,19 @@ const styles = StyleSheet.create({
   container: {
       paddingVertical: 50,
       paddingHorizontal: 30,
-      flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
   },
   input: {
       color:'white',
-      backgroundColor: "#0c1f1c",
+      backgroundColor: "#171D20",
       paddingHorizontal: 15,
       paddingVertical: 15,
       borderRadius: 10,
       marginTop: 10,
-      borderWidth:2,
-      borderColor:'#05CAAD',
+      borderWidth:0,
+      borderBottomWidth: 2,
+      borderColor:'#ababab',
       fontSize:20,
       width:'100%',
       
@@ -179,7 +269,7 @@ const styles = StyleSheet.create({
       marginTop: 20
   },
   button: {
-      backgroundColor: '#2c472e',
+      backgroundColor: '#3B9683',
       width: "100%",
       padding: 15,
       borderRadius: 10,

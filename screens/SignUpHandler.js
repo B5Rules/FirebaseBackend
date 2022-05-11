@@ -152,21 +152,19 @@ const AuthHandler = ({navigation}) => {
                         >
                             <Text
                             style={styles.buttonText}
-                            >Register</Text>
+                            >Sign Up</Text>
+                        </TouchableHighlight>
+                        
+                        <TouchableHighlight
+                        onPress={()=>{navigation.navigate('SignInHandler')}}
+                        style={styles.button}
+                        underlayColor={'#22e6ab'}
+                        >
+                            <Text
+                            style={styles.buttonText}
+                            >Sign In</Text>
                         </TouchableHighlight>
 
-                        <TouchableOpacity
-                        onPress={()=>{
-                            navigation.navigate('SignInHandler')
-                        }}>
-                            <Text
-                            style={[styles.hyperlink,{
-                                margin:20,
-                                marginBottom:0,
-                                width:170,
-                                justifyContent: 'center'
-                            }]}>Have an account already? Sign in</Text>
-                        </TouchableOpacity>
                     </View>
                 </View>
                 
@@ -181,7 +179,7 @@ export default AuthHandler
 const styles = StyleSheet.create({
     backgroundImage:{
         height: '100%',
-        backgroundColor:'#182724'
+        backgroundColor:'#0A1613'
     },
     logo:{
         height:120,
@@ -215,7 +213,7 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     button: {
-        backgroundColor: '#2c472e',
+        backgroundColor: '#3B9683',
         width: "100%",
         padding: 15,
         borderRadius: 10,

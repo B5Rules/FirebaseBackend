@@ -147,7 +147,7 @@ export default HomeScreen
 const styles = StyleSheet.create({
   backgroundImage:{
       height: '100%',
-      backgroundColor:'#182724'
+      backgroundColor:'#0A1613'
   },
   logo:{
       height:120,
@@ -165,8 +165,9 @@ const styles = StyleSheet.create({
       paddingVertical: 15,
       borderRadius: 10,
       marginTop: 10,
-      borderWidth:2,
-      borderColor:'#05CAAD',
+      borderWidth:0,
+      borderBottomWidth:2,
+      borderColor:'#ababab',
       fontSize:20,
       width:'100%'
   },
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
       marginTop: 20
   },
   button: {
-      backgroundColor: '#2c472e',
+      backgroundColor: '#3B9683',
       width: "100%",
       padding: 15,
       borderRadius: 10,

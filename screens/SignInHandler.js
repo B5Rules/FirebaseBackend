@@ -15,6 +15,8 @@ const getProfileData = httpsCallable(fireFunc,'getProfileData');
 
 const SignInHandler = ({navigation}) => {
     useEffect(() => {
+        if(fireAuth.currentUser) {postAuth();
+        }
         NavigationBar.setBackgroundColorAsync('#05CAAD')
         const back = BackHandler.addEventListener('hardwareBackPress', ()=>{handleBackButton();});
         return () => {
@@ -158,19 +160,17 @@ const SignInHandler = ({navigation}) => {
                             style={styles.buttonText}
                             >Login</Text>
                         </TouchableHighlight>
-
-                        <TouchableOpacity
-                        onPress={()=>{
-                            navigation.navigate('SignUpHandler')
-                        }}>
+                        
+                        <TouchableHighlight
+                        onPress={()=>{navigation.navigate('SignUpHandler')}}
+                        style={styles.button}
+                        >
                             <Text
-                            style={[styles.hyperlink,{
-                                margin:20,
-                                marginBottom:0,
-                                width:170,
-                                justifyContent: 'center'
-                            }]}>Don't have an account? Sign Up</Text>
-                        </TouchableOpacity>
+                            style={styles.buttonText}
+                            
+                            >Register</Text>
+                        </TouchableHighlight>
+
 
                     </View>
                     <TouchableOpacity
@@ -202,7 +202,7 @@ export default SignInHandler
 const styles = StyleSheet.create({
     backgroundImage:{
         height: '100%',
-        backgroundColor:'#182724'
+        backgroundColor:'#0A1613',
     },
     logo:{
         height:120,
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     button: {
-        backgroundColor: '#2c472e',
+        backgroundColor: '#3B9683',
         width: "100%",
         padding: 15,
         borderRadius: 10,

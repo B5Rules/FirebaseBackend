@@ -14,7 +14,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   useEffect(()=>{
-    
+    NavigationBar.setBackgroundColorAsync('#182724')
   },[]);
   return (
     <NavigationContainer style={{backgroundColor: '#182724',}}>
