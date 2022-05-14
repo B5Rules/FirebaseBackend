@@ -1,28 +1,47 @@
-import { StyleSheet, Text, TextInput, SafeAreaView, Image, View, Pressable } from 'react-native';
+import { StyleSheet, Text, TextInput, SafeAreaView, Image, View, Pressable, StatusBar } from 'react-native';
 import React from 'react';
+
+function getStationId() {
+  return '404';
+}
 
 export default function ViewProfile() {
 
   return (
     <SafeAreaView style={styles.container}>
 
-        <Image source={require("./Logo.svg")} style={styles.logo} resizeMode="center" />
+    <StatusBar  
+        backgroundColor = "#1C2E2B"  
+        barStyle = "white-content"   
+      />  
+
+        <Text style={styles.title}> Payment report </Text>
+
+        {/* <Image source={require("./Logo.svg")} style={styles.logo} resizeMode="center" /> */}
+
+        <View style={styles.card}>
+            <Text style={styles.attachLabel}> Station's ID: </Text>
+            <TextInput editable={false} defaultValue={getStationId()} style={styles.dataLabel}/>
+        </View>
+        <View style={styles.line}/>
+
+        <View style={styles.card}>
+            <Text style={styles.attachLabel}> Station's Owner: </Text>
+            <TextInput editable={false} defaultValue='Ciobanu  Matei' style={styles.dataLabel}/>
+        </View>
+        <View style={styles.line}/>
         
         <View style={styles.card}>
             <Text style={styles.attachLabel}> Price / kWh: </Text>
             <TextInput editable={false} defaultValue='1.05 Lei' style={styles.dataLabel}/>
+            <Image source={require("../bag_icon.png")} style={styles.mini_icon} resizeMode="center" />
         </View>
         <View style={styles.line}/>
 
         <View style={styles.card}>
-            <Text style={styles.attachLabel}> kWh: </Text>
+            <Text style={styles.attachLabel}> No. kWh: </Text>
             <TextInput editable={false} defaultValue='45' style={styles.dataLabel}/>
-        </View>
-        <View style={styles.line}/>
-
-        <View style={styles.card}>
-            <Text style={styles.attachLabel}> Owner Name: </Text>
-            <TextInput editable={false} defaultValue='Ciobanu  Matei' style={styles.dataLabel}/>
+            <Image source={require("../bag_icon.png")} style={styles.mini_icon} resizeMode="center" />
         </View>
         <View style={styles.line}/>
 
@@ -33,13 +52,19 @@ export default function ViewProfile() {
         <View style={styles.line}/>
 
         <View style={styles.card}>
-            <Text style={styles.attachLabel}> Total Price: </Text>
+            <Text style={styles.attachLabel}> Total ammount: </Text>
             <TextInput editable={false} defaultValue='47.25 Lei' style={styles.dataLabel}/>
+            <Image source={require("../bag_icon.png")} style={styles.mini_icon} resizeMode="center" />
         </View>
         <View style={styles.line}/>
 
+        <View style={styles.info_container}>
+          <View style={styles.line}/>
+          <Text style={styles.info}> * We're using Stripe as a payment processor. </Text>
+        </View>
+
         <Pressable style={styles.buttonPay}>
-            <Text style={styles.buttonText}> Pay </Text>
+            <Text style={styles.buttonText}> Pay Now </Text>
         </Pressable>
 
      </SafeAreaView>
@@ -95,10 +120,32 @@ const styles = StyleSheet.create({
         fontSize: 32,
         color: 'white',
       },
-     logo: {
-        width: 250,
-        height: 250,
-        marginBottom: 10
-      },
+    mini_icon: {
+      height: 40,
+      width: 40,
+      alignSelf: 'center',
+      position: 'absolute',
+      right: 10,
+    },
+    title: {
+      fontSize: 32,
+      color: '#04ae95',
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontWeight: "bold",
+      bottom: '5%',
+    },
+    info: {
+      fontSize: 14,
+      color: '#04ae95',
+      marginTop: '2%',
+    },
+    info_container: {
+      width: '80%',
+      marginTop: '10%',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start',
+      marginLeft: -25,
+    }
 });
 
