@@ -5,46 +5,50 @@ import { useValidation,customValidationMessages } from 'react-native-form-valida
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground';
 import HidewithKeyboard from 'react-native-hide-with-keyboard';
 import {fireAuth,fireFunc} from '../globals/firebase';
-import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
-import { setGlobalState } from '../globals/profiledata';
+import { getGlobalState, setGlobalState } from '../globals/profiledata';
 import Logo from '../components/Logo';
 import * as NavigationBar from 'expo-navigation-bar';
 
 const getProfileData = httpsCallable(fireFunc,'getProfileData');
+let daemonIsRunning = false;
 
 const SignInHandler = ({navigation}) => {
     useEffect(() => {
-        if(fireAuth.currentUser) {postAuth();
-        }
         NavigationBar.setBackgroundColorAsync('#05CAAD')
         const back = BackHandler.addEventListener('hardwareBackPress', ()=>{handleBackButton();});
         return () => {
             back.remove();
         };
     });
+    
+
 
     const postAuth = () => {
-        getProfileData().then(response=>{
-            if(response.data['result']==null){
-                //profile doesn't exist
-                navigation.navigate('ProfileSetup');
-            }
-            else{
-                //profile exists; shove it in global state
-                setGlobalState('userData',{
-                    username: response.data['result']['username'],
-                    firstName: response.data['result']['firstName'],
-                    lastName: response.data['result']['lastName'],
-                    phone: response.data['result']['phone']
-                });
-                setGlobalState('needUpdate',false);
-                navigation.navigate('HomeScreen');
-            }
-        }).catch(error=>{
-            console.log('getprofiledata error');
-            console.log(error)
-        });
+        if(getGlobalState('needUpdate')==true){
+            getProfileData().then(response=>{
+                if(response.data['result']==null){
+                    //profile doesn't exist
+                    navigation.navigate('ProfileSetup');
+                }
+                else{
+                    console.log(response.data['result']['username']);
+                    //profile exists; shove it in global state
+                    setGlobalState('userData',{
+                        username: response.data['result']['username'],
+                        firstName: response.data['result']['firstName'],
+                        lastName: response.data['result']['lastName'],
+                        phone: response.data['result']['phone']
+                    });
+                    setGlobalState('needUpdate',false);
+                    navigation.navigate('HomeScreen');
+                }
+            }).catch(error=>{
+                console.log('getprofiledata error');
+                console.log(error)
+            });
+        }
     }
 
     const handleBackButton = () => {
@@ -107,7 +111,7 @@ const SignInHandler = ({navigation}) => {
             <KeyboardAvoidingView
             style={styles.container}
             behavior="height"
-            keyboardVerticalOffset={'0'}
+            keyboardVerticalOffset={-50}
             >
                 <HidewithKeyboard><Logo></Logo></HidewithKeyboard>
                 <View style={{

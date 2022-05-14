@@ -89,7 +89,7 @@ const AuthHandler = ({navigation}) => {
             <KeyboardAvoidingView
             style={styles.container}
             behavior="height"
-            keyboardVerticalOffset={'0'}
+            keyboardVerticalOffset={-500}
             >
                 <HidewithKeyboard><Logo></Logo></HidewithKeyboard>
                 <View style={{

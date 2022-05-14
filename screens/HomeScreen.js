@@ -1,10 +1,13 @@
-import { StyleSheet, Text, View,TextInput,TouchableHighlight,Alert,BackHandler } from 'react-native'
+import { StyleSheet, Text, View,TextInput,TouchableHighlight,Alert,BackHandler,Image,TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground'
 import { fireAuth,fireFunc } from '../globals/firebase';
 import { signOut, updatePassword } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
+import { useIsFocused } from '@react-navigation/native'
+
 import {getGlobalState,setGlobalState} from '../globals/profiledata';
+
 import * as NavigationBar from 'expo-navigation-bar';
 import EditButton from '../images/editButton'
 
@@ -12,6 +15,10 @@ import EditButton from '../images/editButton'
 const deleteAccount = httpsCallable(fireFunc, 'deleteAccount');
 
 const HomeScreen = ({navigation}) => {
+
+  const isFocused = useIsFocused();
+
+  //const [dummy,setDummy] = useState(true);
   const handleBackButton = () => {
     Alert.alert('Exit','Are you sure you want to exit?',[
       {text: 'No', onPress: () => {}, style: 'cancel'},
@@ -26,7 +33,7 @@ const HomeScreen = ({navigation}) => {
     return () => {
       back.remove();  
     };
-  },[]);
+  },[isFocused]);
 
   const [password, setPassword] = useState('');
 
@@ -63,6 +70,15 @@ const HomeScreen = ({navigation}) => {
         marginTop:50,
         backgroundColor:'#0A1613'
       }]}>
+          <TouchableOpacity
+            style={{padding:10,width:40,height:40,borderRadius:10,backgroundColor:'#05CAAD'}}
+            onPress={()=>{}}
+          >
+            <Image
+              style={{height:'100%',width:'100%',resizeMode:'contain'}}
+              source={require('../images/refresh.png')}
+            ></Image>
+          </TouchableOpacity>
           <Text 
           style={styles.buttonText}>
           Welcome, {getGlobalState('userData').firstName.concat(" ",getGlobalState('userData').lastName,"!")}</Text>
