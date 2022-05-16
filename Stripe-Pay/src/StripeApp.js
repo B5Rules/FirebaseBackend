@@ -1,12 +1,27 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, Button, Alert, Pressable, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Button,
+  SafeAreaView,
+  Alert,
+  Pressable,
+  Image,
+  ScrollView,
+  StatusBar,
+  ImageBackground,
+  ScrollViewComponent,
+} from "react-native";
 import { CardField, useConfirmPayment } from "@stripe/stripe-react-native";
+import { CreditCardInput } from "react-native-credit-card-input";
 
 //ADD localhost address of your server
 //const API_URL = "http://10.0.2.2:3000"; // emulator
-const API_URL = "http://192.168.0.101:3000";// - telefon
+const API_URL = "http://192.168.56.1:3000"; // - telefon
 
-const StripeApp = props => {
+const StripeApp = ({ navigation }) => {
   const [email, setEmail] = useState();
   const [cardDetails, setCardDetails] = useState();
   const { confirmPayment, loading } = useConfirmPayment();
@@ -23,7 +38,6 @@ const StripeApp = props => {
   };
 
   const handlePayPress = async () => {
-    //1.Gather the customer's billing information (e.g., email)
     if (!cardDetails?.complete || !email) {
       Alert.alert("Please enter Complete card details and Email");
       return;
@@ -31,10 +45,8 @@ const StripeApp = props => {
     const billingDetails = {
       email: email,
     };
-    //2.Fetch the intent client secret from the backend
     try {
       const { clientSecret, error } = await fetchPaymentIntentClientSecret();
-      //2. confirm the payment
       if (error) {
         console.log("Unable to process payment");
       } else {
@@ -52,48 +64,67 @@ const StripeApp = props => {
     } catch (e) {
       console.log(e);
     }
-    //3.Confirm the payment with the card details
   };
 
   return (
-    <View style={styles.container_black}>
-
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      style={{ flex: 1 }}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
+      <SafeAreaView style={styles.container_black}>
+        <StatusBar backgroundColor="#1C2E2B" barStyle="white-content" />
+    {/* <View style={{styles.container_black}}> */}
       <View style={styles.container}>
+        <ImageBackground source={require("./streets.png")} style={styles.image}>
+          <Image source={require("./Logo.png")} style={styles.logo}></Image>
 
-      <Image source={require("./Logo.svg")} style={styles.logo} >
-      </Image>
+          <TextInput
+            autoCapitalize="none"
+            placeholder="E-mail"
+            placeholderTextColor={"#f1f1f1"}
+            keyboardType="email-address"
+            onChange={(value) => setEmail(value.nativeEvent.text)}
+            style={styles.input}
+          />
 
-        <TextInput
-          autoCapitalize="none"
-          placeholder="E-mail"
-          placeholderTextColor={"#f1f1f1"}
-          keyboardType="email-address"
-          onChange={value => setEmail(value.nativeEvent.text)}
-          style={styles.input}
-        />
+          <CardField
+            postalCodeEnabled={true}
+            placeholder={{
+              number: "4242 4242 4242 4242",
+            }}
+            placeholderTextColor={'#f1f1f1'}
+            cardStyle={styles.card}
+            style={styles.cardContainer}
+            onCardChange={(cardDetails) => {
+              setCardDetails(cardDetails);
+            }}
+          />
 
-        <CardField
-          postalCodeEnabled={true}
-          placeholder={{
-            number: "4242 4242 4242 4242",
-          }}
-          placeholderTextColor={"#f1f1f1"}
-          cardStyle={styles.card}
-          style={styles.cardContainer}
-          onCardChange={cardDetails => {
+          {/* <CreditCardInput onChange={(cardDetails) => {
             setCardDetails(cardDetails);
-          }}
-        />
+            }} 
+            placeholders={{
+              number: "4242 4242 4242 4242",
+            }}
+            placeholderColor = "white"
+            //cardStyle={styles.card}
+            style={styles.cardContainer}
+          /> */}
 
-        {/* <Button onPress={handlePayPress} title="Pay" disabled={loading} /> */}
-        <Pressable style={styles.button} onPress={handlePayPress}> 
-          <Text style={styles.buttonText}> 
-            Pay 
-          </Text> 
-        </Pressable>
-
+          <Pressable
+            onPress={handlePayPress}
+            style={styles.button}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>Pay</Text>
+          </Pressable>
+        </ImageBackground>
       </View>
-    </View>
+    {/* </View> */}
+    </SafeAreaView>
+    </ScrollView>
+
   );
 };
 export default StripeApp;
@@ -103,6 +134,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#111",
     flex: 1,
   },
+  image: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
   container: {
     flex: 1,
     justifyContent: "center",
@@ -111,11 +147,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "white",
     padding: 20,
+    placeholder: {
+      color: "white",
+    },
     backgroundColor: "#0C1615",
   },
   input: {
     backgroundColor: "#1C2E2B",
-    color: "#f1f1f1",  
+    color: "#f1f1f1",
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     fontSize: 20,
@@ -124,8 +163,9 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "#1C2E2B",
-    color: "#f1f1f1",
     borderRadius: 8,
+    textColor: "white",
+    color: "white",
     // borderTopLeftRadius: 8,
     // borderTopRightRadius: 8,
   },
@@ -135,28 +175,29 @@ const styles = StyleSheet.create({
     marginVertical: 30,
   },
   line: {
-    borderBottomColor: '#05CAAD',
+    borderBottomColor: "#05CAAD",
     borderWidth: 2,
-    width: '100%',
+    width: "100%",
   },
   button: {
-    backgroundColor: '#04ae95',
-    width: '75%',
+    backgroundColor: "#04ae95",
+    width: "75%",
     maxHeight: 55,
     marginTop: 50,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex:1,
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
     alignSelf: "center",
-},
-buttonText: {
-  fontSize: 32,
-  color: 'white',
-},
-logo: {
-  width: 250,
-  height: 250,
-  marginBottom: 10
-},
+  },
+  buttonText: {
+    fontSize: 32,
+    color: "white",
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
+    alignSelf: "center",
+  },
 });
