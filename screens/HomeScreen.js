@@ -6,7 +6,7 @@ import { signOut, updatePassword } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
 import { useIsFocused } from '@react-navigation/native'
 
-import {getGlobalState,setGlobalState} from '../globals/profiledata';
+import {getGlobalState,setGlobalState} from '../globals/global';
 
 import * as NavigationBar from 'expo-navigation-bar';
 import EditButton from '../images/editButton'
@@ -119,6 +119,16 @@ const HomeScreen = ({navigation}) => {
             <Text
             style={styles.buttonText}
             >Submit</Text>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+        onPress={()=> {navigation.navigate('Enter_kwh')} }
+        style={styles.button}
+        underlayColor={'#22e6ab'}
+        >
+            <Text
+            style={styles.buttonText}
+            >Simulate Payment</Text>
         </TouchableHighlight>
 
         <TouchableHighlight

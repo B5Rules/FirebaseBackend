@@ -7,7 +7,7 @@ import HidewithKeyboard from 'react-native-hide-with-keyboard';
 import {fireAuth,fireFunc} from '../globals/firebase';
 import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
-import { setGlobalState } from '../globals/profiledata';
+import { setGlobalState } from '../globals/global';
 import Logo from '../components/Logo';
 import * as NavigationBar from 'expo-navigation-bar';
 
@@ -34,7 +34,8 @@ const AuthHandler = ({navigation}) => {
                     username: response.data['result']['username'],
                     firstName: response.data['result']['firstName'],
                     lastName: response.data['result']['lastName'],
-                    phone: response.data['result']['phone']
+                    phone: response.data['result']['phone'],
+                    country: response.data['result']['country'],
                 });
                 setGlobalState('needUpdate',false);
                 navigation.navigate('HomeScreen');

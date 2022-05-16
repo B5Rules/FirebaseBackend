@@ -22,6 +22,7 @@ exports.insertProfile = functions.region('europe-west1').https.onCall(async(data
     const lastName = data.lastName;
     const firstName = data.firstName;
     const phone = data.phone;
+    const country = data.country; 
 
     if (!username.match("^[a-zA-Z0-9]+$")) return ({status:3,message:"Username can only contain letters and numbers"});
     if (!phone.match("^[0-9]+$")) return ({status:3,message:"Phone number can only contain numbers"});
@@ -35,7 +36,8 @@ exports.insertProfile = functions.region('europe-west1').https.onCall(async(data
         username: data.username,
         firstName: data.firstName,
         lastName: data.lastName,
-        phone: data.phone
+        phone: data.phone,
+        country: data.country
     }).then(()=>{
         status=0;
     }).catch(error=>{
@@ -79,4 +81,9 @@ exports.getAllStations = functions.region("europe-west1").https.onCall(async(dat
 
 });
 
-
+exports.getStationData = functions.region("europe-west1").https.onCall(async(data, context)=>{
+    let stationID = data.stationID;
+    
+    let querySnapshot = await db.collection('chargingstations').doc(stationID).get();
+    return ({result:(querySnapshot.data())});
+});
