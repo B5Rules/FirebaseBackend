@@ -43,7 +43,7 @@ const SignInHandler = ({navigation}) => {
                         country: response.data['result']['country'],
                     });
                     setGlobalState('needUpdate',false);
-                    navigation.navigate('HomeScreen');
+                    navigation.navigate('MapHomeScreen');
                 }
             }).catch(error=>{
                 console.log('getprofiledata error');

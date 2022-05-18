@@ -6,8 +6,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as NavigationBar from 'expo-navigation-bar';
 
 import { StripeProvider } from "@stripe/stripe-react-native";
-
-
+import { Provider } from "react-redux";  // 
+import { store } from "./store"; //
 import HomeScreen from './screens/HomeScreen';
 import SignInHandler from './screens/SignInHandler';
 import SignUpHandler from './screens/SignUpHandler';
@@ -42,10 +42,12 @@ export default function App() {
     NavigationBar.setBackgroundColorAsync('#182724')
   },[]);
   return (
+    <Provider store={store}>
     <ImageBackground source={require('./images/streets.png')} style={styles.backgroundImage}>
       <NavigationContainer style={{backgroundColor:'transparent'}} theme={navTheme}>
         <StatusBar translucent={true} backgroundColor={'transparent'} />
         <Stack.Navigator>
+          <Stack.Screen options={{headerShown:false}} name="MapHomeScreen" component={MapHomeScreen} />
           <Stack.Screen options={{headerShown:false}} name="SignInHandler" component={SignInHandler}/>
           <Stack.Screen options={{headerShown:false}} name="SignUpHandler" component={SignUpHandler}/>
           <Stack.Screen options={{headerShown:false}} name="HomeScreen" component={HomeScreen}/>
@@ -54,11 +56,11 @@ export default function App() {
           <Stack.Screen options={{headerShown:false}} name="LoadingScreen" component={LoadingScreen} />
           <Stack.Screen options={{headerShown:false}} name="Journal" component={Journal} />
           <Stack.Screen options={{headerShown:false}} name="Pay" component={ComponentStripeProvider} />
-          <Stack.Screen options={{headerShown:false}} name="MapHomeScreen" component={MapHomeScreen} />
           <Stack.Screen options={{headerShown:false}} name="NearbyStations" component={NearbyStations} />
         </Stack.Navigator>
       </NavigationContainer>
     </ImageBackground>
+    </Provider>
   );
 }
 
