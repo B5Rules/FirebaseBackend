@@ -47,7 +47,6 @@ export default function App() {
       <NavigationContainer style={{backgroundColor:'transparent'}} theme={navTheme}>
         <StatusBar translucent={true} backgroundColor={'transparent'} />
         <Stack.Navigator>
-          <Stack.Screen options={{headerShown:false}} name="MapHomeScreen" component={MapHomeScreen} />
           <Stack.Screen options={{headerShown:false}} name="SignInHandler" component={SignInHandler}/>
           <Stack.Screen options={{headerShown:false}} name="SignUpHandler" component={SignUpHandler}/>
           <Stack.Screen options={{headerShown:false}} name="HomeScreen" component={HomeScreen}/>
@@ -56,6 +55,7 @@ export default function App() {
           <Stack.Screen options={{headerShown:false}} name="LoadingScreen" component={LoadingScreen} />
           <Stack.Screen options={{headerShown:false}} name="Journal" component={Journal} />
           <Stack.Screen options={{headerShown:false}} name="Pay" component={ComponentStripeProvider} />
+          <Stack.Screen options={{headerShown:false}} name="MapHomeScreen" component={MapHomeScreen} />
           <Stack.Screen options={{headerShown:false}} name="NearbyStations" component={NearbyStations} />
         </Stack.Navigator>
       </NavigationContainer>
