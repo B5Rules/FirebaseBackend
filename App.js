@@ -16,10 +16,7 @@ import Journal from './screens/Journal';
 import Enter_kwh from './screens/Enter_kwh';
 import LoadingScreen from './screens/Loadingscreen';
 import StripeApp from "./screens/StripeApp";
-import MapHomeScreen from './screens/MapHomeScreen';
 import NearbyStations from './screens/NearbyStations';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import MapNavigator from './screens/MapNavigator';
 
 const ComponentStripeProvider = () => {
@@ -39,7 +36,7 @@ const navTheme = {
 }
 
 const Stack = createNativeStackNavigator();
-const Tabs = createMaterialBottomTabNavigator();
+
 
 export default function App() {
   useEffect(()=>{
