@@ -10,20 +10,30 @@ import { httpsCallable } from 'firebase/functions';
 import { getGlobalState, setGlobalState } from '../globals/global';
 import Logo from '../components/Logo';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useIsFocused } from '@react-navigation/native';
 
 const getProfileData = httpsCallable(fireFunc,'getProfileData');
 let daemonIsRunning = false;
 
-const SignInHandler = ({navigation}) => {
+const AuthHandler = ({navigation}) => {
+
+    const isFocused = useIsFocused();
+
+    const handleBackButton = () => {
+        Alert.alert('Exit','Are you sure you want to exit?',[
+            {text: 'No', onPress: () => {}, style: 'cancel'},
+            {text: 'Yes', onPress: () => BackHandler.exitApp()},
+        ]);
+        return true;
+    }
+
     useEffect(() => {
         NavigationBar.setBackgroundColorAsync('#05CAAD')
-        const back = BackHandler.addEventListener('hardwareBackPress', ()=>{handleBackButton();});
+        const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         return () => {
             back.remove();
         };
-    });
-    
-
+    },[isFocused]);
 
     const postAuth = () => {
         if(getGlobalState('needUpdate')==true){
@@ -43,7 +53,7 @@ const SignInHandler = ({navigation}) => {
                         country: response.data['result']['country'],
                     });
                     setGlobalState('needUpdate',false);
-                    navigation.navigate('HomeScreen');
+                    navigation.navigate('MapNavigator');
                 }
             }).catch(error=>{
                 console.log('getprofiledata error');
@@ -52,51 +62,34 @@ const SignInHandler = ({navigation}) => {
         }
     }
 
-    const handleBackButton = () => {
-        Alert.alert('Exit','Are you sure you want to exit?',[
-            {text: 'No', onPress: () => {}, style: 'cancel'},
-            {text: 'Yes', onPress: () => BackHandler.exitApp()},
-        ]);
-        return true;
-    }
     
-    useEffect(()=>{
-        BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-        };
-    },[]);
-        
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword,setConfirmPassword] = useState('');
+    const [whichScreen,setWhichScreen] = useState(1);
   
     const {validate, isFieldInError,getErrorsInField} = useValidation({
-        state:{ email, password },
+        state:{ email, password,confirmPassword },
         messages: customValidationMessages
     });
 
-    const validateInput = function(){
+    const validateInputSignIn = function(){
         return validate({
             email: { required: true, email: true },
             password: { required: true, minLength: 6}
         });
     }
-
-    const handleSignIn = () => {
-        if(validateInput()){
-            signInWithEmailAndPassword(fireAuth,email,password).then(()=>{
-                postAuth();
-                console.log('success');
-            }).catch(error=>{
-                console.log(error);
-                Alert.alert("Authentication failed",error.message);
-            });
-        }
-    };
+    const validateInputSignUp = function(){
+        return validate({
+            email: { required: true, email: true },
+            password: { required: true, minLength: 6},
+            confirmPassword: { required: true, equalPassword: password}
+        });
+    }
 
     const handleSignUp = () => {
-        if(validateInput()){
+        if(validateInputSignIn()){
             createUserWithEmailAndPassword(fireAuth,email,password).then((creds)=>{
                 postAuth();
                 console.log('success');
@@ -106,9 +99,22 @@ const SignInHandler = ({navigation}) => {
             });
         }
     }
+
+    const handleSignIn = () => {
+        if(validateInputSignIn()){
+            signInWithEmailAndPassword(fireAuth,email,password).then(()=>{
+                postAuth();
+                console.log('success');
+            }).catch(error=>{
+                console.log(error);
+                Alert.alert("Authentication failed",error.message);
+            });
+        }
+    };
     
-    return (
-        <View style={{height:'100%'}}>
+    if(whichScreen == 1){
+        return(
+            <View style={{height:'100%'}}>
             <KeyboardAvoidingView
             style={styles.container}
             behavior="height"
@@ -167,8 +173,9 @@ const SignInHandler = ({navigation}) => {
                         </TouchableHighlight>
                         
                         <TouchableHighlight
-                        onPress={()=>{navigation.navigate('SignUpHandler')}}
+                        onPress={()=>{setWhichScreen(0)}}
                         style={styles.button}
+                        underlayColor={'#22e6ab'}
                         >
                             <Text
                             style={styles.buttonText}
@@ -199,10 +206,101 @@ const SignInHandler = ({navigation}) => {
                 
             </KeyboardAvoidingView>
         </View>
-    );
+        );
+    }
+    else{
+        return(
+            <View style={{height:'100%'}}>
+            <KeyboardAvoidingView
+            style={styles.container}
+            behavior="height"
+            keyboardVerticalOffset={-500}
+            >
+                <HidewithKeyboard><Logo></Logo></HidewithKeyboard>
+                <View style={{
+                        backgroundColor:'#05CAAD',
+                        width:"100%",
+                        alignItems:'center',
+                        flex:1,
+                        borderTopLeftRadius:30,
+                        borderTopRightRadius:30
+                    }}>
+                    <View style={styles.inputContainer}>
+                        <TextInput
+                        placeholder="Email"
+                        placeholderTextColor={'#bababa'}
+                        keyboardType='visible-password'
+                        //value={''}
+                        onChangeText={setEmail}
+                        style={styles.input}
+                        />
+                        {isFieldInError('email') && getErrorsInField('email').map(errorMessage => <Text style={styles.error}>{errorMessage}</Text>)}
+
+                        <TextInput
+                        placeholder="Password"
+                        placeholderTextColor={'#bababa'}
+                        secureTextEntry
+                        keyboardType='default'
+                        //value={''}
+                        onChangeText={setPassword}
+                        style={styles.input}
+                        />
+                        {isFieldInError('password') && getErrorsInField('password').map(errorMessage => <Text style={styles.error}>{errorMessage}</Text>)}
+                        
+                        <TextInput
+                        placeholder="Confirm password"
+                        placeholderTextColor={'#bababa'}
+                        secureTextEntry
+                        keyboardType='default'
+                        //value={''}
+                        onChangeText={setConfirmPassword}
+                        style={styles.input}
+                        />
+                        {isFieldInError('confirmPassword') && getErrorsInField('confirmPassword').map(errorMessage => <Text style={styles.error}>{errorMessage}</Text>)}
+                    
+                    </View>
+
+                    <View
+                    style={styles.buttonContainer}
+                    >   
+                        <View style={
+                            {
+                                width:"140%",
+                                height:10,
+                                backgroundColor: '#05BAAD'
+                            }
+                        }></View>
+                        <TouchableHighlight
+                        onPress={()=>{handleSignUp()}}
+                        style={styles.button}
+                        underlayColor={'#22e6ab'}
+                        >
+                            <Text
+                            style={styles.buttonText}
+                            >Sign Up</Text>
+                        </TouchableHighlight>
+                        
+                        <TouchableHighlight
+                        onPress={()=>setWhichScreen(1)}
+                        style={styles.button}
+                        underlayColor={'#22e6ab'}
+                        >
+                            <Text
+                            style={styles.buttonText}
+                            >Sign In</Text>
+                        </TouchableHighlight>
+
+                    </View>
+                </View>
+                
+            </KeyboardAvoidingView>
+            
+        </View>
+        )
+    }
 }
 
-export default SignInHandler
+export default AuthHandler
 
 const styles = StyleSheet.create({
     backgroundImage:{

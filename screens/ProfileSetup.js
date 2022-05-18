@@ -8,6 +8,7 @@ import { httpsCallable } from 'firebase/functions';
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground';
 import * as NavigationBar from 'expo-navigation-bar';
 import EditButton from '../images/editButton';
+import { useIsFocused } from '@react-navigation/native';
 
 const insertProfile = httpsCallable(fireFunc, 'insertProfile');
 
@@ -15,40 +16,39 @@ const ProfileSetup = ({navigation}) => {
   
   const handleBackButton = () => {
     if(getGlobalState('needUpdate')){
-      navigation.navigate('SignInHandler');
+      navigation.navigate('AuthHandler');
     }else{
-      navigation.navigate('HomeScreen');
+      navigation.navigate('MapNavigator');
     }
     return true;
   }
 
-  useEffect(() => {
-    NavigationBar.setBackgroundColorAsync('#182724')
-    const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-    return () => {
-      back.remove();
-    };
-  }, []);
-
+  const isFocused = useIsFocused();
   const [selectedCountry, setSelectedCountry] = useState('');
   const [username,setUsername] = useState('');
   const [firstName,setFirstName] = useState('');
   const [lastName,setLastName] = useState('');
   const [phone,setPhone] = useState('');
 
-  const { validate, isFieldInError, getErrorMessages} =
-    useValidation({
-      state: { firstName, lastName, username, phone,selectedCountry }
-    });
-  
-  useEffect(()=>{
+  useEffect(() => {
     if(!getGlobalState('needUpdate')){
       setUsername(getGlobalState('userData').username);
       setFirstName(getGlobalState('userData').firstName);
       setLastName(getGlobalState('userData').lastName);
       setPhone(getGlobalState('userData').phone);
     }
-  },[]);
+    NavigationBar.setBackgroundColorAsync('#182724')
+    const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+    return () => {
+      back.remove();
+    };
+  }, [isFocused]);
+  
+  const { validate, isFieldInError, getErrorMessages} =
+    useValidation({
+      state: { firstName, lastName, username, phone,selectedCountry }
+    });
+
 
   const handleSubmit = () => {
     if( validate({
@@ -76,7 +76,7 @@ const ProfileSetup = ({navigation}) => {
                 country: selectedCountry
               });
               setGlobalState('needUpdate',false);
-              navigation.navigate('HomeScreen');
+              navigation.navigate('MapNavigator');
             }else{
               //failed, alert with error message
               Alert.alert('Profile update failed',response.data['message']);

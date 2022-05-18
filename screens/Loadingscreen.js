@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   StatusBar,
   ImageBackground,
   Image,
+  BackHandler
 } from "react-native";
 import ProgressBar from "react-native-animated-progress";
 
@@ -13,6 +14,12 @@ export default function LoadingScreen({ navigation }) {
   setTimeout(() => {
     navigation.navigate("Journal");
   }, 5000);
+
+  useEffect(() => {
+    StatusBar.setBarStyle("dark-content");
+    const back = BackHandler.addEventListener("hardwareBackPress", () => {return true;} );
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: "center" }}>
       <StatusBar backgroundColor="#1C2E2B" barStyle="white-content" />

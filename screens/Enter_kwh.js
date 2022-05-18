@@ -11,16 +11,34 @@ import {
     Dimensions,
     ImageBackground,
     TouchableOpacity,
+    BackHandler
   } from "react-native";
-  import {useState, React} from "react";
+  import {useState, React, useEffect} from "react";
   
 import { getGlobalState, setGlobalState } from "../globals/global";
 import { fireFunc } from "../globals/firebase";
 import { httpsCallable } from "firebase/functions";
+import { useIsFocused } from "@react-navigation/native";
   
 const getStationData = httpsCallable(fireFunc, "getStationData");
 
   export default function Enter_kwh({ navigation }) {
+
+    const isFocused = useIsFocused();
+
+    const handleBackButton = () => {
+      navigation.navigate('MapNavigator');
+      return true;
+    };
+
+    useEffect(() => {
+      StatusBar.setBarStyle("dark-content");
+      const back = BackHandler.addEventListener("hardwareBackPress", handleBackButton);
+      return () => {
+        back.remove();
+      };
+    }, [isFocused]);
+
     const [value, setValue] = useState(0);
     const [stationID, setStationID] = useState('');
 

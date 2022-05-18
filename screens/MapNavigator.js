@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 // Screens import
 import MapHomeScreen from "./MapHomeScreen";
 import NearbyStations from "./NearbyStations";
-import HomeScreen from './HomeScreen';
+import ProfilePage from './ProfileHome';
 import { store } from '../store';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -40,7 +40,7 @@ export default function MapNavigator(){
                  }} 
                  />
     
-              <Tabs.Screen name="Account" component={HomeScreen}
+              <Tabs.Screen name="Account" component={ProfilePage}
                  options={{
                     tabBarLabel:'Account',
                     tabBarColor:'#01F2CF',
@@ -51,7 +51,7 @@ export default function MapNavigator(){
                      }}
                      />
               </Tabs.Navigator>
-              </SafeAreaProvider>
+          </SafeAreaProvider>
      
     </Provider>
   );

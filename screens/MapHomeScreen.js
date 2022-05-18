@@ -69,9 +69,7 @@ const MapHomeScreen = ({navigation}) => {
   useEffect(() => {
     getAllStations()
       .then((res) => {
-        console.log("1");
         dispatch(setStations(res.data.result));
-        console.log("2");
         const func = async () => {
           let stationsAux = [];
           let distancesAux = [];
