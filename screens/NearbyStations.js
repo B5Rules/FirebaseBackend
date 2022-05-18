@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector } from "react-redux";
-import {selectNearByStations} from '../navSlice';
+import {selectNearByStations} from "../slices/navSlice";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StyleSheet, View, TouchableOpacity, Text, Image, component } from 'react-native';
 
