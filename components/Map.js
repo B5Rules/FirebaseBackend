@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, View, Button } from "react-native";
+import { Dimensions, StyleSheet, Text, View, Button, TouchableHighlight } from "react-native";
 import React, {
   useState,
   useEffect,
@@ -9,25 +9,19 @@ import React, {
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { useSelector } from "react-redux";
-import {
-  selectDestination,
-  selectOrigin,
-  selectNearByStations,
-  selectStaions,
-  setOrigin,
-} from "../slices/navSlice";
-import { setNearByStaions } from "../slices/navSlice";
-import {
-  locationPermission,
-  getCurrentLocation,
-} from "../slices/helperFunction";
+import { selectDestination, selectOrigin, selectNearByStations, selectStaions } from "../navSlice";
+//import { setNearByStaions } from '../navSlice';
+//import { GOOGLE_MAPS_APIKEY } from "@env";
 import { decode } from "@mapbox/polyline";
 import { useDispatch } from "react-redux";
 import Constants from "expo-constants";
+
+const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
+
 //import { or } from "react-native-reanimated";
 
-// LogBox.ignoreLogs(["Setting a timer"]);
-const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
+//LogBox.ignoreLogs(['Setting a timer']);
+
 const getDistanceBetweenPoints = async (pointA, pointB) => {
   var urlToFetchDistance =
     "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
@@ -55,8 +49,6 @@ const Map = (props, ref) => {
   const providedDestination = useSelector(selectDestination);
   const [destination, setDestination] = useState(null);
   const [routeDestination, setRouteDestination] = useState(null);
-  const [routeOrigin, setRouteOrigin] = useState(null);
-
   //const [nearByStations, setNearByStations]  = useState([]);
   const region = useRef({});
 
@@ -66,30 +58,7 @@ const Map = (props, ref) => {
     },
   }));
 
-  useEffect(() => {
-    setRouteOrigin(origin);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getLiveLocation();
-    }, 3000);
-    return () => clearInterval(interval);
-  });
-
-  const getLiveLocation = async () => {
-    const res = await getCurrentLocation();
-
-    const originF = {
-      location: {
-        latitude: res.coords.latitude,
-        longitude: res.coords.longitude,
-        latitudeDelta: 0.08,
-        longitudeDelta: 0.08,
-      },
-    };
-    setRouteOrigin(originF);
-  };
+  
 
   const goToDestination = () => {
     const myRegion = {
@@ -144,7 +113,7 @@ const Map = (props, ref) => {
       >
         {routeDestination && (
           <MapViewDirections
-            origin={routeOrigin?.location}
+            origin={origin?.location}
             destination={routeDestination}
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={4}
@@ -175,57 +144,62 @@ const Map = (props, ref) => {
           />
         )}
 
-        {routeOrigin?.location !== undefined && (
+        {origin?.location !== undefined && 
           <Marker
             coordinate={{
-              latitude: routeOrigin?.location.latitude,
-              longitude: routeOrigin?.location.longitude,
+              latitude: origin?.location.latitude,
+              longitude: origin?.location.longitude,
             }}
             title="Origin"
             identifier="origin"
-          />
-        )}
-
-        {destination?.latitude !== undefined &&
-          destination?.longitude !== undefined && (
-            <Marker
-              coordinate={{
-                latitude: destination.latitude,
-                longitude: destination.longitude,
-              }}
-              title="Destination"
-              identifier="destination"
             />
-          )}
+              
+        }
+
+        {destination?.latitude !==undefined && destination?.longitude !== undefined && (
+          console.log(stations),
+          <Marker
+            coordinate={{
+              latitude: destination.latitude,
+              longitude: destination.longitude,
+            }}
+            title="Destination"
+            identifier="destination"
+          />
+        )}  
 
         {stations?.length > 0 &&
           stations.map((station, index) => {
             const str = `Station ${index}`;
-            if (
-              station?._fieldsProto?.coordinates?.geoPointValue.latitude !==
-                undefined &&
-              station?._fieldsProto?.coordinates?.geoPointValue.longitude !==
-                undefined
-            )
-              return (
-                <Marker
-                  key={index}
-                  coordinate={{
-                    latitude:
-                      station?._fieldsProto?.coordinates?.geoPointValue
-                        .latitude,
-                    longitude:
-                      station?._fieldsProto?.coordinates?.geoPointValue
-                        .longitude,
-                  }}
-                  onPress={onMapPress}
-                  title="Destination"
-                />
-              );
+            if(station?._fieldsProto?.coordinates?.geoPointValue.latitude !== undefined && station?._fieldsProto?.coordinates?.geoPointValue.longitude !== undefined)
+            return (
+              <Marker key= {index}
+                coordinate={{
+                  latitude:
+                    station?._fieldsProto?.coordinates?.geoPointValue.latitude,
+                  longitude:
+                    station?._fieldsProto?.coordinates?.geoPointValue.longitude,
+                }}
+                onPress={onMapPress}
+                title="Destination"
+               
+              >
+              <MapView.Callout tooltip style={styles.customView}>
+                  <TouchableHighlight onPress= {()=>this.markerClick()} underlayColor='#dddddd'>
+                      <View style={styles.marker}>
+                      <Text style={styles.markerText}>Price:{station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
+                            Type: {station?._fieldsProto?.type?.stringValue} {"\n"}</Text>
+                      </View>
+                  </TouchableHighlight>
+                </MapView.Callout>
+              </Marker>
+          );
           })}
       </MapView>
 
+
       <Button onPress={() => createRoute()} title="Route" />
+          
 
       {/*Display user's current region:*/}
       {/*<Text style={styles.text}>Current latitude: {region.latitude}</Text>
@@ -242,6 +216,17 @@ const styles = StyleSheet.create({
     flex: 1, //the container will fill the whole screen.
     justifyContent: "flex-end",
     alignItems: "center",
+  },
+  marker: {
+    width: 150,
+    backgroundColor: "#27423A",
+    borderWidth: 3,
+    borderColor:"grey",
+    borderRadius: 10,
+    paddingLeft:6,
+  },
+  markerText:{
+    color:"white",
   },
   map: {
     ...StyleSheet.absoluteFillObject,
