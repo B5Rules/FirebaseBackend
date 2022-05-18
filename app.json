@@ -37,7 +37,8 @@
           "storageBucket": "b5uberelectric-bacbb.appspot.com",
           "messagingSenderId": "1053866920657",
           "appId": "1:1053866920657:web:1db10f617e6e7b639dd3f0"
-        }
+        },
+        "gmaps_api_key":"AIzaSyB9v7V_D0tF4_jHRkJKF6iGg1s4KMXjWLk"
       }
     }
   }

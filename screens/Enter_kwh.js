@@ -14,7 +14,6 @@ import {
   } from "react-native";
   import {useState, React} from "react";
   
-  import Constants from "./Constants";
 import { getGlobalState, setGlobalState } from "../globals/global";
 import { fireFunc } from "../globals/firebase";
 import { httpsCallable } from "firebase/functions";
