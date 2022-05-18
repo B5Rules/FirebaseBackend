@@ -69,8 +69,9 @@ const MapHomeScreen = ({navigation}) => {
   useEffect(() => {
     getAllStations()
       .then((res) => {
-        dispatch(setStations(res.data));
-        
+        console.log("1");
+        dispatch(setStations(res.data.result));
+        console.log("2");
         const func = async () => {
           let stationsAux = [];
           let distancesAux = [];
@@ -78,7 +79,7 @@ const MapHomeScreen = ({navigation}) => {
           let counter = 0;
          
           const location = await Location.getLastKnownPositionAsync();
-          const statii = res.data;
+          const statii = res.data.result;
           for(const station of statii) {
             let dist;
             //console.log(station?._fieldsProto?.coordinates?.geoPointValue);
