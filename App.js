@@ -18,6 +18,9 @@ import LoadingScreen from './screens/Loadingscreen';
 import StripeApp from "./screens/StripeApp";
 import MapHomeScreen from './screens/MapHomeScreen';
 import NearbyStations from './screens/NearbyStations';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
+import MapNavigator from './screens/MapNavigator';
 
 const ComponentStripeProvider = () => {
   return (
@@ -36,6 +39,7 @@ const navTheme = {
 }
 
 const Stack = createNativeStackNavigator();
+const Tabs = createMaterialBottomTabNavigator();
 
 export default function App() {
   useEffect(()=>{
@@ -47,6 +51,7 @@ export default function App() {
       <NavigationContainer style={{backgroundColor:'transparent'}} theme={navTheme}>
         <StatusBar translucent={true} backgroundColor={'transparent'} />
         <Stack.Navigator>
+          <Stack.Screen options={{headerShown:false}} name="MapNavigator" component={MapNavigator} />
           <Stack.Screen options={{headerShown:false}} name="SignInHandler" component={SignInHandler}/>
           <Stack.Screen options={{headerShown:false}} name="SignUpHandler" component={SignUpHandler}/>
           <Stack.Screen options={{headerShown:false}} name="HomeScreen" component={HomeScreen}/>
@@ -55,7 +60,6 @@ export default function App() {
           <Stack.Screen options={{headerShown:false}} name="LoadingScreen" component={LoadingScreen} />
           <Stack.Screen options={{headerShown:false}} name="Journal" component={Journal} />
           <Stack.Screen options={{headerShown:false}} name="Pay" component={ComponentStripeProvider} />
-          <Stack.Screen options={{headerShown:false}} name="MapHomeScreen" component={MapHomeScreen} />
           <Stack.Screen options={{headerShown:false}} name="NearbyStations" component={NearbyStations} />
         </Stack.Navigator>
       </NavigationContainer>
