@@ -23,14 +23,14 @@ function NearbyStations(navigation) {
           <Text style={styles.txtRight}>{nearByStations[0]?.distance?.doubleValue / 1000} km</Text>
           <Image
             style={styles.image}
-            source={require('../assets/location.png')}
+            source={require('../assets/icon.png')}
           />
         </View>
 
         <View style={styles.row}>
           <Text style={styles.txtLeft}>Price:</Text>
           <Text style={styles.txtRight}>{nearByStations[0]?.price?.doubleValue}  /kWh</Text>
-          <Image style={styles.image} source={require('../assets/power.png')} />
+          <Image style={styles.image} source={require('../assets/icon.png')} />
           <Text style={styles.txtRight}>{nearByStations[0]?.type?.stringValue}</Text>
         </View>
 
@@ -60,14 +60,14 @@ function NearbyStations(navigation) {
           <Text style={styles.txtRight}>{nearByStations[1]?.distance?.doubleValue / 1000 } km</Text>
           <Image
             style={styles.image}
-            source={require('../assets/location.png')}
+            source={require('../assets/icon.png')}
           />
         </View>
 
         <View style={styles.row}>
           <Text style={styles.txtLeft}>Price:</Text>
           <Text style={styles.txtRight}>{ nearByStations[1]?.price?.doubleValue } /kWh</Text>
-          <Image style={styles.image} source={require('../assets/power.png')} />
+          <Image style={styles.image} source={require('../assets/icon.png')} />
           <Text style={styles.txtRight}>{nearByStations[1]?.type?.stringValue}</Text>
         </View>
 
@@ -97,14 +97,14 @@ function NearbyStations(navigation) {
           <Text style={styles.txtRight}>{nearByStations[2]?.distance?.doubleValue / 1000} km</Text>
           <Image
             style={styles.image}
-            source={require('../assets/location.png')}
+            source={require('../assets/icon.png')}
           />
         </View>
 
         <View style={styles.row}>
           <Text style={styles.txtLeft}>Price:</Text>
           <Text style={styles.txtRight}>{nearByStations[2]?.price?.doubleValue} /kWh</Text>
-          <Image style={styles.image} source={require('../assets/power.png')} />
+          <Image style={styles.image} source={require('../assets/icon.png')} />
           <Text style={styles.txtRight}>{nearByStations[2]?.type?.stringValue}</Text>
         </View>
 

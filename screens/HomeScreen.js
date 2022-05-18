@@ -132,6 +132,16 @@ const HomeScreen = ({navigation}) => {
         </TouchableHighlight>
 
         <TouchableHighlight
+        onPress={()=> {navigation.navigate('MapHomeScreen')} }
+        style={styles.button}
+        underlayColor={'#22e6ab'}
+        >
+            <Text
+            style={styles.buttonText}
+            >Map Screen</Text>
+        </TouchableHighlight>
+
+        <TouchableHighlight
         onPress={()=>{navigation.navigate('ProfileSetup')}}
         style={styles.button}
         underlayColor={'#22e6ab'}
