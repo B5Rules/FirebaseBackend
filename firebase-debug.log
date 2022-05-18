@@ -476,3 +476,67 @@
 [info] i  functions: Finished "getAllStations" in ~1s {"metadata":{"emulator":{"name":"functions"},"function":{"name":"europe-west1-getAllStations"},"extension":{},"message":"Finished \"getAllStations\" in ~1s"}}
 [debug] [2022-05-18T12:17:55.685Z] [worker-europe-west1-getAllStations-e0f7e6ef-2d2c-46ce-bf58-0b44273b965c]: IDLE {"metadata":{"emulator":{"name":"functions"},"message":"[worker-europe-west1-getAllStations-e0f7e6ef-2d2c-46ce-bf58-0b44273b965c]: IDLE"}}
 [debug] [2022-05-18T12:17:55.685Z] [work-queue] {"queueLength":0,"workRunningCount":0}
+[debug] [2022-05-18T16:31:43.362Z] ----------------------------------------------------------------------
+[debug] [2022-05-18T16:31:43.364Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Lucian\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve --only functions -o 192.168.0.111
+[debug] [2022-05-18T16:31:43.364Z] CLI Version:   10.7.1
+[debug] [2022-05-18T16:31:43.364Z] Platform:      win32
+[debug] [2022-05-18T16:31:43.364Z] Node Version:  v16.14.2
+[debug] [2022-05-18T16:31:43.371Z] Time:          Wed May 18 2022 19:31:43 GMT+0300 (Eastern European Summer Time)
+[debug] [2022-05-18T16:31:43.371Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-05-18T16:31:43.715Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-05-18T16:31:43.716Z] > authorizing via signed-in user (kiriaclucian@gmail.com)
+[debug] [2022-05-18T16:31:43.716Z] [iam] checking project b5uberelectric-bacbb for permissions ["firebase.projects.get"]
+[debug] [2022-05-18T16:31:43.718Z] > refreshing access token with scopes: []
+[debug] [2022-05-18T16:31:43.719Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2022-05-18T16:31:43.917Z] <<< HTTP RESPONSE 200 {"pragma":"no-cache","date":"Wed, 18 May 2022 16:31:43 GMT","expires":"Mon, 01 Jan 1990 00:00:00 GMT","cache-control":"no-cache, no-store, max-age=0, must-revalidate","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2022-05-18T16:31:43.933Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/b5uberelectric-bacbb:testIamPermissions [none]
+[debug] [2022-05-18T16:31:43.933Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/b5uberelectric-bacbb:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2022-05-18T16:31:44.804Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/b5uberelectric-bacbb:testIamPermissions 200
+[debug] [2022-05-18T16:31:44.804Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/b5uberelectric-bacbb:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2022-05-18T16:31:44.805Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/b5uberelectric-bacbb [none]
+[debug] [2022-05-18T16:31:45.146Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/b5uberelectric-bacbb 200
+[debug] [2022-05-18T16:31:45.146Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/b5uberelectric-bacbb {"projectId":"b5uberelectric-bacbb","projectNumber":"1053866920657","displayName":"b5uberelectric","name":"projects/b5uberelectric-bacbb","resources":{"hostingSite":"b5uberelectric-bacbb","storageBucket":"b5uberelectric-bacbb.appspot.com","locationId":"europe-west"},"state":"ACTIVE"}
+[info] +  functions: Using node@16 from host. {"metadata":{"emulator":{"name":"functions"},"message":"Using node@16 from host."}}
+[debug] [2022-05-18T16:31:47.238Z] defaultcredentials: writing to file C:\Users\Lucian\AppData\Roaming\firebase\kiriaclucian_gmail_com_application_default_credentials.json
+[debug] [2022-05-18T16:31:47.241Z] Setting GAC to C:\Users\Lucian\AppData\Roaming\firebase\kiriaclucian_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to C:\\Users\\Lucian\\AppData\\Roaming\\firebase\\kiriaclucian_gmail_com_application_default_credentials.json"}}
+[debug] [2022-05-18T16:31:47.242Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/b5uberelectric-bacbb/adminSdkConfig [none]
+[debug] [2022-05-18T16:31:47.566Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/b5uberelectric-bacbb/adminSdkConfig 200
+[debug] [2022-05-18T16:31:47.566Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/b5uberelectric-bacbb/adminSdkConfig {"projectId":"b5uberelectric-bacbb","storageBucket":"b5uberelectric-bacbb.appspot.com","locationId":"europe-west"}
+[info] i  functions: Watching "E:\Informatica\Anul 2 Sem 2\IP_Integrated\FirebaseAuthentication\functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"E:\\Informatica\\Anul 2 Sem 2\\IP_Integrated\\FirebaseAuthentication\\functions\" for Cloud Functions..."}}
+[debug] [2022-05-18T16:31:47.583Z] Validating nodejs source
+[warn] !  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[debug] [2022-05-18T16:31:52.353Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "16"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/storage": "^5.19.4",
+    "countries-api": "^2.0.2",
+    "firebase-admin": "^10.1.0",
+    "firebase-functions": "^3.20.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^0.2.0"
+  },
+  "private": true
+}
+[debug] [2022-05-18T16:31:52.353Z] Building nodejs source
+[debug] [2022-05-18T16:31:52.353Z] Analyzing nodejs backend spec
+[info] +  functions[europe-west1-insertProfile]: http function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/insertProfile). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/insertProfile)."}}
+[info] +  functions[europe-west1-getProfileData]: http function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/getProfileData). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/getProfileData)."}}
+[info] +  functions[europe-west1-deleteAccount]: http function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/deleteAccount). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/deleteAccount)."}}
+[info] +  functions[europe-west1-helloWorld]: http function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/helloWorld). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/helloWorld)."}}
+[info] +  functions[europe-west1-getAllStations]: http function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/getAllStations). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/getAllStations)."}}
+[info] +  functions[europe-west1-getStationData]: http function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/getStationData). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://192.168.0.111:5000/b5uberelectric-bacbb/europe-west1/getStationData)."}}

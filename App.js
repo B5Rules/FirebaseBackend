@@ -16,8 +16,8 @@ import Journal from './screens/Journal';
 import Enter_kwh from './screens/Enter_kwh';
 import LoadingScreen from './screens/Loadingscreen';
 import StripeApp from "./screens/StripeApp";
-import MapHomeScreen from './screens/MapHomeScreen';
 import NearbyStations from './screens/NearbyStations';
+import MapNavigator from './screens/MapNavigator';
 
 const ComponentStripeProvider = () => {
   return (
@@ -37,6 +37,7 @@ const navTheme = {
 
 const Stack = createNativeStackNavigator();
 
+
 export default function App() {
   useEffect(()=>{
     NavigationBar.setBackgroundColorAsync('#182724')
@@ -47,6 +48,7 @@ export default function App() {
       <NavigationContainer style={{backgroundColor:'transparent'}} theme={navTheme}>
         <StatusBar translucent={true} backgroundColor={'transparent'} />
         <Stack.Navigator>
+          <Stack.Screen options={{headerShown:false}} name="MapNavigator" component={MapNavigator} />
           <Stack.Screen options={{headerShown:false}} name="SignInHandler" component={SignInHandler}/>
           <Stack.Screen options={{headerShown:false}} name="SignUpHandler" component={SignUpHandler}/>
           <Stack.Screen options={{headerShown:false}} name="HomeScreen" component={HomeScreen}/>
@@ -55,7 +57,6 @@ export default function App() {
           <Stack.Screen options={{headerShown:false}} name="LoadingScreen" component={LoadingScreen} />
           <Stack.Screen options={{headerShown:false}} name="Journal" component={Journal} />
           <Stack.Screen options={{headerShown:false}} name="Pay" component={ComponentStripeProvider} />
-          <Stack.Screen options={{headerShown:false}} name="MapHomeScreen" component={MapHomeScreen} />
           <Stack.Screen options={{headerShown:false}} name="NearbyStations" component={NearbyStations} />
         </Stack.Navigator>
       </NavigationContainer>
