@@ -1,38 +1,44 @@
-import { StyleSheet, Text, View,TextInput,TouchableHighlight,Alert,BackHandler } from 'react-native'
+import { StyleSheet, Text, View,TextInput,TouchableHighlight,Alert,BackHandler,Image,TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground'
 import { fireAuth,fireFunc } from '../globals/firebase';
 import { signOut, updatePassword } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
-import {getGlobalState,setGlobalState} from '../globals/profiledata';
+import { useIsFocused } from '@react-navigation/native'
+
+import {getGlobalState,setGlobalState} from '../globals/global';
+
 import * as NavigationBar from 'expo-navigation-bar';
 import EditButton from '../images/editButton'
 
 
 const deleteAccount = httpsCallable(fireFunc, 'deleteAccount');
 
-const HomeScreen = ({navigation}) => {
+const ProfilePage = ({navigation}) => {
+
+  const isFocused = useIsFocused();
+  /*
   const handleBackButton = () => {
     Alert.alert('Exit','Are you sure you want to exit?',[
       {text: 'No', onPress: () => {}, style: 'cancel'},
       {text: 'Yes', onPress: () => BackHandler.exitApp()},
     ]);
     return true;
-  }
+  }*/
 
   useEffect(()=>{
     NavigationBar.setBackgroundColorAsync('#182724')
-    const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+    /*const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
     return () => {
       back.remove();  
-    };
-  },[]);
+    };*/
+  },[isFocused]);
 
   const [password, setPassword] = useState('');
 
   const handleSignOut = () => {
     signOut(fireAuth).then(()=>{
-      navigation.navigate('SignInHandler');
+      navigation.navigate('AuthHandler');
       setGlobalState('userData',{
         username: '',
         firstName: '',
@@ -47,7 +53,7 @@ const HomeScreen = ({navigation}) => {
     updatePassword(fireAuth.currentUser,password).then(()=>{
       Alert.alert('Password Updated','Please login with your new password');
       signOut(fireAuth).then(()=>{
-        navigation.navigate('SignInHandler');
+        navigation.navigate('AuthHandler');
       });
     });
   }
@@ -63,6 +69,15 @@ const HomeScreen = ({navigation}) => {
         marginTop:50,
         backgroundColor:'#0A1613'
       }]}>
+          <TouchableOpacity
+            style={{padding:10,width:40,height:40,borderRadius:10,backgroundColor:'#05CAAD'}}
+            onPress={()=>{}}
+          >
+            <Image
+              style={{height:'100%',width:'100%',resizeMode:'contain'}}
+              source={require('../images/refresh.png')}
+            ></Image>
+          </TouchableOpacity>
           <Text 
           style={styles.buttonText}>
           Welcome, {getGlobalState('userData').firstName.concat(" ",getGlobalState('userData').lastName,"!")}</Text>
@@ -106,6 +121,16 @@ const HomeScreen = ({navigation}) => {
         </TouchableHighlight>
 
         <TouchableHighlight
+        onPress={()=> {navigation.navigate('Enter_kwh')} }
+        style={styles.button}
+        underlayColor={'#22e6ab'}
+        >
+            <Text
+            style={styles.buttonText}
+            >Simulate Payment</Text>
+        </TouchableHighlight>
+
+        <TouchableHighlight
         onPress={()=>{navigation.navigate('ProfileSetup')}}
         style={styles.button}
         underlayColor={'#22e6ab'}
@@ -136,7 +161,7 @@ const HomeScreen = ({navigation}) => {
               {text: 'OK', onPress: () => {
                 deleteAccount().then(()=>{
                   fireAuth.signOut().then(()=>{
-                    navigation.navigate('SignInHandler')
+                    navigation.navigate('AuthHandler')
                     setGlobalState('userData',{
                       username: '',
                       firstName: '',
@@ -168,7 +193,7 @@ const HomeScreen = ({navigation}) => {
   )
 }
 
-export default HomeScreen
+export default ProfilePage
 
 const styles = StyleSheet.create({
   backgroundImage:{

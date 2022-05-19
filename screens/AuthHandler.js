@@ -5,45 +5,19 @@ import { useValidation,customValidationMessages } from 'react-native-form-valida
 import ImageBackground from 'react-native/Libraries/Image/ImageBackground';
 import HidewithKeyboard from 'react-native-hide-with-keyboard';
 import {fireAuth,fireFunc} from '../globals/firebase';
-import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
-import { setGlobalState } from '../globals/profiledata';
+import { getGlobalState, setGlobalState } from '../globals/global';
 import Logo from '../components/Logo';
 import * as NavigationBar from 'expo-navigation-bar';
+import { useIsFocused } from '@react-navigation/native';
 
 const getProfileData = httpsCallable(fireFunc,'getProfileData');
+let daemonIsRunning = false;
 
 const AuthHandler = ({navigation}) => {
-    useEffect(() => {
-        NavigationBar.setBackgroundColorAsync('#05CAAD')
-        const back = BackHandler.addEventListener('hardwareBackPress', ()=>{handleBackButton();});
-        return () => {
-            back.remove();
-        };
-    });
 
-    const postAuth = () => {
-        getProfileData().then(response=>{
-            if(response.data['result']==null){
-                //profile doesn't exist
-                navigation.navigate('ProfileSetup');
-            }
-            else{
-                //profile exists; shove it in global state
-                setGlobalState('userData',{
-                    username: response.data['result']['username'],
-                    firstName: response.data['result']['firstName'],
-                    lastName: response.data['result']['lastName'],
-                    phone: response.data['result']['phone']
-                });
-                setGlobalState('needUpdate',false);
-                navigation.navigate('HomeScreen');
-            }
-        }).catch(error=>{
-            console.log('getprofiledata error');
-            console.log(error)
-        });
-    }
+    const isFocused = useIsFocused();
 
     const handleBackButton = () => {
         Alert.alert('Exit','Are you sure you want to exit?',[
@@ -52,19 +26,61 @@ const AuthHandler = ({navigation}) => {
         ]);
         return true;
     }
-        
+
+    useEffect(() => {
+        NavigationBar.setBackgroundColorAsync('#05CAAD')
+        const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+        return () => {
+            back.remove();
+        };
+    },[isFocused]);
+
+    const postAuth = () => {
+        if(getGlobalState('needUpdate')==true){
+            getProfileData().then(response=>{
+                if(response.data['result']==null){
+                    //profile doesn't exist
+                    navigation.navigate('ProfileSetup');
+                }
+                else{
+                    console.log(response.data['result']['username']);
+                    //profile exists; shove it in global state
+                    setGlobalState('userData',{
+                        username: response.data['result']['username'],
+                        firstName: response.data['result']['firstName'],
+                        lastName: response.data['result']['lastName'],
+                        phone: response.data['result']['phone'],
+                        country: response.data['result']['country'],
+                    });
+                    setGlobalState('needUpdate',false);
+                    navigation.navigate('MapNavigator');
+                }
+            }).catch(error=>{
+                console.log('getprofiledata error');
+                console.log(error)
+            });
+        }
+    }
+
+    
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword,setConfirmPassword] = useState('');
-
-
+    const [whichScreen,setWhichScreen] = useState(1);
+  
     const {validate, isFieldInError,getErrorsInField} = useValidation({
-        state:{ email, password, confirmPassword },
+        state:{ email, password,confirmPassword },
         messages: customValidationMessages
     });
 
-    const validateInput = function(){
+    const validateInputSignIn = function(){
+        return validate({
+            email: { required: true, email: true },
+            password: { required: true, minLength: 6}
+        });
+    }
+    const validateInputSignUp = function(){
         return validate({
             email: { required: true, email: true },
             password: { required: true, minLength: 6},
@@ -73,7 +89,7 @@ const AuthHandler = ({navigation}) => {
     }
 
     const handleSignUp = () => {
-        if(validateInput()){
+        if(validateInputSignIn()){
             createUserWithEmailAndPassword(fireAuth,email,password).then((creds)=>{
                 postAuth();
                 console.log('success');
@@ -83,13 +99,122 @@ const AuthHandler = ({navigation}) => {
             });
         }
     }
+
+    const handleSignIn = () => {
+        if(validateInputSignIn()){
+            signInWithEmailAndPassword(fireAuth,email,password).then(()=>{
+                postAuth();
+                console.log('success');
+            }).catch(error=>{
+                console.log(error);
+                Alert.alert("Authentication failed",error.message);
+            });
+        }
+    };
     
-    return (
-        <View style={{height:'100%'}}>
+    if(whichScreen == 1){
+        return(
+            <View style={{height:'100%'}}>
             <KeyboardAvoidingView
             style={styles.container}
             behavior="height"
-            keyboardVerticalOffset={'0'}
+            keyboardVerticalOffset={-50}
+            >
+                <HidewithKeyboard><Logo></Logo></HidewithKeyboard>
+                <View style={{
+                        backgroundColor:'#05CAAD',
+                        width:"100%",
+                        alignItems:'center',
+                        flex:1,
+                        borderTopLeftRadius:30,
+                        borderTopRightRadius:30,
+                    }}>
+                    <View style={styles.inputContainer}>
+                        <TextInput
+                        placeholder="Email"
+                        placeholderTextColor={'#bababa'}
+                        keyboardType='visible-password'
+                        //value={''}
+                        onChangeText={setEmail}
+                        style={styles.input}
+                        />
+                        {isFieldInError('email') && getErrorsInField('email').map(errorMessage => <Text style={styles.error}>{errorMessage}</Text>)}
+
+                        <TextInput
+                        placeholder="Password"
+                        placeholderTextColor={'#bababa'}
+                        secureTextEntry
+                        keyboardType='default'
+                        //value={''}
+                        onChangeText={setPassword}
+                        style={styles.input}
+                        />
+                        {isFieldInError('password') && getErrorsInField('password').map(errorMessage => <Text style={styles.error}>{errorMessage}</Text>)}
+                    </View>
+                    
+                    <View
+                    style={styles.buttonContainer}
+                    >   
+                        <View style={
+                            {
+                                width:"140%",
+                                height:10,
+                                backgroundColor: '#05BAAD'
+                            }
+                        }></View>
+                        <TouchableHighlight
+                        onPress={()=>{handleSignIn()}}
+                        style={styles.button}
+                        underlayColor={'#22e6ab'}
+                        >
+                            <Text
+                            style={styles.buttonText}
+                            >Login</Text>
+                        </TouchableHighlight>
+                        
+                        <TouchableHighlight
+                        onPress={()=>{setWhichScreen(0)}}
+                        style={styles.button}
+                        underlayColor={'#22e6ab'}
+                        >
+                            <Text
+                            style={styles.buttonText}
+                            
+                            >Register</Text>
+                        </TouchableHighlight>
+
+
+                    </View>
+                    <TouchableOpacity
+                    onPress={()=>{
+                        if(validate({email: { required: true, email: true }})) {
+                            sendPasswordResetEmail(fireAuth,email)
+                            .then(()=>{
+                                Alert.alert("Email sent", "Check your email for a password reset link");
+                            });
+                        }
+                    }}
+                    >
+                        <Text
+                        style={[styles.hyperlink,
+                        {
+                            marginTop:60,
+                        }]}
+                        >Forgot password?</Text>
+                    </TouchableOpacity>
+                </View>
+                
+            </KeyboardAvoidingView>
+        </View>
+        );
+    }
+    else{
+        return(
+            <View style={{height:'100%'}}>
+            <KeyboardAvoidingView
+            style={styles.container}
+            behavior="height"
+            keyboardVerticalOffset={-500}
             >
                 <HidewithKeyboard><Logo></Logo></HidewithKeyboard>
                 <View style={{
@@ -156,7 +281,7 @@ const AuthHandler = ({navigation}) => {
                         </TouchableHighlight>
                         
                         <TouchableHighlight
-                        onPress={()=>{navigation.navigate('SignInHandler')}}
+                        onPress={()=>setWhichScreen(1)}
                         style={styles.button}
                         underlayColor={'#22e6ab'}
                         >
@@ -171,7 +296,8 @@ const AuthHandler = ({navigation}) => {
             </KeyboardAvoidingView>
             
         </View>
-    );
+        )
+    }
 }
 
 export default AuthHandler
@@ -179,7 +305,7 @@ export default AuthHandler
 const styles = StyleSheet.create({
     backgroundImage:{
         height: '100%',
-        backgroundColor:'#0A1613'
+        backgroundColor:'#0A1613',
     },
     logo:{
         height:120,
@@ -197,7 +323,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 15,
         borderRadius: 10,
-        marginTop: 10,
+        marginTop: 20,
         borderWidth:0,
         borderColor:'#22e6ab',
     },
@@ -232,7 +358,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 16,
         alignSelf: 'center',
-        width: 160,
+        width: 130,
         marginBottom:60
     },
     error: {

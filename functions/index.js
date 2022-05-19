@@ -32,6 +32,7 @@ exports.insertProfile = functions
     const lastName = data.lastName;
     const firstName = data.firstName;
     const phone = data.phone;
+    const country = data.country; 
 
     if (!username.match("^[a-zA-Z0-9]+$"))
       return {
@@ -55,28 +56,25 @@ exports.insertProfile = functions
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
-      })
-      .then(() => {
-        status = 0;
-      })
-      .catch((error) => {
-        status = 6;
-        message = error;
-      });
+        country: data.country
+    }).then(()=>{
+        status=0;
+    }).catch(error=>{
+        status=6; message = error;
+    });
 
-    if (status) return { status: status, message: message };
-    else return { status: 0 };
-  });
+    if(status) return{status:status,message:message};
+    else return {status:0};
 
-exports.getProfileData = functions
-  .region("europe-west1")
-  .https.onCall(async (data, context) => {
-    let uid = context.auth.uid;
-    if (!context.auth) {
-      throw new functions.https.HttpsError(
-        "unauthenticated",
-        "You must be authenticated to use this function"
-      );
+});
+
+
+
+exports.getProfileData = functions.region("europe-west1").https.onCall(async(data, context)=>{
+    
+    let uid= context.auth.uid;
+    if(!context.auth){
+        throw new functions.https.HttpsError('unauthenticated','You must be authenticated to use this function');
     }
     let querySnapshot = await db.collection("userdata").doc(uid).get();
     return { result: querySnapshot.data() };
@@ -191,13 +189,22 @@ exports.deleteStation = functions
       }
   });
 
-exports.getStation = functions
-  .region("europe-west1")
-  .https.onCall(async (data, context) => {
-    // let querySnapshot = await db.collection('chargingstations').doc(data.id).delete();
+// exports.getStation = functions
+//   .region("europe-west1")
+//   .https.onCall(async (data, context) => {
+//     // let querySnapshot = await db.collection('chargingstations').doc(data.id).delete();
 
-    return {
-      result: querySnapshot.id,
-      message: "Station deleted successfully",
-    };
-  });
+//     return {
+//       result: querySnapshot.id,
+//       message: "Station deleted successfully",
+//     };
+//   });
+// });
+
+
+exports.getStationData = functions.region("europe-west1").https.onCall(async(data, context)=>{
+    let stationID = data.stationID;
+    
+    let querySnapshot = await db.collection('chargingstations').doc(stationID).get();
+    return ({result:(querySnapshot.data())});
+});

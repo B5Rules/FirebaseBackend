@@ -5,9 +5,21 @@ const {setGlobalState, getGlobalState} = createGlobalState({
         username: '',
         firstName: '',
         lastName: '',
-        phone: ''
+        phone: '',
+        country: '',
     },
-    needUpdate: true
+    needUpdate: true,
+    kwhToCharge: -1,
+    currentStationData:{
+        id:'',
+        owneruid:'',
+        lat: 0,
+        long: 0,
+        price: 0,
+        service_flags: [],
+        type: "",
+    },
+
 });
 
 export {setGlobalState, getGlobalState};
