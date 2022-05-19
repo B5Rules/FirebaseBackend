@@ -19,7 +19,7 @@ import { CreditCardInput } from "react-native-credit-card-input";
 
 //ADD localhost address of your server
 //const API_URL = "http://10.0.2.2:3000"; // emulator
-const API_URL = "http://192.168.56.1:3000"; // - telefon
+const API_URL = "http://192.168.0.103:3000"; // - telefon
 
 const StripeApp = ({ navigation }) => {
   const [email, setEmail] = useState();
