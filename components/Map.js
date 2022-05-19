@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, View, Button } from "react-native";
+import { Dimensions, StyleSheet, Text, View, Button, TouchableHighlight } from "react-native";
 import React, {
   useState,
   useEffect,
@@ -152,11 +152,12 @@ const Map = (props, ref) => {
             }}
             title="Origin"
             identifier="origin"
-          />
+            />
+              
         }
 
         {destination?.latitude !==undefined && destination?.longitude !== undefined && (
-          console.log(123),
+          console.log(stations),
           <Marker
             coordinate={{
               latitude: destination.latitude,
@@ -169,7 +170,6 @@ const Map = (props, ref) => {
 
         {stations?.length > 0 &&
           stations.map((station, index) => {
-            
             const str = `Station ${index}`;
             if(station?._fieldsProto?.coordinates?.geoPointValue.latitude !== undefined && station?._fieldsProto?.coordinates?.geoPointValue.longitude !== undefined)
             return (
@@ -182,7 +182,17 @@ const Map = (props, ref) => {
                 }}
                 onPress={onMapPress}
                 title="Destination"
-              />
+               
+              >
+              <MapView.Callout tooltip style={styles.customView}>
+                  <TouchableHighlight onPress= {()=>this.markerClick()} underlayColor='#dddddd'>
+                      <View style={styles.marker}>
+                      <Text style={styles.markerText}>Price:{station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
+                            Type: {station?._fieldsProto?.type?.stringValue} {"\n"}</Text>
+                      </View>
+                  </TouchableHighlight>
+                </MapView.Callout>
+              </Marker>
           );
           })}
       </MapView>
@@ -206,6 +216,17 @@ const styles = StyleSheet.create({
     flex: 1, //the container will fill the whole screen.
     justifyContent: "flex-end",
     alignItems: "center",
+  },
+  marker: {
+    width: 150,
+    backgroundColor: "#27423A",
+    borderWidth: 3,
+    borderColor:"grey",
+    borderRadius: 10,
+    paddingLeft:6,
+  },
+  markerText:{
+    color:"white",
   },
   map: {
     ...StyleSheet.absoluteFillObject,

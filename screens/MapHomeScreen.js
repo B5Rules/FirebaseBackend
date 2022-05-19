@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Button, Component, Image } from "react-native";
 import React, { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { selectStaions, setDestination, setOrigin, setStations, selectOrigin, setNearByStaions, selectNearByStations } from "../navSlice";
+import { selectStaions, setDestination, setOrigin, setStations, selectOrigin, setNearByStaions, selectNearByStations } from "../slices/navSlice";
 // Google
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 //import { GOOGLE_MAPS_APIKEY } from "@env";
