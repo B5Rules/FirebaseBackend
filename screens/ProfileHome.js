@@ -14,32 +14,31 @@ import EditButton from '../images/editButton'
 
 const deleteAccount = httpsCallable(fireFunc, 'deleteAccount');
 
-const HomeScreen = ({navigation}) => {
+const ProfilePage = ({navigation}) => {
 
   const isFocused = useIsFocused();
-
-  //const [dummy,setDummy] = useState(true);
+  /*
   const handleBackButton = () => {
     Alert.alert('Exit','Are you sure you want to exit?',[
       {text: 'No', onPress: () => {}, style: 'cancel'},
       {text: 'Yes', onPress: () => BackHandler.exitApp()},
     ]);
     return true;
-  }
+  }*/
 
   useEffect(()=>{
     NavigationBar.setBackgroundColorAsync('#182724')
-    const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+    /*const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
     return () => {
       back.remove();  
-    };
+    };*/
   },[isFocused]);
 
   const [password, setPassword] = useState('');
 
   const handleSignOut = () => {
     signOut(fireAuth).then(()=>{
-      navigation.navigate('SignInHandler');
+      navigation.navigate('AuthHandler');
       setGlobalState('userData',{
         username: '',
         firstName: '',
@@ -54,7 +53,7 @@ const HomeScreen = ({navigation}) => {
     updatePassword(fireAuth.currentUser,password).then(()=>{
       Alert.alert('Password Updated','Please login with your new password');
       signOut(fireAuth).then(()=>{
-        navigation.navigate('SignInHandler');
+        navigation.navigate('AuthHandler');
       });
     });
   }
@@ -132,16 +131,6 @@ const HomeScreen = ({navigation}) => {
         </TouchableHighlight>
 
         <TouchableHighlight
-        onPress={()=> {navigation.navigate('MapHomeScreen')} }
-        style={styles.button}
-        underlayColor={'#22e6ab'}
-        >
-            <Text
-            style={styles.buttonText}
-            >Map Screen</Text>
-        </TouchableHighlight>
-
-        <TouchableHighlight
         onPress={()=>{navigation.navigate('ProfileSetup')}}
         style={styles.button}
         underlayColor={'#22e6ab'}
@@ -172,7 +161,7 @@ const HomeScreen = ({navigation}) => {
               {text: 'OK', onPress: () => {
                 deleteAccount().then(()=>{
                   fireAuth.signOut().then(()=>{
-                    navigation.navigate('SignInHandler')
+                    navigation.navigate('AuthHandler')
                     setGlobalState('userData',{
                       username: '',
                       firstName: '',
@@ -204,7 +193,7 @@ const HomeScreen = ({navigation}) => {
   )
 }
 
-export default HomeScreen
+export default ProfilePage
 
 const styles = StyleSheet.create({
   backgroundImage:{
