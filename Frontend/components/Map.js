@@ -9,7 +9,7 @@ import React, {
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { useSelector } from "react-redux";
-import { selectDestination, selectOrigin, selectNearByStations, selectStaions } from "../navSlice";
+import { selectDestination, selectOrigin, selectNearByStations, selectStaions } from "../slices/navSlice";
 //import { setNearByStaions } from '../navSlice';
 //import { GOOGLE_MAPS_APIKEY } from "@env";
 import { decode } from "@mapbox/polyline";

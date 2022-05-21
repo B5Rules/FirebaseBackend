@@ -11,6 +11,7 @@ import { getGlobalState, setGlobalState } from '../globals/global';
 import Logo from '../components/Logo';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useIsFocused } from '@react-navigation/native';
+import {Platform} from 'react-native';
 
 const getProfileData = httpsCallable(fireFunc,'getProfileData');
 let daemonIsRunning = false;
@@ -28,7 +29,7 @@ const AuthHandler = ({navigation}) => {
     }
 
     useEffect(() => {
-        NavigationBar.setBackgroundColorAsync('#05CAAD')
+        Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#05CAAD')
         const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         return () => {
             back.remove();

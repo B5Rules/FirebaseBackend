@@ -22,6 +22,8 @@ import ManageStations from './screens/ManageStations';
 import ManagePersonalData from './screens/ManagePersonalData';
 import StationInfo from './screens/StationInfo';
 import AddKwh from './screens/AddKwh';
+import {Platform} from 'react-native';
+
 
 
 const ComponentStripeProvider = () => {
@@ -45,7 +47,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   useEffect(()=>{
-    NavigationBar.setBackgroundColorAsync('#182724')
+    Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#182724')
   },[]);
   return (
     <Provider store={store}>

@@ -5,6 +5,7 @@ import { fireAuth,fireFunc } from '../globals/firebase';
 import { signOut, updatePassword } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
 import { useIsFocused } from '@react-navigation/native'
+import {Platform} from 'react-native';
 
 import {getGlobalState,setGlobalState} from '../globals/global';
 
@@ -27,7 +28,7 @@ const ProfilePage = ({navigation}) => {
   }*/
 
   useEffect(()=>{
-    NavigationBar.setBackgroundColorAsync('#182724')
+    Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#182724')
     /*const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
     return () => {
       back.remove();  

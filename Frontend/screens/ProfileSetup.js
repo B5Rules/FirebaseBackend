@@ -9,6 +9,7 @@ import ImageBackground from 'react-native/Libraries/Image/ImageBackground';
 import * as NavigationBar from 'expo-navigation-bar';
 import EditButton from '../images/editButton';
 import { useIsFocused } from '@react-navigation/native';
+import {Platform} from 'react-native';
 
 const insertProfile = httpsCallable(fireFunc, 'insertProfile');
 
@@ -37,7 +38,7 @@ const ProfileSetup = ({navigation}) => {
       setLastName(getGlobalState('userData').lastName);
       setPhone(getGlobalState('userData').phone);
     }
-    NavigationBar.setBackgroundColorAsync('#182724')
+    Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#182724')
     const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
     return () => {
       back.remove();
