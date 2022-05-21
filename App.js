@@ -17,6 +17,12 @@ import StripeApp from "./screens/StripeApp";
 import NearbyStations from './screens/NearbyStations';
 import MapNavigator from './screens/MapNavigator';
 import AuthHandler from './screens/AuthHandler';
+import HomeScreen from './screens/HomeScreen';
+import ManageStations from './screens/ManageStations';
+import ManagePersonalData from './screens/ManagePersonalData';
+import StationInfo from './screens/StationInfo';
+import AddKwh from './screens/AddKwh';
+
 
 const ComponentStripeProvider = () => {
   return (
@@ -58,6 +64,15 @@ export default function App() {
           --Serbanstein*/}
           <Stack.Screen options={{headerShown:false}} name="MapNavigator" component={MapNavigator} />
           <Stack.Screen options={{headerShown:false}} name="NearbyStations" component={NearbyStations} />
+
+          {/* provider pages */}
+
+          <Stack.Screen name="Provider Homepage" component={HomeScreen}/>
+          <Stack.Screen name="Manage Stations"  component={ManageStations}/>
+          <Stack.Screen   name="Manage Personal Data" component={ManagePersonalData}/>
+          <Stack.Screen name="Station Info" component={StationInfo}/>
+          <Stack.Screen name="Add kWh" component={AddKwh}/>
+
         </Stack.Navigator>
       </NavigationContainer>
     </ImageBackground>

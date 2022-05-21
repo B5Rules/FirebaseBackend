@@ -26,7 +26,7 @@ const ManageStations = () => {
 
       <View style={[styles.mainContainer, styles.containerProps]}>
 
-      <ImageBackground source={require('../images/Map.png')} resizeMode="cover" style={styles.image}>
+      <ImageBackground source={require('../images/streets.png')} resizeMode="cover" style={styles.image}>
 
         <ScrollView style={{ width }}>
 
@@ -35,11 +35,11 @@ const ManageStations = () => {
 
           </Pressable>
 
-          <Pressable style={styles.button}>
+          {/* <Pressable style={styles.button}>
           <Image 
             source={require('../images/Logo.png')}
             style={styles.lightning}/>
-          </Pressable>
+          </Pressable> */}
           
 
           <Pressable style={[styles.button, styles.shadowProp]}

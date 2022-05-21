@@ -100,21 +100,12 @@ exports.helloWorld = functions
     return { result: "Hello World" };
   });
 
-exports.getAllStations = functions
-  .region("europe-west1")
-  .https.onCall(async (data, context) => {
-    let querySnapshot = await db.collection("chargingstations").get();
-    const stations = [];
-    querySnapshot.forEach((doc) => {
-      const id = doc.id;
-      // doc = doc.data()
-      stations.push({
-        id: id,
-        ...doc.data(),
-      });
-    });
-    return { result: stations };
-  });
+exports.getAllStations = functions.region("europe-west1").https.onCall(async(data, context)=>{
+    let querySnapshot = await db.collection('chargingstations').get();
+
+    return ({result:querySnapshot.docs});
+
+});
 
 const validateObject = (object, data) => {
   const valid = object.validate(data);

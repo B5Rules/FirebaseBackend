@@ -58,6 +58,8 @@ const ProfilePage = ({navigation}) => {
     });
   }
   
+
+
   return (
     <View style={{height:'100%'}}>
       <View style={[styles.container,{
@@ -186,6 +188,16 @@ const ProfilePage = ({navigation}) => {
               color:'red',
             }]}
             >Delete account</Text>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+        onPress={() => {navigation.navigate("Provider Homepage")}}
+        style={styles.button}
+        underlayColor={'#22e6ab'}
+        >
+            <Text
+            style={styles.buttonText}
+            >Switch to provider</Text>
         </TouchableHighlight>
 
       </View>

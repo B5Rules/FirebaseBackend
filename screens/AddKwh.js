@@ -2,9 +2,9 @@ import React from 'react';
 import {StyleSheet,Text, View,TextInput,Image,Dimensions, ScrollView, Button, ImageBackground, Pressable, TouchableHighlight, Alert} from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+// import { NavigationContainer } from "@react-navigation/native";
+// import { createStackNavigator } from "@react-navigation/stack";
+// import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
