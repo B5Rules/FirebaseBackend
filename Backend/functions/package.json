@@ -3,7 +3,7 @@
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "serve": "firebase emulators:start --only functions",
-    "start:functions": "firebase serve --only functions -o 192.168.100.17",
+    "start:functions": "firebase serve --only functions -o ",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
