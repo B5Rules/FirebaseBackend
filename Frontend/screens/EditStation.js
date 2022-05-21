@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet,Text, View,TextInput,Image,Dimensions, ScrollView, Button, ImageBackground, Pressable, TouchableHighlight, Alert} from "react-native";
+import { Chip } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // import { NavigationContainer } from "@react-navigation/native";
@@ -25,12 +26,11 @@ export class Form extends React.Component{
 }
 
 
-const ManagePersonalData = () => {
+const EditStation = () => {
 
-  const [name, onChangeName] = React.useState("Name Station");
+  const [name, onChangeName] = React.useState("Station Name");
   const [charger, onChangeCharger] = React.useState("Charging Plug");
-  const [plug, onChangePlug] = React.useState("Power Plug");
-  const [current, onChangeCurrent] = React.useState("Adjustable Current"); //Adjustable Current
+  const [price, onChangePrice] = React.useState("Price"); //Adjustable Current
   const [voltage, onChangeVoltage] = React.useState("Working Voltage");
   const [protection, onChangeProtection] = React.useState("Protection Level");
 
@@ -49,12 +49,9 @@ const ManagePersonalData = () => {
                   source={require('../images/Blue-circle.png')}
               />
               <View> 
-              <Text style={{ fontSize: 20, fontWeight: "bold", color:"#6B6464", marginBottom: 5 }}>
+              <Text style={{ fontSize: 20, fontWeight: "bold", color:"white", marginBottom: 5 }}>
                 Provider account
               </Text>
-              <Text style={{ fontSize: 24, fontWeight: "bold", color: "white" }}>
-                Provider Name
-                </Text>
                 </View>
 
             </View>
@@ -80,60 +77,40 @@ const ManagePersonalData = () => {
                   source={require('../images/edit.png')}/>
               
               </View>
+        
 
               <View style={styles.input}>
               <TextInput style={styles.inputs}
-              onChangeText={onChangePlug}
-              value={plug}
-              />
-                <Image style={styles.icon}
-                      source={require('../images/edit.png')}/>
-              
-              </View>
-              <View style={styles.input}>
-              <TextInput style={styles.inputs}
-              onChangeText={onChangeCurrent}
-              value={current}
-              />
-                <Image style={styles.icon}
-                      source={require('../images/edit.png')}/>
-              
-              </View>
-              <View style={styles.input}>
-
-              <TextInput style={styles.inputs}
-              onChangeText={onChangeVoltage}
-              value={voltage}
-              />     
-                <Image style={styles.icon}
-                      source={require('../images/edit.png')}/>
-              
-              </View>
-              <View style={styles.input}>
-              <TextInput style={styles.inputs}
-              onChangeText={onChangeProtection}
-              value={protection}
+              onChangeText={onChangePrice}
+              value={price}
               />
                 <Image style={styles.icon}
                       source={require('../images/edit.png')}/>
               
               </View>
 
-  
+              <View style={styles.chips}>
+              <Text style={styles.textChips}> Services   </Text>
+
+                <View style={styles.chipsContent}>
+                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F"> coffee </Chip>
+                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F"> food </Chip>
+                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F"> gas </Chip>
+                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F"> hotel </Chip>
+                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F"> bathroom </Chip>
+                  
+                </View>              
+              </View>
 
           <Pressable style={styles.button1}>
-            <Text style={styles.textButton1}>Add Picture</Text>
+            <Text style={styles.textButton1}>Add Location</Text>
           </Pressable>
 
           <Pressable style={styles.button2}>
             <Text style={styles.textButton2}>ADD</Text>
           </Pressable>
 
-
             </View>
-
-
-
 
           </View>
 
@@ -154,7 +131,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: "#182724",
+    backgroundColor: "#0A1613",
     alignItems: "center",
     justifyContent: "center",
     paddingBottom:'45%'
@@ -174,7 +151,7 @@ const styles = StyleSheet.create({
   },
 
   mainContainer: {
-    backgroundColor: "#182724",
+    backgroundColor: "#0A1613",
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
@@ -219,7 +196,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 5,
 
-    
   },
 
   icon: {
@@ -228,41 +204,74 @@ const styles = StyleSheet.create({
     height: 2
   },
 
+  //chips:
+
+  chips:{
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding:10,
+    color: "white",
+    backgroundColor:"#182724",
+    borderBottomColor:"white",
+    borderBottomWidth: 2,
+
+  },
+
+  textChips:{
+    fontSize: 18, 
+    fontWeight: "bold",
+    color: "white",
+    marginBottom: 10,
+  },
+
+  chipsContent:{
+    justifyContent: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+
+  chip:{
+    margin: 5,
+    color: "#00FFDA",
+  },
+
   //buttons
   button1: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 5,
+    paddingVertical: 12,
     borderRadius: 20,
     elevation: 3,
-    backgroundColor: '#00FFDA',
+    backgroundColor: '#182724',
     marginTop: 30,
+    marginLeft: 30,
+    marginRight: 30,
     
   },
 
   textButton1: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: 'black',
+    color: 'white',
   },
  
   button2: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: 15,
     paddingHorizontal: 5,
     borderRadius: 20,
     elevation: 3,
     backgroundColor: '#01A78F',
     marginTop: 30,
-    marginLeft: 55,
-    marginRight: 55,
+    marginLeft: 70,
+    marginRight: 75,
     
   },
 
   textButton2: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
     
@@ -270,4 +279,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default ManagePersonalData;
+export default EditStation;

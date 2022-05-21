@@ -3,26 +3,44 @@ import {StyleSheet,Text, View,TextInput,Image,Dimensions, ScrollView, Button, Im
 import { SafeAreaView } from 'react-native-safe-area-context';
 const { width } = Dimensions.get("screen");
 
-const ManageStations = () => {
+const ManageStations = ({navigation}) => {
     return (
 
       <SafeAreaView style={styles.container}>
-      <View style={[styles.headerContainer, styles.containerProps]}>
 
-      <Image
-          style={{marginRight: 20 }}
-          source={require('../images/Blue-circle.png')}
-      />
-      <View> 
-      <Text style={{ fontSize: 20, fontWeight: "bold", color:"#6B6464", marginBottom: 5 }}>
-        Provider account
-      </Text>
-      <Text style={{ fontSize: 24, fontWeight: "bold", color: "white" }}>
-        Provider Name
-        </Text>
-        </View>
+        
+              <View style={[styles.headerContainer, styles.containerProps]}>
 
-      </View>
+                <View style={{ flexDirection: 'row',    alignItems: 'center', justifyContent: 'center'}}>
+                  <Image
+                    style={{marginRight: 10 }}
+                    source={require('../images/Blue-circle.png')}
+                  />
+                  <View> 
+                    <Text style={{ fontSize: 20, fontWeight: "bold", color:"white" }}>
+                      Provider account
+                    </Text>
+                  </View>      
+                        
+                        
+                </View>
+
+                
+              <View style={{marginBottom:5}}>
+
+              <Pressable style={[styles.button1, styles.shadowProp]}>
+                  <Text style={styles.textButton1}
+                  onPress={() => {navigation.navigate("Edit Station")}}>
+                  Add Station
+                  </Text>
+
+                </Pressable>
+              </View>
+
+                
+              </View>
+
+      
 
       <View style={[styles.mainContainer, styles.containerProps]}>
 
@@ -30,24 +48,40 @@ const ManageStations = () => {
 
         <ScrollView style={{ width }}>
 
-          <Pressable style={[styles.button, styles.shadowProp]}>
-              <Text style={styles.textButton}>Add Station</Text>
-
-          </Pressable>
-
-          {/* <Pressable style={styles.button}>
-          <Image 
-            source={require('../images/Logo.png')}
-            style={styles.lightning}/>
-          </Pressable> */}
-          
 
           <Pressable style={[styles.button, styles.shadowProp]}
-                    onPress={() => {navigation.navigate("Manage Stations")}}>
-              <Text style={styles.textButton}>Update Station</Text>
+                     onPress={() => {navigation.navigate("Edit Station")}}>
+              <View style ={styles.inline}>
+                <Text style={styles.textButton}>Station Name:</Text>
+                <Text style={styles.textDetails}>  ZittyMall </Text>
+
+              </View>
+              
+              <View style ={styles.inline}>
+                <Text style={styles.textButton}>Type:</Text>
+                <Text style={styles.textDetails}>  ... </Text>
+              </View>
+              
           </Pressable>
+
+          <Pressable style={[styles.button, styles.shadowProp]}
+                     onPress={() => {navigation.navigate("Edit Station")}}>
+              <View style ={styles.inline}>
+                <Text style={styles.textButton}>Station Name:</Text>
+                <Text style={styles.textDetails}>  PalasMall </Text>
+
+              </View>
+              
+              <View style ={styles.inline}>
+                <Text style={styles.textButton}>Type:</Text>
+                <Text style={styles.textDetails}>  ... </Text>
+              </View>
+              
+          </Pressable>
+
         </ScrollView>
       </ImageBackground>
+
 
       </View>
 </SafeAreaView>
@@ -63,23 +97,25 @@ const styles = StyleSheet.create({
   
     container: {
       flex: 1,
-      backgroundColor: "#182724",
+      backgroundColor: "#0A1613",
       alignItems: "center",
       justifyContent: "center",
    
     },
    
-    headerContainer: {
-      backgroundColor: "#182724",
-      flex: 0.2,
-      flexDirection:'row',
-    },
-   
     mainContainer: {
-      backgroundColor: "#182724",
+      backgroundColor: "#0A1613",
       alignItems: 'center',
       justifyContent: 'center',
       flex: 1,
+    },
+
+    headerContainer: {
+      width,
+      flex: 0.2,
+      borderRadius: 40,
+      paddingTop: 30,
+      paddingBottom: 30,
     },
    
     image: {
@@ -93,16 +129,17 @@ const styles = StyleSheet.create({
     },
    
     containerProps: {
-      width,
+      marginLeflt: 10,
       alignItems: "center",
       justifyContent: "center",
     },
+
+
+    //buttons
    
     button: {
-     alignItems: 'center',
-     justifyContent: 'center',
      paddingVertical: 20,
-     paddingHorizontal: 5,
+     paddingHorizontal: 20,
      borderRadius: 10,
      elevation: 3,
      backgroundColor: '#182724',
@@ -111,6 +148,47 @@ const styles = StyleSheet.create({
      marginTop: 30,
      
    },
+
+   textButton: {
+     fontSize: 18,
+     lineHeight: 21,
+     fontWeight: 'bold',
+     letterSpacing: 0.25,
+     color: 'white',
+   },
+
+   textDetails: {
+    fontSize: 18,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: '#00FFDA',
+  },
+
+   inline: {
+    flexDirection:'row',
+    flex: 0.2,
+   },
+
+   button1: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    borderRadius: 25,
+    backgroundColor: '#3B9683',
+    marginTop: 10,
+    paddingHorizontal: 15
+  },
+
+  textButton1: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
+    marginBottom: 5
+  },
+
    
    shadowProp: {
      shadowColor: 'black',
@@ -120,14 +198,7 @@ const styles = StyleSheet.create({
      elevation: 5,
    },
    
-   textButton: {
-     fontSize: 14,
-     lineHeight: 21,
-     fontWeight: 'bold',
-     letterSpacing: 0.25,
-     color: 'white',
-     marginBottom: 5
-   },
+
    
    lightning: {
     height: 100,

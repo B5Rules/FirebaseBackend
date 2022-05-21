@@ -192,7 +192,7 @@ const ProfilePage = ({navigation}) => {
         </TouchableHighlight>
 
         <TouchableHighlight
-        onPress={() => {navigation.navigate("Provider Homepage")}}
+        onPress={() => {navigation.navigate("Manage Stations")}}
         style={styles.button}
         underlayColor={'#22e6ab'}
         >
