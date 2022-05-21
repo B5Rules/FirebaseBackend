@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 // import { createStackNavigator } from "@react-navigation/stack";
 // import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
+
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
 
