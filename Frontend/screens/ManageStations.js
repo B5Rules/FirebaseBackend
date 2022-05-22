@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { httpsCallable } from "firebase/functions";
 import { fireFunc } from "../globals/firebase";
-import { getGlobalState } from "../globals/global";
+import { setGlobalState } from "../globals/global";
 
 const getAllStationsForSpecificUser = httpsCallable(
   fireFunc,
@@ -28,8 +28,19 @@ const ManageStations = ({ navigation }) => {
   useEffect(() => {
     getAllStationsForSpecificUser().then((res) => {
       setStations(res.data.result);
+      console.log(res.data.result[0])
     });
   }, []);
+
+  const pressStation = (station) => {
+    navigation.navigate("Edit Station", {
+        ...station,
+        coordinates: {
+          lat: station?.coordinates?._latitude,
+          long: station?.coordinates?._longitude
+        }
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -79,9 +90,7 @@ const ManageStations = ({ navigation }) => {
                 <Pressable
                   key={station.id}
                   style={[styles.button, styles.shadowProp]}
-                  onPress={() => {
-                    navigation.navigate("Edit Station");
-                  }}
+                  onPress={() => pressStation(station)}
                 >
                   <View style={styles.inline}>
                     <Text style={styles.textButton}>Station Name:</Text>
