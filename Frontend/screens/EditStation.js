@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet,Text, View,TextInput,Image,Dimensions, ScrollView, Button, ImageBackground, Pressable, TouchableHighlight, Alert} from "react-native";
+import {StyleSheet,Text, StatusBar, View,TextInput,Image,Dimensions, ScrollView, Button, ImageBackground, Pressable, TouchableHighlight, Alert} from "react-native";
 import { Chip } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
+
 
 export class Form extends React.Component{
   static navigationOptions={
@@ -33,10 +34,13 @@ const EditStation = () => {
   const [price, onChangePrice] = React.useState("Price"); //Adjustable Current
   const [voltage, onChangeVoltage] = React.useState("Working Voltage");
   const [protection, onChangeProtection] = React.useState("Protection Level");
+  const [hidden, setHidden] = React.useState(false);
 
-  
+
     return (
-      <SafeAreaView style={styles.container}>
+      
+      <View style={styles.container}>
+        <StatusBar hidden={true} />
         <View style={[styles.mainContainer, styles.containerProps]}>
         <ImageBackground source={require('../images/streets.png')} resizeMode="cover" style={styles.image}>
 
@@ -93,11 +97,11 @@ const EditStation = () => {
               <Text style={styles.textChips}> Services   </Text>
 
                 <View style={styles.chipsContent}>
-                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F"> coffee </Chip>
-                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F"> food </Chip>
-                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F"> gas </Chip>
-                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F"> hotel </Chip>
-                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F"> bathroom </Chip>
+                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F" onPress={() => console.log('Pressed')} selected={true}> coffee </Chip>
+                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F" onPress={() => console.log('Pressed')}> food </Chip>
+                  <Chip style={styles.chip} mode="flat" animateFrom="right" selectedColor="#01A78F" onPress={() => console.log('Pressed')}> gas </Chip>
+                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F" onPress={() => console.log('Pressed')}> hotel </Chip>
+                  <Chip style={styles.chip} mode="flat" selectedColor="#01A78F"onPress={() => console.log('Pressed')}> bathroom </Chip>
                   
                 </View>              
               </View>
@@ -118,7 +122,7 @@ const EditStation = () => {
 
         </ImageBackground>
         </View>
-      </SafeAreaView>
+      </View>
     )
 };
 
@@ -134,11 +138,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#0A1613",
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom:'45%'
  
   },
    
   headerContainer: {
+    
     flex: 0.2,
     flexDirection:'row',
     alignItems: "center",
@@ -155,6 +159,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    paddingTop: 50,
   },
 
   containerProps: {

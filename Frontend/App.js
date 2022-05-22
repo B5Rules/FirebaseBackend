@@ -69,11 +69,11 @@ export default function App() {
 
           {/* provider pages */}
 
-          <Stack.Screen name="Provider Homepage" component={HomeScreen}/>
-          <Stack.Screen name="Manage Stations"  component={ManageStations}/>
-          <Stack.Screen   name="Edit Station" component={EditStation}/>
-          <Stack.Screen name="Station Info" component={StationInfo}/>
-          <Stack.Screen name="Add kWh" component={AddKwh}/>
+          <Stack.Screen options={{headerShown:false}} name="Provider Homepage" component={HomeScreen}/>
+          <Stack.Screen options={{headerShown:false}} name="Manage Stations"  component={ManageStations}/>
+          <Stack.Screen options={{headerShown:false}} name="Edit Station" component={EditStation}/>
+          <Stack.Screen  options={{headerShown:false}} name="Station Info" component={StationInfo}/>
+          <Stack.Screen  options={{headerShown:false}} name="Add kWh" component={AddKwh}/>
 
         </Stack.Navigator>
       </NavigationContainer>

@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get("screen");
 
-
 const HomeScreen = ({navigation}) => {
     return (
 
