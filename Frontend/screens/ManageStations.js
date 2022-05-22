@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { httpsCallable } from "firebase/functions";
 import { fireFunc } from "../globals/firebase";
 import { setGlobalState } from "../globals/global";
+import { useIsFocused } from "@react-navigation/native";
 
 const getAllStationsForSpecificUser = httpsCallable(
   fireFunc,
@@ -24,13 +25,17 @@ const { width } = Dimensions.get("screen");
 const ManageStations = ({ navigation }) => {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     getAllStationsForSpecificUser().then((res) => {
       setStations(res.data.result);
       setLoading(false);
     });
-    setLoading(true);
-  }, []);
+    if(isFocused) {
+      setLoading(true);
+    }
+  }, [isFocused]);
 
   const pressStation = (station) => {
     navigation.navigate("Edit Station", {

@@ -145,17 +145,19 @@ exports.createStation = functions
     try {
       validateObject(
         Joi.object({
+          name: Joi.string().required(),
           price: Joi.number().required(),
           services: Joi.array().items(Joi.string()).required(),
-          type: Joi.string().valid("slow", "normal", "fast").required(),
-          coordinate: Joi.object({
+          type: Joi.number().valid(22, 43, 55).required(),
+          coordinates: Joi.object({
             latitude: Joi.number().required(),
             longitude: Joi.number().required(),
           }).required(),
         }),
         data
       );
-      let querySnapshot = await db.collection("chargingstations").add(data);
+      console.log('Create station',data);
+      // let querySnapshot = await db.collection("chargingstations").add(data);
 
       return {
         result: querySnapshot.id,
@@ -177,8 +179,27 @@ exports.createStation = functions
 exports.updateStation = functions
 .region("europe-west1")
 .https.onCall(async (data, context) => {
-  console.log(data, context.auth.uid)
-  return {result: null, message: `Successfully modified`}
+  try {
+    validateObject(Joi.object({
+      id: Joi.string().required(),
+      name: Joi.string(),
+      price: Joi.number(),
+      services: Joi.array().items(Joi.string()),
+      type: Joi.number().valid(22, 43, 55),
+    }), data);
+    let querySnapshot = await db.collection("chargingstations").doc(data.id).get()
+    if(querySnapshot.data().userID != context.auth.uid){
+      return {result:null, error:true, message:"You are not the owner of this station"}
+    }
+    data.price = parseFloat(data.price);
+    data.type = parseInt(data.type); 
+    await db.collection("chargingstations").doc(data.id).update(data);
+  } catch(e) {
+    console.error(e);
+    return {result: null,error: true, message: 'Failed to update this charging station. Error: '+e.message};
+  }
+
+  return {result: null, error: false, message: `Successfully modified`}
 })
 
 exports.deleteStation = functions

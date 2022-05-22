@@ -28,21 +28,35 @@ import { fireFunc } from "../globals/firebase";
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
-const updateStation = httpsCallable(
+const updateStationFunc = httpsCallable(
   fireFunc,
   "updateStation"
 );
 
+const createStationFunc = httpsCallable(
+  fireFunc,
+  "createStation"
+);
+
 const EditStation = ({ navigation, route }) => {
   const station = route.params;
-  const [name, onChangeName] = useState(station.name);
-  const [charger, onChangeCharger] = useState(station.type);
-  const [price, onChangePrice] = useState(station.price); 
-  const [services, setServices] = useState(station.services)
-  const [hidden, setHidden] = useState(false);
+  const [name, onChangeName] = useState(station?.name || "");
+  const [charger, onChangeCharger] = useState(station?.type || 0);
+  const [price, onChangePrice] = useState(station?.price || 0); 
+  const [services, setServices] = useState(station?.services || [])
+  const [response, setResponse] = useState({
+    error: false,
+    message: '',
+    result : null,
+  })
+  let locationButtonText = 'Modify Location';
+  let submitButtonText = 'Update';
+  if(station === undefined) {
+    locationButtonText = 'Set location';
+    submitButtonText = 'Add';
+  }
 
   const pressedStation = (serviceName) => {
-    // TODO: Finish this!
     for(const service of services) {
         if(serviceName === service)
           return true;
@@ -59,16 +73,41 @@ const EditStation = ({ navigation, route }) => {
     }
   }
 
-  const onSubmit = async () => {
+  const updateStation = async () => {
     const newStation = {
       id: station.id,
+      name: name,
       price: price,
       services,
       type: charger,
     }
-    console.log('Waiting for response');
-    const response = await updateStation(newStation)
-    console.log('Response: ', response);
+    const response = await updateStationFunc(newStation)
+    console.log('Update station response: ',response)
+    return response;
+  }
+
+  const createStation = async () => {
+    const station = {
+      name: name, 
+      price: price,
+      services,
+      type: charger,
+      coordinates: {
+        latitude: 0.0,
+        longitude: 0.0,
+      }
+    }
+    const response = await createStationFunc(station)
+    console.log('Create station response: ',response)
+
+    return response
+  }
+
+  const onSubmit = async () => {
+      setResponse(station !== undefined ? 
+        await updateStation()
+        : await createStation()
+      );
   };
 
   return (
@@ -157,12 +196,13 @@ const EditStation = ({ navigation, route }) => {
                 </View>
 
                 <Pressable style={styles.button1}>
-                  <Text style={styles.textButton1}>Modify Location</Text>
+                  <Text style={styles.textButton1}>{locationButtonText}</Text>
                 </Pressable>
 
                 <Pressable style={styles.button2} onPress={onSubmit}>
-                  <Text style={styles.textButton2}>Update</Text>
+                  <Text style={styles.textButton2}>{submitButtonText}</Text>
                 </Pressable>
+
               </View>
             </View>
           </ScrollView>
