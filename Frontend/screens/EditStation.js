@@ -92,7 +92,9 @@ const EditStation = ({ navigation, route }) => {
               </View>
 
               <View style={styles.form}>
+              <Text style={styles.label}>Station Name</Text>
                 <View style={styles.input}>
+                
                   <TextInput
                     style={styles.inputs}
                     onChangeText={onChangeName}
@@ -103,7 +105,7 @@ const EditStation = ({ navigation, route }) => {
                     source={require("../images/edit.png")}
                   />
                 </View>
-
+                <Text style={styles.label}>Charger</Text>
                 <View style={styles.input}>
                   <TextInput
                     style={styles.inputs}
@@ -115,6 +117,7 @@ const EditStation = ({ navigation, route }) => {
                     source={require("../images/edit.png")}
                   />
                 </View>
+                <Text style={styles.label}>Price</Text>
 
                 <View style={styles.input}>
                   <TextInput
@@ -127,10 +130,8 @@ const EditStation = ({ navigation, route }) => {
                     source={require("../images/edit.png")}
                   />
                 </View>
-
-                <View style={styles.chips}>
-                  <Text style={styles.textChips}> Services </Text>
-                  
+              <Text style={styles.textChips}> Services </Text>
+                <View style={styles.chips}>                            
                   <View style={styles.chipsContent}>
                     {
                       stationServicesChips.map(stationChip => (
@@ -198,7 +199,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flex: 1,
-    paddingTop: 50,
   },
 
   containerProps: {
@@ -217,6 +217,16 @@ const styles = StyleSheet.create({
   // form
   form: {
     marginTop: 20,
+  },
+
+  label :{
+    flex: 1,
+    fontSize: 18,
+    color: "white",
+    marginLeft: 10,
+    marginBottom: 5,
+    fontWeight: "bold",
+
   },
 
   inputs: {
@@ -255,6 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#182724",
     borderBottomColor: "white",
     borderBottomWidth: 2,
+    borderRadius: 5,
   },
 
   textChips: {
@@ -268,6 +279,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     flexWrap: "wrap",
+    borderRadius: 5,
   },
 
   chip: {
