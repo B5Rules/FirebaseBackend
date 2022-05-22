@@ -7,6 +7,7 @@ const {setGlobalState, getGlobalState} = createGlobalState({
         lastName: '',
         phone: '',
         country: '',
+        uid: '',
     },
     needUpdate: true,
     kwhToCharge: -1,

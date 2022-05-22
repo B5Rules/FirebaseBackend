@@ -64,7 +64,7 @@ exports.insertProfile = functions
     });
 
     if(status) return{status:status,message:message};
-    else return {status:0};
+    else return {status:0, uid: uid};
 
 });
 
@@ -105,6 +105,16 @@ exports.getAllStations = functions.region("europe-west1").https.onCall(async(dat
 
     return ({result:querySnapshot.docs});
 
+});
+
+exports.getAllStationsForSpecificUser = functions.region("europe-west1").https.onCall(async(data, context)=>{
+  let querySnapshot = await db.collection('chargingstations').where("userID", "==", context.auth.uid).get();
+  let stations = [];
+
+  querySnapshot.forEach(doc => {
+    stations.push({id: doc.id, ...doc.data()})
+  });
+  return ({result:stations});
 });
 
 const validateObject = (object, data) => {

@@ -74,7 +74,8 @@ const ProfileSetup = ({navigation}) => {
                 firstName: firstName,
                 lastName: lastName,
                 phone: phone,
-                country: selectedCountry
+                country: selectedCountry,
+                uid: response.data['uid']
               });
               setGlobalState('needUpdate',false);
               navigation.navigate('MapNavigator');
