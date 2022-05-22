@@ -111,7 +111,7 @@ const ManageStations = ({ navigation }) => {
               </ScrollView>
             </>
           ) : (
-            <View style={[ styles.containerProps]}>
+            <View style={[styles.mainContainer, styles.containerProps]}>
               <Text
                 style={{ fontSize: 18, fontWeight: "bold", color: "white" }}
               >

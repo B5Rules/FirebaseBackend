@@ -14,6 +14,7 @@ import {
   TouchableHighlight,
   Alert,
 } from "react-native";
+import DropDownPicker from 'react-native-dropdown-picker';
 import { Chip } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getGlobalState } from "../globals/global";
@@ -55,6 +56,14 @@ const EditStation = ({ navigation, route }) => {
     locationButtonText = 'Set location';
     submitButtonText = 'Add';
   }
+
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    {label: '55', value: '55'},
+    {label: '43', value: '43'},
+    {label: '22', value: '22'}
+  ]);
 
   const pressedStation = (serviceName) => {
     for(const service of services) {
@@ -100,8 +109,11 @@ const EditStation = ({ navigation, route }) => {
     const response = await createStationFunc(station)
     console.log('Create station response: ',response)
 
+
     return response
   }
+
+
 
   const onSubmit = async () => {
       setResponse(station !== undefined ? 
@@ -152,18 +164,12 @@ const EditStation = ({ navigation, route }) => {
                     source={require("../images/edit.png")}
                   />
                 </View>
-                <Text style={styles.label}>Charger</Text>
-                <View style={styles.input}>
-                  <TextInput
-                    style={styles.inputs}
-                    onChangeText={onChangeCharger}
-                    value={`${charger}`}
-                  />
-                  <Image
+
+                  {/* <Image
                     style={styles.icon}
                     source={require("../images/edit.png")}
-                  />
-                </View>
+                  /> */}
+               
                 <Text style={styles.label}>Price</Text>
 
                 <View style={styles.input}>
@@ -177,6 +183,27 @@ const EditStation = ({ navigation, route }) => {
                     source={require("../images/edit.png")}
                   />
                 </View>
+
+                <Text style={styles.label}>Charger</Text>
+                <DropDownPicker
+                  open={open}
+                  value={`${charger}`}
+                  items={items}
+                  containerStyle={{height: 40,marginBottom: 20}}
+                  style={{backgroundColor: '#182724', borderBottomColor:"white", borderBottomWidth: 2, marginBottom: 10,     
+                  borderTopLeftRadius: 5, borderTopRightRadius: 5,
+                  borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}
+                  textStyle={{ fontSize: 18 }}
+                  labelStyle={{fontWeight: "bold",color: "white" }}
+                  dropDownStyle={{backgroundColor: '#182724'}}
+                  arrowStyle={{color: "white", marginRight: 20}}
+                  setOpen={setOpen}
+                  setValue={setValue}
+                  setItems={setItems}
+                  
+                />
+
+
                 <Text style={styles.textChips}> Services </Text>
                 <View style={styles.chips}>
                   <View style={styles.chipsContent}>
@@ -238,7 +265,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   scrollView: {
-    paddingTop: 60,
+    paddingTop: 10,
   },
   mainContainer: {
     backgroundColor: "#0A1613",
@@ -262,7 +289,7 @@ const styles = StyleSheet.create({
 
   // form
   form: {
-    marginTop: 20,
+    // marginTop: 20,
   },
 
   label: {
@@ -294,6 +321,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 
+  inputDropdown:{
+
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+
   icon: {
     padding: 10,
     marginRight: 10,
@@ -318,6 +353,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     marginBottom: 10,
+    marginLeft: 7
   },
 
   chipsContent: {
