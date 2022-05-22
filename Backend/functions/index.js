@@ -174,6 +174,13 @@ exports.createStation = functions
  }, '')
  */
 
+exports.updateStation = functions
+.region("europe-west1")
+.https.onCall(async (data, context) => {
+  console.log(data, context.auth.uid)
+  return {result: null, message: `Successfully modified`}
+})
+
 exports.deleteStation = functions
   .region("europe-west1")
   .https.onCall(async (data, context) => {

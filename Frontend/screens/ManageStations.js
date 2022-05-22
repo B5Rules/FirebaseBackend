@@ -3,11 +3,9 @@ import {
   StyleSheet,
   Text,
   View,
-  TextInput,
   Image,
   Dimensions,
   ScrollView,
-  Button,
   ImageBackground,
   Pressable,
 } from "react-native";
@@ -25,11 +23,13 @@ const { width } = Dimensions.get("screen");
 
 const ManageStations = ({ navigation }) => {
   const [stations, setStations] = useState([]);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     getAllStationsForSpecificUser().then((res) => {
       setStations(res.data.result);
-      console.log(res.data.result[0])
+      setLoading(false);
     });
+    setLoading(true);
   }, []);
 
   const pressStation = (station) => {
@@ -53,8 +53,8 @@ const ManageStations = ({ navigation }) => {
           }}
         >
           <Image
-            style={{ marginRight: 10 }}
-            source={require("../images/Blue-circle.png")}
+            style={{ marginRight: 10, width: 48, height:48 }}
+            source={require('../images/electric-station.png')}
           />
           <View>
             <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
@@ -110,7 +110,9 @@ const ManageStations = ({ navigation }) => {
               <Text
                 style={{ fontSize: 18, fontWeight: "bold", color: "white" }}
               >
-                You have no stations registered.
+                {
+                  loading === true ? "Loading..." : "You have no stations yet"
+                }
               </Text>
             </View>
           )}

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -18,64 +18,73 @@ import { Chip } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getGlobalState } from "../globals/global";
 
-import { stationServicesChips } from '../slices/serviceChips'
+import { stationServicesChips } from "../slices/serviceChips";
 
+import { httpsCallable } from "firebase/functions";
+import { fireFunc } from "../globals/firebase";
 // import { NavigationContainer } from "@react-navigation/native";
 // import { createStackNavigator } from "@react-navigation/stack";
 // import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
-
-export class Form extends React.Component {
-  static navigationOptions = {
-    header: null,
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: "Enter Name",
-      email: "Enter Email Asddress",
-    };
-  }
-}
-
+const updateStation = httpsCallable(
+  fireFunc,
+  "updateStation"
+);
 
 const EditStation = ({ navigation, route }) => {
   const station = route.params;
   const [name, onChangeName] = useState(station.name);
   const [charger, onChangeCharger] = useState(station.type);
-  const [price, onChangePrice] = useState(station.price); //Adjustable Current
+  const [price, onChangePrice] = useState(station.price); 
+  const [services, setServices] = useState(station.services)
   const [hidden, setHidden] = useState(false);
-
 
   const pressedStation = (serviceName) => {
     // TODO: Finish this!
-    // for(const service in station.serviceName) {
-    //   console.log('Service', service)
-    //   if(serviceName.toLowerCase() === service)
-    //     return true;
-    // }
+    for(const service of services) {
+        if(serviceName === service)
+          return true;
+    }
     return false;
+  };
+
+  const serviceButtonPressAction = (serviceName) => {
+    if(pressedStation(serviceName)) {
+      setServices(services.filter(service => service !== serviceName));
+    }
+    else {
+      setServices([...services, serviceName]);
+    }
   }
 
+  const onSubmit = async () => {
+    const newStation = {
+      id: station.id,
+      price: price,
+      services,
+      type: charger,
+    }
+    console.log('Waiting for response');
+    const response = await updateStation(newStation)
+    console.log('Response: ', response);
+  };
 
   return (
-    <View style={styles.container}>
-      <StatusBar hidden={true} />
+    <SafeAreaView style={styles.container}>
       <View style={[styles.mainContainer, styles.containerProps]}>
         <ImageBackground
           source={require("../images/streets.png")}
           resizeMode="cover"
           style={styles.image}
         >
-          <ScrollView style={[ width, styles.scrollView ]}>
+          <ScrollView style={[width, styles.scrollView]}>
             <View style={styles.darkcontainer}>
               <View style={styles.headerContainer}>
                 <Image
-                  style={{ marginRight: 10 }}
-                  source={require("../images/Blue-circle.png")}
+                  style={{ marginRight: 10, width: 48, height: 48, marginBottom: 20 }}
+                  source={require("../images/electric-station.png")}
                 />
                 <View>
                   <Text
@@ -92,9 +101,8 @@ const EditStation = ({ navigation, route }) => {
               </View>
 
               <View style={styles.form}>
-              <Text style={styles.label}>Station Name</Text>
+                <Text style={styles.label}>Station Name</Text>
                 <View style={styles.input}>
-                
                   <TextInput
                     style={styles.inputs}
                     onChangeText={onChangeName}
@@ -110,7 +118,7 @@ const EditStation = ({ navigation, route }) => {
                   <TextInput
                     style={styles.inputs}
                     onChangeText={onChangeCharger}
-                    value={`${charger} kWh`}
+                    value={`${charger}`}
                   />
                   <Image
                     style={styles.icon}
@@ -130,23 +138,21 @@ const EditStation = ({ navigation, route }) => {
                     source={require("../images/edit.png")}
                   />
                 </View>
-              <Text style={styles.textChips}> Services </Text>
-                <View style={styles.chips}>                            
+                <Text style={styles.textChips}> Services </Text>
+                <View style={styles.chips}>
                   <View style={styles.chipsContent}>
-                    {
-                      stationServicesChips.map(stationChip => (
-                          <Chip
-                            key={`chip-${stationChip}`}
-                            style={styles.chip}
-                            mode="flat"
-                            selectedColor="#01A78F"
-                            onPress={() => console.log("Pressed: ", stationChip)}
-                            selected={pressedStation(stationChip)}
-                          >
-                            {` ${stationChip} `}
-                          </Chip>
-                      ))
-                    }
+                    {stationServicesChips.map((stationChip) => (
+                      <Chip
+                        key={`chip-${stationChip}`}
+                        style={styles.chip}
+                        mode="flat"
+                        selectedColor="#01A78F"
+                        onPress={() => serviceButtonPressAction(stationChip.toLowerCase())}
+                        selected={pressedStation(stationChip.toLowerCase())}
+                      >
+                        {` ${stationChip} `}
+                      </Chip>
+                    ))}
                   </View>
                 </View>
 
@@ -154,7 +160,7 @@ const EditStation = ({ navigation, route }) => {
                   <Text style={styles.textButton1}>Modify Location</Text>
                 </Pressable>
 
-                <Pressable style={styles.button2}>
+                <Pressable style={styles.button2} onPress={onSubmit}>
                   <Text style={styles.textButton2}>Update</Text>
                 </Pressable>
               </View>
@@ -162,7 +168,7 @@ const EditStation = ({ navigation, route }) => {
           </ScrollView>
         </ImageBackground>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -191,7 +197,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
-  scrollView : {
+  scrollView: {
     paddingTop: 60,
   },
   mainContainer: {
@@ -219,14 +225,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
-  label :{
+  label: {
     flex: 1,
     fontSize: 18,
     color: "white",
     marginLeft: 10,
     marginBottom: 5,
     fontWeight: "bold",
-
   },
 
   inputs: {

@@ -19,20 +19,7 @@ const {setGlobalState, getGlobalState} = createGlobalState({
         price: 0,
         service_flags: [],
         type: "",
-    },
-    providerStationData: {
-        userID: '',
-        type: 0,
-        services: [],
-        price: 0,
-        name: '',
-        id: '',
-        coordinates: {
-            lat: 0,
-            long: 0,
-        }
-    },
-    providerStationDataButtonClicked: false,
+    }
 });
 
 export {setGlobalState, getGlobalState};
