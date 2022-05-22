@@ -54,6 +54,7 @@ const ManageStations = ({navigation}) => {
               <View style ={styles.inline}>
                 <Text style={styles.textButton}>Station Name:</Text>
                 <Text style={styles.textDetails}>  ZittyMall </Text>
+                
 
               </View>
               
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
     },
    
     containerProps: {
-      marginLeflt: 10,
+      marginLeft: 10,
       alignItems: "center",
       justifyContent: "center",
     },
