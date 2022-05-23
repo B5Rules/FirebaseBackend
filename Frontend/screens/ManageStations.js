@@ -102,7 +102,7 @@ const ManageStations = ({ navigation }) => {
                   onPress={() => pressStation(station)}
                 >
                   <View style={styles.inline}>
-                    <Text style={styles.textButton}>Station Name:</Text>
+                    <Text style={styles.textButton}>Station:</Text>
                     <Text style={styles.textDetails}> {station.name} </Text>
                   </View>
 
