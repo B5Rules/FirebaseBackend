@@ -43,13 +43,13 @@ const StationLocationOnMap = ({ navigation }) => {
   useEffect(() => {
     if(!isFocused) return;
     const data = async () => {
-      setInitialPosition({
-        longitude: getGlobalState("stationChangeMode").coordinates.longitude || origin?.location?.longitude,
-        latitude: getGlobalState("stationChangeMode").coordinates.latitude || origin?.location?.latitude,
+      await setInitialPosition({
+        longitude: getGlobalState("stationChangeMode")?.coordinates?.longitude || origin?.location?.longitude,
+        latitude: getGlobalState("stationChangeMode")?.coordinates?.latitude || origin?.location?.latitude,
         longitudeDelta: mapDelta,
         latitudeDelta: mapDelta,
       })
-      setRegion(initialPosition);
+      await setRegion(initialPosition);
       console.log('Location Position:', initialPosition, region)
     } 
     data();  
