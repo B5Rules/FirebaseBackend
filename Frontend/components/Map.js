@@ -157,7 +157,7 @@ const Map = (props, ref) => {
         }
 
         {destination?.latitude !==undefined && destination?.longitude !== undefined && (
-          console.log(stations),
+          // console.log(stations),
           <Marker
             coordinate={{
               latitude: destination.latitude,
@@ -188,7 +188,7 @@ const Map = (props, ref) => {
                   <TouchableHighlight onPress= {()=>this.markerClick()} underlayColor='#dddddd'>
                       <View style={styles.marker}>
                       <Text style={styles.markerText}>Price:{station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
-                            Type: {station?._fieldsProto?.type?.stringValue} {"\n"}</Text>
+                            {`Type: ${station?._fieldsProto?.type?.integerValue} kWh\n`}</Text>
                       </View>
                   </TouchableHighlight>
                 </MapView.Callout>
