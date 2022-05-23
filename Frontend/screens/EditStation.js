@@ -139,28 +139,28 @@ const EditStation = ({ navigation, route }) => {
   }
 
   const goToMap = () => {
-    const localStation = {
-      id: station?.id,
-      name: name,
-      price: price,
-      services: services,
-      type: charger,
-      coordinates: {
-        latitude: station?.coordinates?.latitude,
-        longitude: station?.coordinates?.longitude,
-      }
-    }
-    console.log("sending data to map: ", localStation)
-    setGlobalState("stationChangeMode", localStation);
+    console.log("sending data to map: ", station)
+    setGlobalState("stationChangeMode", station);
     setGlobalState("stationChangeModeActive", true);
     navigation.navigate("StationLocationOnMap")
   }
+
+  useEffect(() => {
+    console.log(response);
+    if(response.message === "") return;
+    if(response.error === true) {
+      setFailModalVisible(true);
+    } else {
+      setModalVisible(true);
+    }
+  }, [response])
 
   const onSubmit = async () => {
       setResponse((mode === 1) ? 
         await updateStation()
         : await createStation()
       );
+
   };
 
   return (
@@ -267,7 +267,7 @@ const EditStation = ({ navigation, route }) => {
                   <Text style={styles.textButton1}>{locationButtonText}</Text>
                 </Pressable>
                                                                              {/* setFailModalVisible(true) */}
-                <Pressable style={styles.button2} onPress={() => {onSubmit ; setModalVisible(true)} }>
+                <Pressable style={styles.button2} onPress={onSubmit}>
                   <Text style={styles.textButton2}>{submitButtonText}</Text>
                 </Pressable>
               </View>

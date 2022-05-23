@@ -7,6 +7,7 @@ import {
   Button,
   Image,
   Pressable,
+  TouchableWithoutFeedback,
   Modal,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
@@ -30,30 +31,42 @@ const StationLocationOnMap = ({ navigation }) => {
     longitudeDelta: mapDelta,
     latitudeDelta: mapDelta,
   });
-  const [initialPosition, setInitialPosition] = useState({})
+  const [initialPosition, setInitialPosition] = useState({
+    latitude: 0,
+    longitude: 0,
+    longitudeDelta: mapDelta,
+    latitudeDelta: mapDelta,
+  })
   const [modalVisible, setModalVisible] = useState(false);
   const isFocused = useIsFocused();
   const origin = useSelector(selectOrigin);
   useEffect(() => {
-    if(isFocused) {
+    if(!isFocused) return;
+    const data = async () => {
       setInitialPosition({
-        longitude: getGlobalState("stationChangeMode").coordinates.longitude || origin?.location.longitude,
-        latitude: getGlobalState("stationChangeMode").coordinates.latitude || origin?.location.latitude,
+        longitude: getGlobalState("stationChangeMode").coordinates.longitude || origin?.location?.longitude,
+        latitude: getGlobalState("stationChangeMode").coordinates.latitude || origin?.location?.latitude,
         longitudeDelta: mapDelta,
         latitudeDelta: mapDelta,
       })
-      console.log('Position:', initialPosition)
-    }
-  },[isFocused]);
+      setRegion(initialPosition);
+      console.log('Location Position:', initialPosition, region)
+    } 
+    data();  
+  },[]);
   const pressStationBack = (station) => {
     setGlobalState("stationChangeModeActive", true);
-    setGlobalState("stationChangeMode", {
+    const data = {
       ...getGlobalState("stationChangeMode"),
-      coordinates: {
+    }
+
+    if(region.latitude !== 0 && region.longitude !== 0) {
+      data.coordinates = {
         latitude: region.latitude,
         longitude: region.longitude,
-      },
-    });
+      }
+    }
+    setGlobalState("stationChangeMode", data);
     navigation.navigate("Edit Station");
   };
   const changeRegion = (region) => {
@@ -62,28 +75,31 @@ const StationLocationOnMap = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={[styles.mainContainer, styles.containerProps]}>
-        
-        <View style={styles.mapContainer}>
-          {/*Render our MapView*/}
-          <MapView
-            provider={PROVIDER_GOOGLE}
-            style={styles.map}
-            showsUserLocation={true}
-            zoomEnable={true}
-            toolbarEnabled={true}
-            showsMyLocationButton={true}
-            initialRegion={initialPosition}
-            onRegionChange={changeRegion}
-          />
-        </View>
-        <View style={styles.markerFixed}>
-          <MarkerComponent style={styles.marker}   onPress={() => setModalVisible(true)} />
-          {/* <Image style={styles.marker} source={marker} /> */}
-        </View>
+          <>
+            <View style={styles.mapContainer}>
+              {/*Render our MapView*/}
+              <MapView
+                provider={PROVIDER_GOOGLE}
+                style={styles.map}
+                showsUserLocation={true}
+                zoomEnable={true}
+                toolbarEnabled={true}
+                showsMyLocationButton={true}
+                initialRegion={initialPosition}
+                onRegionChange={changeRegion}
+              />
+            </View>
+            <View style={styles.markerFixed}>
+              <MarkerComponent style={styles.marker} onPress={() => setModalVisible(true)} />
+              {/* <Image style={styles.marker} source={marker} /> */}
+            </View>
+          </>
         <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
+        onStartShouldSetResponder={() => true}
+        // on
         onRequestClose={() => {
           Alert.alert("Modal has been closed.");
           setModalVisible(!modalVisible);
@@ -97,7 +113,7 @@ const StationLocationOnMap = ({ navigation }) => {
 
               <Pressable
                 style={[styles.button, styles.buttonClose]}
-                onPress={() => navigation.navigate("Edit Station")}
+                onPress={pressStationBack}
               >
                 <Text style={styles.textStyle}>Confirm</Text>
               </Pressable>
@@ -111,11 +127,6 @@ const StationLocationOnMap = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-        <View style={styles.footer}>
-          <Pressable style={styles.locationButton} onPress={pressStationBack}>
-            <Text>Set location</Text>
-          </Pressable>
-        </View>
       </View>
     </SafeAreaView>
   );
