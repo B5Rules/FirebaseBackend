@@ -2,61 +2,61 @@ import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
-  StatusBar,
   View,
-  TextInput,
-  Image,
   Dimensions,
-  ScrollView,
   Button,
-  ImageBackground,
+  Image,
   Pressable,
-  TouchableHighlight,
-  Alert,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { selectDestination } from "../slices/navSlice";
+import { useSelector } from "react-redux";
+import { selectOrigin } from "../slices/navSlice";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getGlobalState, setGlobalState } from "../globals/global";
 import Constants from "expo-constants";
-import Geolocation from "@react-native-community/geolocation";
+import MarkerComponent from '../components/Marker'; 
 import { useIsFocused } from "@react-navigation/native";
-
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
+const mapDelta = 0.001;
 
 const StationLocationOnMap = ({ navigation }) => {
+  const [region, setRegion] = useState({
+    longitude: 0,
+    latitude: 0,
+    longitudeDelta: mapDelta,
+    latitudeDelta: mapDelta,
+  });
+  const [initialPosition, setInitialPosition] = useState({})
   const isFocused = useIsFocused();
-
-  const [initialPosition, setInitialPosition] = useState({});
+  const origin = useSelector(selectOrigin);
   useEffect(() => {
-    Geolocation.getCurrentPosition((info) => {
-      let lat = info.coords.latitude;
-      let long = info.coords.longitude;
-
-      var initialRegion = {
-        latitude: lat,
-        longitude: long,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      };
-      setInitialPosition(initialRegion);
-  }, [isFocused]);
-
+    if(isFocused) {
+      setInitialPosition({
+        longitude: getGlobalState("stationChangeMode").coordinates.longitude || origin?.location.longitude,
+        latitude: getGlobalState("stationChangeMode").coordinates.latitude || origin?.location.latitude,
+        longitudeDelta: mapDelta,
+        latitudeDelta: mapDelta,
+      })
+      console.log('Position:', initialPosition)
+    }
+  },[isFocused]);
   const pressStationBack = (station) => {
     setGlobalState("stationChangeModeActive", true);
     setGlobalState("stationChangeMode", {
       ...getGlobalState("stationChangeMode"),
       coordinates: {
-        latitude: 44.3021412,
-        longitude: 55.243242,
+        latitude: region.latitude,
+        longitude: region.longitude,
       },
     });
     navigation.navigate("Edit Station");
   };
-
+  const changeRegion = (region) => {
+    setRegion(region);
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={[styles.mainContainer, styles.containerProps]}>
@@ -66,31 +66,42 @@ const StationLocationOnMap = ({ navigation }) => {
             provider={PROVIDER_GOOGLE}
             style={styles.map}
             showsUserLocation={true}
-            followsUserLocation={true}
-            rotateEnabled={true}
             zoomEnable={true}
             toolbarEnabled={true}
             showsMyLocationButton={true}
-            initialPosition={initialPosition}
-            //specify our coordinates.
-            // initialRegion={{
-            //   latitude: 37.78825,
-            //   longitude: -122.4324,
-            //   latitudeDelta: 0.0922,
-            //   longitudeDelta: 0.0421,
-            // }}
+            initialRegion={initialPosition}
+            onRegionChange={changeRegion}
           />
         </View>
-
-        <Pressable style={styles.locationButton} onPress={pressStationBack}>
-          <Text>Set location</Text>
-        </Pressable>
+        <View style={styles.markerFixed}>
+          <MarkerComponent style={styles.marker} />
+          {/* <Image style={styles.marker} source={marker} /> */}
+        </View>
+        <View style={styles.footer}>
+          <Pressable style={styles.locationButton} onPress={pressStationBack}>
+            <Text>Set location</Text>
+          </Pressable>
+        </View>
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  footer: {
+    top: "40%"
+  },
+  markerFixed: {
+    left: "50%",
+    marginLeft: -24,
+    marginTop: -48,
+    position: "absolute",
+    top: "50%",
+  },
+  marker: {
+    height: 48,
+    width: 48,
+  },
   mapContainer: {
     ...StyleSheet.absoluteFillObject,
     flex: 1, //the container will fill the whole screen.

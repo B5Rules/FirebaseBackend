@@ -42,12 +42,12 @@ const createStationFunc = httpsCallable(
 
 const EditStation = ({ navigation, route }) => {
   
-  let station = route.params;
   const isFocused = useIsFocused();
   const mode = getGlobalState("stationChargeModeEdit");
+  const [station, setStation] = useState(route.params);
   useEffect(() => {
     if(isFocused && getGlobalState("stationChangeModeActive") === true){
-        station = getGlobalState("stationChangeMode");
+        setStation(getGlobalState("stationChangeMode"));
         setGlobalState('stationChangeModeActive', false);
     }
   }, [isFocused])
@@ -94,7 +94,7 @@ const EditStation = ({ navigation, route }) => {
 
   const updateStation = async () => {
     const newStation = {
-      id: station.id,
+      id: station?.id,
       name: name,
       price: price,
       services,
@@ -104,7 +104,11 @@ const EditStation = ({ navigation, route }) => {
         longitude: station?.coordinates?.longitude,
       }
     }
+    console.log('Update data: ', newStation);
     const response = await updateStationFunc(newStation)
+    if(response.error !== true) {
+      setStation(newStation);
+    }
     console.log('Update station response: ',response)
     return response;
   }
@@ -129,7 +133,7 @@ const EditStation = ({ navigation, route }) => {
   }
 
   const goToMap = () => {
-    const station = {
+    const localStation = {
       id: station?.id,
       name: name,
       price: price,
@@ -140,7 +144,8 @@ const EditStation = ({ navigation, route }) => {
         longitude: station?.coordinates?.longitude,
       }
     }
-    setGlobalState("stationChangeMode", station);
+    console.log("sending data to map: ", localStation)
+    setGlobalState("stationChangeMode", localStation);
     setGlobalState("stationChangeModeActive", true);
     navigation.navigate("StationLocationOnMap")
   }

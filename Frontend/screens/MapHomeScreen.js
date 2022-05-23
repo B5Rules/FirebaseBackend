@@ -16,6 +16,7 @@ import * as Location from "expo-location";
 import { fireApp, fireAuth, fireFunc } from "../globals/firebase";
 import { httpsCallable } from "firebase/functions";
 import Constants from "expo-constants";
+import { useIsFocused } from "@react-navigation/native";
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -31,10 +32,13 @@ const getDistanceBetweenPoints = async (pointA, pointB) => {
     pointB.longitude +
     "&key=" +
     GOOGLE_MAPS_APIKEY;
-
-  const res = await fetch(urlToFetchDistance);
-  const data = await res.json();
-  return data.rows[0].elements[0].distance.value;
+  try {
+    const res = await fetch(urlToFetchDistance);
+    const data = await res.json();
+    return data.rows[0].elements[0].distance.value;
+  }catch(e) {
+    return 99999999;
+  }
 };
 
 
@@ -52,7 +56,6 @@ const MapHomeScreen = ({navigation}) => {
     const { status } = await Location.requestForegroundPermissionsAsync();
 
     const location = await Location.getLastKnownPositionAsync();
-
     dispatch(
       setOrigin({
         location: {
@@ -65,8 +68,11 @@ const MapHomeScreen = ({navigation}) => {
     );
   };
 
+  const isFocused = useIsFocused();
 
   useEffect(() => {
+    // this should be added  because we want to fetch data every time we enter this screen
+    if(!isFocused) return;
     getAllStations()
       .then((res) => {
         dispatch(setStations(res.data.result));
@@ -128,10 +134,9 @@ const MapHomeScreen = ({navigation}) => {
         func();
       })
       .catch((err) => {
-        console.log("getAllStations: Map.js");
-        console.log(err);
+        console.error("getAllStations: Map.js",err);
       });
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     getLocation();
@@ -158,7 +163,7 @@ const MapHomeScreen = ({navigation}) => {
             placeholderTextColor: "white",
           }}
           onPress={(data, details = null) => {
-            console.log(data);
+            // console.log(data);
             dispatch(
               setDestination({
                 location: { latitude: details.geometry.location.lat, longitude: details.geometry.location.lng },
