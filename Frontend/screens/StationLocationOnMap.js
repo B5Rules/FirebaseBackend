@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
     width,
   },
 
+
 });
 
 export default StationLocationOnMap;
