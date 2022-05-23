@@ -40,6 +40,7 @@ const StationLocationOnMap = ({ navigation }) => {
         longitudeDelta: mapDelta,
         latitudeDelta: mapDelta,
       })
+      setRegion(initialPosition);
       console.log('Position:', initialPosition)
     }
   },[isFocused]);
