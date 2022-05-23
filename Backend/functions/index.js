@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const Joi = require("joi");
+const firestore = require('firebase-admin/firestore');
 
 const app = admin.initializeApp();
 const db = admin.firestore(app);
@@ -156,8 +157,12 @@ exports.createStation = functions
         }),
         data
       );
+      data.price = parseFloat(data.price);
+      data.type = parseInt(data.type);
+      data.coordinates = new firestore.GeoPoint(data.coordinates.latitude, data.coordinates.longitude);
+      data.userID = context.auth.uid;
       console.log('Create station',data);
-      // let querySnapshot = await db.collection("chargingstations").add(data);
+      let querySnapshot = await db.collection("chargingstations").add(data);
 
       return {
         result: querySnapshot.id,
@@ -186,6 +191,10 @@ exports.updateStation = functions
       price: Joi.number(),
       services: Joi.array().items(Joi.string()),
       type: Joi.number().valid(22, 43, 55),
+      coordinates: Joi.object({
+        latitude: Joi.number().required(),
+        longitude: Joi.number().required(),
+      }),
     }), data);
     let querySnapshot = await db.collection("chargingstations").doc(data.id).get()
     if(querySnapshot.data().userID != context.auth.uid){
@@ -193,13 +202,16 @@ exports.updateStation = functions
     }
     data.price = parseFloat(data.price);
     data.type = parseInt(data.type); 
+    data.userID = context.auth.uid;
+    data.coordinates = new firestore.GeoPoint(data.coordinates.latitude, data.coordinates.longitude);
+
     await db.collection("chargingstations").doc(data.id).update(data);
   } catch(e) {
     console.error(e);
     return {result: null,error: true, message: 'Failed to update this charging station. Error: '+e.message};
   }
 
-  return {result: null, error: false, message: `Successfully modified`}
+  return {result: null, error: false, message: `Successfully modified station with id ${data.id}`}
 })
 
 exports.deleteStation = functions

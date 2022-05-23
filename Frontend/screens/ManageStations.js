@@ -13,8 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { httpsCallable } from "firebase/functions";
 import { fireFunc } from "../globals/firebase";
-import { setGlobalState } from "../globals/global";
 import { useIsFocused } from "@react-navigation/native";
+import { setGlobalState } from "../globals/global";
 
 const getAllStationsForSpecificUser = httpsCallable(
   fireFunc,
@@ -33,16 +33,19 @@ const ManageStations = ({ navigation }) => {
       setLoading(false);
     });
     if(isFocused) {
+      setGlobalState('stationChargeModeEdit', 0);
+      setGlobalState("stationChangeModeActive", false);
       setLoading(true);
     }
   }, [isFocused]);
 
   const pressStation = (station) => {
+    setGlobalState("stationChargeModeEdit", 1);
     navigation.navigate("Edit Station", {
         ...station,
         coordinates: {
-          lat: station?.coordinates?._latitude,
-          long: station?.coordinates?._longitude
+          latitude: station?.coordinates?._latitude,
+          longitude: station?.coordinates?._longitude
         }
     });
   };
@@ -73,6 +76,7 @@ const ManageStations = ({ navigation }) => {
             <Text
               style={styles.textButton1}
               onPress={() => {
+                setGlobalState("stationChargeModeEdit", 2);
                 navigation.navigate("Edit Station");
               }}
             >

@@ -22,6 +22,7 @@ import ManageStations from './screens/ManageStations';
 import EditStation from './screens/EditStation';
 import StationInfo from './screens/StationInfo';
 import AddKwh from './screens/AddKwh';
+import StationLocationOnMap from './screens/StationLocationOnMap';
 import {Platform} from 'react-native';
 
 
@@ -72,6 +73,7 @@ export default function App() {
           <Stack.Screen options={{headerShown:false}} name="Provider Homepage" component={HomeScreen}/>
           <Stack.Screen options={{headerShown:false}} name="Manage Stations"  component={ManageStations}/>
           <Stack.Screen options={{headerShown:false}} name="Edit Station" component={EditStation}/>
+          <Stack.Screen options={{headerShown:false}} name="StationLocationOnMap" component={StationLocationOnMap}/>
           <Stack.Screen  options={{headerShown:false}} name="Station Info" component={StationInfo}/>
           <Stack.Screen  options={{headerShown:false}} name="Add kWh" component={AddKwh}/>
 

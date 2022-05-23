@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -17,12 +17,13 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Chip } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getGlobalState } from "../globals/global";
+import { getGlobalState, setGlobalState } from "../globals/global";
 
 import { stationServicesChips } from "../slices/serviceChips";
 
 import { httpsCallable } from "firebase/functions";
 import { fireFunc } from "../globals/firebase";
+import { useIsFocused } from "@react-navigation/native";
 // import { NavigationContainer } from "@react-navigation/native";
 // import { createStackNavigator } from "@react-navigation/stack";
 // import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
@@ -40,9 +41,19 @@ const createStationFunc = httpsCallable(
 );
 
 const EditStation = ({ navigation, route }) => {
-  const station = route.params;
+  
+  let station = route.params;
+  const isFocused = useIsFocused();
+  const mode = getGlobalState("stationChargeModeEdit");
+  useEffect(() => {
+    if(isFocused && getGlobalState("stationChangeModeActive") === true){
+        station = getGlobalState("stationChangeMode");
+        setGlobalState('stationChangeModeActive', false);
+    }
+  }, [isFocused])
+  
   const [name, onChangeName] = useState(station?.name || "");
-  const [charger, onChangeCharger] = useState(station?.type || 0);
+  const [charger, setCharger] = useState(station?.type || 0);
   const [price, onChangePrice] = useState(station?.price || 0); 
   const [services, setServices] = useState(station?.services || [])
   const [response, setResponse] = useState({
@@ -52,13 +63,12 @@ const EditStation = ({ navigation, route }) => {
   })
   let locationButtonText = 'Modify Location';
   let submitButtonText = 'Update';
-  if(station === undefined) {
+  if(mode === 2) {
     locationButtonText = 'Set location';
     submitButtonText = 'Add';
   }
 
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
   const [items, setItems] = useState([
     {label: '55', value: '55'},
     {label: '43', value: '43'},
@@ -89,6 +99,10 @@ const EditStation = ({ navigation, route }) => {
       price: price,
       services,
       type: charger,
+      coordinates: {
+        latitude: station?.coordinates?.latitude,
+        longitude: station?.coordinates?.longitude,
+      }
     }
     const response = await updateStationFunc(newStation)
     console.log('Update station response: ',response)
@@ -96,27 +110,43 @@ const EditStation = ({ navigation, route }) => {
   }
 
   const createStation = async () => {
-    const station = {
+    const newStation = {
       name: name, 
       price: price,
       services,
       type: charger,
       coordinates: {
-        latitude: 0.0,
-        longitude: 0.0,
+        latitude: station?.coordinates?.latitude,
+        longitude: station?.coordinates?.longitude,
       }
     }
-    const response = await createStationFunc(station)
+    console.log('Station created: ', newStation);
+    const response = await createStationFunc(newStation)
     console.log('Create station response: ',response)
 
 
     return response
   }
 
-
+  const goToMap = () => {
+    const station = {
+      id: station?.id,
+      name: name,
+      price: price,
+      services: services,
+      type: charger,
+      coordinates: {
+        latitude: station?.coordinates?.latitude,
+        longitude: station?.coordinates?.longitude,
+      }
+    }
+    setGlobalState("stationChangeMode", station);
+    setGlobalState("stationChangeModeActive", true);
+    navigation.navigate("StationLocationOnMap")
+  }
 
   const onSubmit = async () => {
-      setResponse(station !== undefined ? 
+      setResponse((mode === 1) ? 
         await updateStation()
         : await createStation()
       );
@@ -198,7 +228,7 @@ const EditStation = ({ navigation, route }) => {
                   dropDownStyle={{backgroundColor: '#182724'}}
                   arrowStyle={{color: "white", marginRight: 20}}
                   setOpen={setOpen}
-                  setValue={setValue}
+                  setValue={setCharger}
                   setItems={setItems}
                   
                 />
@@ -222,7 +252,7 @@ const EditStation = ({ navigation, route }) => {
                   </View>
                 </View>
 
-                <Pressable style={styles.button1}>
+                <Pressable style={styles.button1} onPress={goToMap}>
                   <Text style={styles.textButton1}>{locationButtonText}</Text>
                 </Pressable>
 
