@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Journal from "./src/Journal";
 import LoadingScreen from "./src/Loading_screen";
 import Enter_kwh from "./src/Enter_kwh";
+import Enter_password from './src/Enter_password';
 
 const ComponentStripeProvider = () => {
   return (
@@ -37,6 +38,7 @@ export default function App() {
         <Stack.Screen name="Enter_kwh" component={Enter_kwh} />
         <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
         <Stack.Screen name="Journal" component={Journal} />
+        <Stack.Screen name="Enter_password" component={Enter_password} />
         <Stack.Screen name="Pay" component={ComponentStripeProvider} options={{headerBackVisible:true}} />
       </Stack.Navigator>
     </NavigationContainer>
