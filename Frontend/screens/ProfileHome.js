@@ -134,16 +134,6 @@ const ProfilePage = ({navigation}) => {
         </TouchableHighlight>
 
         <TouchableHighlight
-        onPress={()=> {navigation.navigate('CarListOriginal')} }
-        style={styles.button}
-        underlayColor={'#22e6ab'}
-        >
-            <Text
-            style={styles.buttonText}
-            >Cars</Text>
-        </TouchableHighlight>
-
-        <TouchableHighlight
         onPress={()=>{navigation.navigate('ProfileSetup')}}
         style={styles.button}
         underlayColor={'#22e6ab'}
@@ -258,7 +248,7 @@ const styles = StyleSheet.create({
   button: {
       backgroundColor: '#3B9683',
       width: "100%",
-      padding: 9,
+      padding: 15,
       borderRadius: 10,
       alignItems: 'center',
       marginTop: 15,
