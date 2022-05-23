@@ -7,6 +7,7 @@ import {
   Button,
   Image,
   Pressable,
+  Modal,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useSelector } from "react-redux";
@@ -30,6 +31,7 @@ const StationLocationOnMap = ({ navigation }) => {
     latitudeDelta: mapDelta,
   });
   const [initialPosition, setInitialPosition] = useState({})
+  const [modalVisible, setModalVisible] = useState(false);
   const isFocused = useIsFocused();
   const origin = useSelector(selectOrigin);
   useEffect(() => {
@@ -60,6 +62,7 @@ const StationLocationOnMap = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={[styles.mainContainer, styles.containerProps]}>
+        
         <View style={styles.mapContainer}>
           {/*Render our MapView*/}
           <MapView
@@ -74,9 +77,40 @@ const StationLocationOnMap = ({ navigation }) => {
           />
         </View>
         <View style={styles.markerFixed}>
-          <MarkerComponent style={styles.marker} />
+          <MarkerComponent style={styles.marker}   onPress={() => setModalVisible(true)} />
           {/* <Image style={styles.marker} source={marker} /> */}
         </View>
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Confirm location</Text>
+
+            <View style={{flexDirection: "row", width, alignItems: "center", justifyContent: "center"}}>
+
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => navigation.navigate("Edit Station")}
+              >
+                <Text style={styles.textStyle}>Confirm</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>Close</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
         <View style={styles.footer}>
           <Pressable style={styles.locationButton} onPress={pressStationBack}>
             <Text>Set location</Text>
@@ -152,9 +186,73 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
   locationButton: {
     bottom: 10,
   },
+
+  
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 700,
+    borderRadius: 20,
+  
+  },
+  
+  
+  modalView: {    
+    backgroundColor: "#182724",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    bottom: 0,
+    margin: 0,
+    flex: 1, 
+    paddingTop:  20
+
+  },
+  
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginRight:10,
+    width: 150,
+
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#16a085",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+
+  modalText: {
+    marginBottom: 20,
+    color: "white",
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: "center",
+    borderBottomColor: "white",
+    borderBottomWidth: 2,
+    width,
+  },
+
 });
 
 export default StationLocationOnMap;
