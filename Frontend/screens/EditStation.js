@@ -13,6 +13,7 @@ import {
   Pressable,
   TouchableHighlight,
   Alert,
+  Modal,
 } from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Chip } from "react-native-paper";
@@ -24,6 +25,9 @@ import { stationServicesChips } from "../slices/serviceChips";
 import { httpsCallable } from "firebase/functions";
 import { fireFunc } from "../globals/firebase";
 import { useIsFocused } from "@react-navigation/native";
+
+import Svg, { Circle } from 'react-native-svg';
+
 // import { NavigationContainer } from "@react-navigation/native";
 // import { createStackNavigator } from "@react-navigation/stack";
 // import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
@@ -68,6 +72,8 @@ const EditStation = ({ navigation, route }) => {
     submitButtonText = 'Add';
   }
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [failModalVisible, setFailModalVisible] = useState(false);
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([
     {label: '55', value: '55'},
@@ -165,7 +171,7 @@ const EditStation = ({ navigation, route }) => {
           resizeMode="cover"
           style={styles.image}
         >
-          <ScrollView style={[width, styles.scrollView]}>
+          <ScrollView nestedScrollEnabled={true}  style={[width, styles.scrollView]}>
             <View style={styles.darkcontainer}>
               <View style={styles.headerContainer}>
                 <Image
@@ -187,7 +193,7 @@ const EditStation = ({ navigation, route }) => {
               </View>
 
               <View style={styles.form}>
-                <Text style={styles.label}>Station Name</Text>
+                <Text style={styles.label}>Name</Text>
                 <View style={styles.input}>
                   <TextInput
                     style={styles.inputs}
@@ -235,7 +241,7 @@ const EditStation = ({ navigation, route }) => {
                   setOpen={setOpen}
                   setValue={setCharger}
                   setItems={setItems}
-                  
+                  listMode="SCROLLVIEW"      
                 />
 
 
@@ -260,12 +266,76 @@ const EditStation = ({ navigation, route }) => {
                 <Pressable style={styles.button1} onPress={goToMap}>
                   <Text style={styles.textButton1}>{locationButtonText}</Text>
                 </Pressable>
-
-                <Pressable style={styles.button2} onPress={onSubmit}>
+                                                                             {/* setFailModalVisible(true) */}
+                <Pressable style={styles.button2} onPress={() => {onSubmit ; setModalVisible(true)} }>
                   <Text style={styles.textButton2}>{submitButtonText}</Text>
                 </Pressable>
-
               </View>
+
+              {/* popup for succes */}
+              <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                Alert.alert("Modal has been closed.");
+                setModalVisible(!modalVisible);
+              }}
+              >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                <Image
+                    style={{ marginRight: 10, width: 48, height: 48, marginBottom: 20 }}
+                    source={require("../images/check-circle.png")}
+                  />
+
+                <Text style={styles.modalText}>Your changes have been successfully saved!</Text>
+
+                  <View style={{flexDirection: "row", width, alignItems: "center", justifyContent: "center"}}>
+
+                    <Pressable
+                      style={[styles.button, styles.buttonClose]}
+                      onPress={() => {setModalVisible(!modalVisible) ; navigation.navigate("Manage Stations")}}
+                    >
+                      <Text style={styles.textStyle}>Close</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </View>
+            </Modal>
+
+
+              {/* popup for fail */}
+              <Modal
+              animationType="slide"
+              transparent={true}
+              visible={failModalVisible}
+              onRequestClose={() => {
+                Alert.alert("Modal has been closed.");
+                setFailModalVisible(!failModalVisible);
+              }}
+              >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                <Image
+                    style={{ marginRight: 10, width: 48, height: 48, marginBottom: 20 }}
+                    source={require("../images/error-icon.png")}
+                  />
+
+                <Text style={styles.modalText}>Something went wrong. Changes were not saved.</Text>
+
+                  <View style={{flexDirection: "row", width, alignItems: "center", justifyContent: "center"}}>
+
+                    <Pressable
+                      style={[styles.button, styles.buttonClose]}
+                      onPress={() => {setFailModalVisible(!failModalVisible) ; navigation.navigate("Manage Stations")}}
+                    >
+                      <Text style={styles.textStyle}>Close</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </View>
+            </Modal>
             </View>
           </ScrollView>
         </ImageBackground>
@@ -299,9 +369,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+
   scrollView: {
     paddingTop: 10,
   },
+
   mainContainer: {
     backgroundColor: "#0A1613",
     alignItems: "center",
@@ -439,6 +511,69 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     color: "white",
+  },
+
+  //modal
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 650,
+    borderRadius: 20,
+  
+  },
+  
+  
+  modalView: {    
+    backgroundColor: "#182724",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    bottom: 0,
+    margin: 0,
+    flex: 1, 
+    paddingTop:  20,
+   
+
+  },
+  
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginRight:10,
+    width: 150,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#16a085",
+    marginBottom: 20
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+
+  modalText: {
+    marginBottom: 20,
+    color: "white",
+    fontSize: 18,
+    textAlign: "center",
+    borderBottomColor: "white",
+    borderBottomWidth: 2,
+    width,
   },
 });
 

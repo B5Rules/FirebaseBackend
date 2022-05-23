@@ -12,6 +12,8 @@
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
     "@mapbox/polyline": "^1.1.1",
+    "@mdi/js": "^6.7.96",
+    "@mdi/react": "^1.6.0",
     "@react-native-picker/picker": "2.4.0",
     "@react-navigation/material-bottom-tabs": "^6.2.1",
     "@react-navigation/native": "^6.0.10",
@@ -49,7 +51,8 @@
     "stripe": "^9.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "react-native-svg-transformer": "^1.0.0"
   },
   "private": true
 }
