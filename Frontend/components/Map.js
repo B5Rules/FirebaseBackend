@@ -16,7 +16,7 @@ import { decode } from "@mapbox/polyline";
 import { useDispatch } from "react-redux";
 import Constants from "expo-constants";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
-
+import { routeCalculator } from "../slices/routeCalculator";
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
 //import { or } from "react-native-reanimated";
@@ -81,6 +81,11 @@ const Map = (props, ref) => {
   };
 
   const createRoute = () => {
+    // TODO: Draw the route using this!
+    routeCalculator({
+      latitude: origin?.location.latitude,
+      longitude: origin?.location.longitude,
+    }, destination);
     setRouteDestination(destination);
   };
 

@@ -108,6 +108,17 @@ exports.getAllStations = functions.region("europe-west1").https.onCall(async(dat
 
 });
 
+exports.getAllStationsData = functions.region("europe-west1").https.onCall(async(data, context)=>{
+  let querySnapshot = await db.collection('chargingstations').get();
+  let stations = [];
+
+  querySnapshot.forEach(doc => {
+    stations.push({id: doc.id, ...doc.data()})
+  });
+  return ({result:stations});
+
+});
+
 exports.getAllStationsForSpecificUser = functions.region("europe-west1").https.onCall(async(data, context)=>{
   let querySnapshot = await db.collection('chargingstations').where("userID", "==", context.auth.uid).get();
   let stations = [];
