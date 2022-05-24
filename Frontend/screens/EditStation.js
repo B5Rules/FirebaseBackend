@@ -110,12 +110,12 @@ const EditStation = ({ navigation, route }) => {
         longitude: station?.coordinates?.longitude,
       }
     }
-    console.log('Update data: ', newStation);
+    // console.log('Update data: ', newStation);
     const response = await updateStationFunc(newStation)
     if(response.error !== true) {
       setStation(newStation);
     }
-    console.log('Update station response: ',response)
+    // console.log('Update station response: ',response)
     return response;
   }
 
@@ -130,23 +130,23 @@ const EditStation = ({ navigation, route }) => {
         longitude: station?.coordinates?.longitude,
       }
     }
-    console.log('Station created: ', newStation);
+    // console.log('Station created: ', newStation);
     const response = await createStationFunc(newStation)
-    console.log('Create station response: ',response)
+    // console.log('Create station response: ',response)
 
 
     return response
   }
 
   const goToMap = () => {
-    console.log("sending data to map: ", station)
+    // console.log("sending data to map: ", station)
     setGlobalState("stationChangeMode", station);
     setGlobalState("stationChangeModeActive", true);
     navigation.navigate("StationLocationOnMap")
   }
 
   useEffect(() => {
-    console.log(response);
+    // console.log(response);
     if(response.message === "") return;
     if(response.error === true) {
       setFailModalVisible(true);

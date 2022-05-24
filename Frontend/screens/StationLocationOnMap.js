@@ -50,7 +50,7 @@ const StationLocationOnMap = ({ navigation }) => {
         latitudeDelta: mapDelta,
       })
       setRegion(initialPosition);
-      console.log('Location Position:', initialPosition, region)
+      // console.log('Location Position:', initialPosition, region)
     } 
     data();  
   },[]);

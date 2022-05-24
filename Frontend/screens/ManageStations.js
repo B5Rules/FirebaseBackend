@@ -69,7 +69,7 @@ const ManageStations = ({ navigation }) => {
     })
     setShouldRefetch(true);
     setModalVisible(false);
-    console.log(response)
+    // console.log(response)
   }
 
   return (
