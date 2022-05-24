@@ -7,6 +7,7 @@ const {setGlobalState, getGlobalState} = createGlobalState({
         lastName: '',
         phone: '',
         country: '',
+        uid: '',
     },
     needUpdate: true,
     kwhToCharge: -1,
@@ -19,7 +20,20 @@ const {setGlobalState, getGlobalState} = createGlobalState({
         service_flags: [],
         type: "",
     },
-
+    stationChangeMode: {
+        id: '',
+        name: '', 
+        price: 0,
+        services: [],
+        type: 0,
+        userID: '',
+        coordinates: {
+            latitude: 0.0,
+            longitude: 0.0,
+        }
+    },
+    stationChangeModeActive: false,
+    stationChargeModeEdit: 0, // 1 - edit, 2 - add
 });
 
 export {setGlobalState, getGlobalState};

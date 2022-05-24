@@ -44,7 +44,6 @@ const AuthHandler = ({navigation}) => {
                     navigation.navigate('ProfileSetup');
                 }
                 else{
-                    console.log(response.data['result']['username']);
                     //profile exists; shove it in global state
                     setGlobalState('userData',{
                         username: response.data['result']['username'],
@@ -52,6 +51,7 @@ const AuthHandler = ({navigation}) => {
                         lastName: response.data['result']['lastName'],
                         phone: response.data['result']['phone'],
                         country: response.data['result']['country'],
+                        uid: response.data['result']['uid'],
                     });
                     setGlobalState('needUpdate',false);
                     navigation.navigate('MapNavigator');
