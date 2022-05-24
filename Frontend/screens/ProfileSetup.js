@@ -219,9 +219,11 @@ const ProfileSetup = ({navigation}) => {
           {isFieldInError('phone') && <Text style={styles.error}>*Phone number must have 10 digits!</Text>}
 
           <View style={registerStyles.wrapper}>
+            
               <Picker
                 selectedValue={selectedCountry}
                 style={registerStyles.picker}
+                itemStyle={Platform.OS === 'ios' && registerStyles.item}
                 onValueChange={(itemValue, itemIndex) =>
                   setSelectedCountry(itemValue)
                 }
@@ -572,7 +574,10 @@ const ProfileSetup = ({navigation}) => {
 }
 
 export default ProfileSetup
-
+const IOSMargins = Platform.OS === 'ios' ? {
+  marginTop: 50,
+  marginBottom: 50,
+} : {}
 const registerStyles = StyleSheet.create({
   wrapper: {
     backgroundColor: "#182724",
@@ -583,6 +588,10 @@ const registerStyles = StyleSheet.create({
     width: "100%",
     height: 50,
     justifyContent: "center",
+    ...IOSMargins
+  },
+  item: {
+    color: '#FFF'
   },
   picker: {
     color: "#f1f1f1",
