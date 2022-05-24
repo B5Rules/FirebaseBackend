@@ -124,6 +124,11 @@ const MapHomeScreen = ({navigation}) => {
             
             stationsAux[i] = aux1;
           }
+
+          stationsAux.sort(function(a, b) {
+            let x = a['distance'].doubleValue; let y = b.distance.doubleValue;
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+          });
           dispatch(
             setNearByStaions(stationsAux)
           );

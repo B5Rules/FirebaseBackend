@@ -137,8 +137,8 @@ const Map = (props, ref) => {
               mapRef.current.fitToCoordinates(result.coordinates, {
                 edgePadding: {
                   top: 50,
-                  right: 20,
-                  left: 20,
+                  right: 50,
+                  left: 50,
                   bottom: 50,
                 },
               });
@@ -149,7 +149,7 @@ const Map = (props, ref) => {
           />
         )}
 
-        {origin?.location !== undefined && 
+        {/* {origin?.location !== undefined && 
           <Marker
             coordinate={{
               latitude: origin?.location.latitude,
@@ -157,9 +157,8 @@ const Map = (props, ref) => {
             }}
             title="Origin"
             identifier="origin"
-            />
-              
-        }
+            />   
+        } */}
 
         {destination?.latitude !==undefined && destination?.longitude !== undefined && (
           // console.log(stations),

@@ -8,7 +8,7 @@ function NearbyStations(navigation) {
   const nearByStations = useSelector(selectNearByStations);
 
   useEffect(() => {
-    //console.log(nearByStations);
+    console.log(nearByStations);
   });
 
   return (
@@ -31,7 +31,7 @@ function NearbyStations(navigation) {
           <Text style={styles.txtLeft}>Price:</Text>
           <Text style={styles.txtRight}>{nearByStations[0]?.price?.doubleValue}  /kWh</Text>
           <Image style={styles.image} source={require('../assets/power.png')} />
-          <Text style={styles.txtRight}>{nearByStations[0]?.type?.stringValue}</Text>
+          <Text style={styles.txtRight}>{nearByStations[0]?.type?.integerValue}</Text>
         </View>
 
         <View style={styles.row}>
@@ -68,7 +68,7 @@ function NearbyStations(navigation) {
           <Text style={styles.txtLeft}>Price:</Text>
           <Text style={styles.txtRight}>{ nearByStations[1]?.price?.doubleValue } /kWh</Text>
           <Image style={styles.image} source={require('../assets/power.png')} />
-          <Text style={styles.txtRight}>{nearByStations[1]?.type?.stringValue}</Text>
+          <Text style={styles.txtRight}>{nearByStations[1]?.type?.integerValue}</Text>
         </View>
 
         <View style={styles.row}>
@@ -105,7 +105,7 @@ function NearbyStations(navigation) {
           <Text style={styles.txtLeft}>Price:</Text>
           <Text style={styles.txtRight}>{nearByStations[2]?.price?.doubleValue} /kWh</Text>
           <Image style={styles.image} source={require('../assets/power.png')} />
-          <Text style={styles.txtRight}>{nearByStations[2]?.type?.stringValue}</Text>
+          <Text style={styles.txtRight}>{nearByStations[2]?.type?.integerValue}</Text>
         </View>
 
         <View style={styles.row}>
