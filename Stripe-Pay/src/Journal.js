@@ -4,6 +4,7 @@ import {
   TextInput,
   SafeAreaView,
   Image,
+  Alert,
   View,
   Pressable,
   ScrollView,
@@ -47,6 +48,8 @@ export default function Journal({ navigation }) {
 
   const fallBackToDefaultAuth = () => {
     console.log('fall back to password authentication');
+
+    navigation.navigate("Enter_password");
   };
 
   const alertComponent = (title, mess, btnTxt, btnFunc) => {
@@ -57,6 +60,7 @@ export default function Journal({ navigation }) {
       },
     ]);
   };
+
 
   const handleBiometricAuth = async () => {
     // Check if hardware supports biometrics
