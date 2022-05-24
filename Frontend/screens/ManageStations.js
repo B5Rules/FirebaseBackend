@@ -22,6 +22,11 @@ const getAllStationsForSpecificUser = httpsCallable(
   fireFunc,
   "getAllStationsForSpecificUser"
 );
+
+const deleteStationByIDForSpecificUser = httpsCallable(
+  fireFunc,
+  "deleteStationByIDForSpecificUser"
+);
 const { width } = Dimensions.get("screen");
 
 const ManageStations = ({ navigation }) => {
@@ -29,18 +34,23 @@ const ManageStations = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
+  const [stationDeleteID, setStationForDelete] = useState('');
+  const [shouldRefetch, setShouldRefetch] = useState(true);
 
   useEffect(() => {
+    if(shouldRefetch === false || isFocused === false) return;
+
     getAllStationsForSpecificUser().then((res) => {
       setStations(res.data.result);
       setLoading(false);
     });
+    setShouldRefetch(false);
     if(isFocused) {
       setGlobalState('stationChargeModeEdit', 0);
       setGlobalState("stationChangeModeActive", false);
       setLoading(true);
     }
-  }, [isFocused]);
+  }, [isFocused, shouldRefetch]);
 
   const pressStation = (station) => {
     setGlobalState("stationChargeModeEdit", 1);
@@ -52,6 +62,15 @@ const ManageStations = ({ navigation }) => {
         }
     });
   };
+
+  const handleDeleteStation = async () => {
+    const response = await deleteStationByIDForSpecificUser({
+      id: stationDeleteID
+    })
+    setShouldRefetch(true);
+    setModalVisible(false);
+    console.log(response)
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -114,7 +133,7 @@ const ManageStations = ({ navigation }) => {
                    accessible={true}
                    activeOpacity={0.5} 
                    style={styles.deleteButton}
-                   onPress={() => setModalVisible(true)}
+                   onPress={() => {setStationForDelete(station.id); setModalVisible(true)}}
                     >
                     <Image
                     style={{  width: 35, height: 35 }}
@@ -162,7 +181,6 @@ const ManageStations = ({ navigation }) => {
         transparent={true}
         visible={modalVisible}
         onStartShouldSetResponder={() => true}
-        // on
         onRequestClose={() => {
           Alert.alert("Modal has been closed.");
           setModalVisible(!modalVisible);
@@ -178,8 +196,9 @@ const ManageStations = ({ navigation }) => {
                accessible={true}
                activeOpacity={0.5}
                 style={[styles.buttonModal, styles.buttonYes]}
+                onPress={handleDeleteStation}
               >
-                <Text style={styles.textStyle}>Yes</Text>
+                <Text style={styles.textStyle} >Yes</Text>
               </TouchableOpacity>
               <TouchableOpacity
               accessible={true}

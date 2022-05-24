@@ -214,7 +214,7 @@ exports.updateStation = functions
   return {result: null, error: false, message: `Successfully modified station with id ${data.id}`}
 })
 
-exports.deleteStation = functions
+exports.deleteStationByIDForSpecificUser = functions
   .region("europe-west1")
   .https.onCall(async (data, context) => {
       try{
@@ -223,7 +223,7 @@ exports.deleteStation = functions
         }), data);
         const resp = await db.collection("chargingstations").doc(data.id).delete();
         
-          return { result: null, message: `Successfully deleted station with id '${data.id}'` };
+        return { result: null, message: `Successfully deleted station with id '${data.id}'` };
 
       } catch (e) {
         return { result: null, error: true, message: e.message };
