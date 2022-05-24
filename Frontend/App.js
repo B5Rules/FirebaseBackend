@@ -19,15 +19,11 @@ import MapNavigator from './screens/MapNavigator';
 import AuthHandler from './screens/AuthHandler';
 import HomeScreen from './screens/HomeScreen';
 import ManageStations from './screens/ManageStations';
-import ManagePersonalData from './screens/ManagePersonalData';
+import EditStation from './screens/EditStation';
 import StationInfo from './screens/StationInfo';
 import AddKwh from './screens/AddKwh';
+import StationLocationOnMap from './screens/StationLocationOnMap';
 import {Platform} from 'react-native';
-import AddCar from "./screens/AddCar";
-import CarListOriginal from "./screens/CarListOriginal";
-import CarDetailOriginal from "./screens/CarDetailOriginal";
-import CarUpdate from "./screens/CarUpdate";
-import CarsMenu from "./screens/CarsMenu";
 
 
 
@@ -74,18 +70,13 @@ export default function App() {
 
           {/* provider pages */}
 
-          <Stack.Screen name="Provider Homepage" component={HomeScreen}/>
-          <Stack.Screen name="Manage Stations"  component={ManageStations}/>
-          <Stack.Screen   name="Manage Personal Data" component={ManagePersonalData}/>
-          <Stack.Screen name="Station Info" component={StationInfo}/>
-          <Stack.Screen name="Add kWh" component={AddKwh}/>
+          <Stack.Screen options={{headerShown:false}} name="Provider Homepage" component={HomeScreen}/>
+          <Stack.Screen options={{headerShown:false}} name="Manage Stations"  component={ManageStations}/>
+          <Stack.Screen options={{headerShown:false}} name="Edit Station" component={EditStation}/>
+          <Stack.Screen options={{headerShown:false}} name="StationLocationOnMap" component={StationLocationOnMap}/>
+          <Stack.Screen  options={{headerShown:false}} name="Station Info" component={StationInfo}/>
+          <Stack.Screen  options={{headerShown:false}} name="Add kWh" component={AddKwh}/>
 
-          {/* beneficiary pages */}
-          <Stack.Screen options={{headerShown:true}} name="CarsMenu" component={CarsMenu}/>
-          <Stack.Screen options={{headerShown:true}} name="CarListOriginal"  component={CarListOriginal}/>
-          <Stack.Screen  options={{headerShown:true}} name="CarDetailOriginal" component={CarDetailOriginal}/>
-          <Stack.Screen options={{headerShown:true}} name="CarUpdate" component={CarUpdate}/>
-          <Stack.Screen options={{headerShown:true}}name="AddCar" component={AddCar}/>
         </Stack.Navigator>
       </NavigationContainer>
     </ImageBackground>

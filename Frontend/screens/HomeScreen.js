@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get("screen");
 
-
 const HomeScreen = ({navigation}) => {
     return (
 
@@ -34,7 +33,7 @@ const HomeScreen = ({navigation}) => {
 
         <Pressable style={[styles.button, styles.shadowProp]}
                   onPress={() => {navigation.navigate("Manage Stations")}}>
-          <Text style={styles.textButton}>Manage Stations</Text>
+          <Text style={styles.textButton}>My Stations</Text>
           <Image
             style={{marginRight: 20 }}
             source={require('../images/Lightning.png')}
@@ -42,7 +41,7 @@ const HomeScreen = ({navigation}) => {
 
         </Pressable>
 
-        <Pressable style={[styles.button, styles.shadowProp]}
+        {/* <Pressable style={[styles.button, styles.shadowProp]}
                   onPress={() => {navigation.navigate("Manage Personal Data")}}>
           <Text style={styles.textButton}>Manage Personal Data</Text>
           <Image
@@ -50,11 +49,11 @@ const HomeScreen = ({navigation}) => {
             source={require('../images/User.png')}
         />
 
-        </Pressable>
+        </Pressable> */}
 
 
 {/* on click it sends you to one stations page info */}
-        <Pressable style={[styles.button, styles.shadowProp]}  
+        {/* <Pressable style={[styles.button, styles.shadowProp]}  
                   onPress={() => {navigation.navigate("Station Info")}}> 
           <Text style={styles.textButton}>Extra facilities</Text>
           <Image
@@ -62,13 +61,13 @@ const HomeScreen = ({navigation}) => {
             source={require('../images/fast-food.png')}
         />
 
-        </Pressable>
+        </Pressable> */}
 
-        <Pressable style={[styles.button, styles.shadowProp]}  
+        {/* <Pressable style={[styles.button, styles.shadowProp]}  
                   onPress={() => {navigation.navigate("Add kWh")}}> 
           <Text style={styles.textButton}> Add kWh</Text>
 
-        </Pressable>
+        </Pressable> */}
 
         </ScrollView>
         </ImageBackground>

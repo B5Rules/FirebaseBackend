@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const Joi = require("joi");
+const firestore = require('firebase-admin/firestore');
 
 const app = admin.initializeApp();
 const db = admin.firestore(app);
@@ -64,7 +65,7 @@ exports.insertProfile = functions
     });
 
     if(status) return{status:status,message:message};
-    else return {status:0};
+    else return {status:0, uid: uid};
 
 });
 
@@ -107,6 +108,16 @@ exports.getAllStations = functions.region("europe-west1").https.onCall(async(dat
 
 });
 
+exports.getAllStationsForSpecificUser = functions.region("europe-west1").https.onCall(async(data, context)=>{
+  let querySnapshot = await db.collection('chargingstations').where("userID", "==", context.auth.uid).get();
+  let stations = [];
+
+  querySnapshot.forEach(doc => {
+    stations.push({id: doc.id, ...doc.data()})
+  });
+  return ({result:stations});
+});
+
 const validateObject = (object, data) => {
   const valid = object.validate(data);
   if (valid.error !== undefined) throw new Error(valid.error);
@@ -135,16 +146,22 @@ exports.createStation = functions
     try {
       validateObject(
         Joi.object({
+          name: Joi.string().required(),
           price: Joi.number().required(),
           services: Joi.array().items(Joi.string()).required(),
-          type: Joi.string().valid("slow", "normal", "fast").required(),
-          coordinate: Joi.object({
+          type: Joi.number().valid(22, 43, 55).required(),
+          coordinates: Joi.object({
             latitude: Joi.number().required(),
             longitude: Joi.number().required(),
           }).required(),
         }),
         data
       );
+      data.price = parseFloat(data.price);
+      data.type = parseInt(data.type);
+      data.coordinates = new firestore.GeoPoint(data.coordinates.latitude, data.coordinates.longitude);
+      data.userID = context.auth.uid;
+      console.log('Create station',data);
       let querySnapshot = await db.collection("chargingstations").add(data);
 
       return {
@@ -164,7 +181,40 @@ exports.createStation = functions
  }, '')
  */
 
-exports.deleteStation = functions
+exports.updateStation = functions
+.region("europe-west1")
+.https.onCall(async (data, context) => {
+  try {
+    validateObject(Joi.object({
+      id: Joi.string().required(),
+      name: Joi.string(),
+      price: Joi.number(),
+      services: Joi.array().items(Joi.string()),
+      type: Joi.number().valid(22, 43, 55),
+      coordinates: Joi.object({
+        latitude: Joi.number().required(),
+        longitude: Joi.number().required(),
+      }),
+    }), data);
+    let querySnapshot = await db.collection("chargingstations").doc(data.id).get()
+    if(querySnapshot.data().userID != context.auth.uid){
+      return {result:null, error:true, message:"You are not the owner of this station"}
+    }
+    data.price = parseFloat(data.price);
+    data.type = parseInt(data.type); 
+    data.userID = context.auth.uid;
+    data.coordinates = new firestore.GeoPoint(data.coordinates.latitude, data.coordinates.longitude);
+
+    await db.collection("chargingstations").doc(data.id).update(data);
+  } catch(e) {
+    console.error(e);
+    return {result: null,error: true, message: 'Failed to update this charging station. Error: '+e.message};
+  }
+
+  return {result: null, error: false, message: `Successfully modified station with id ${data.id}`}
+})
+
+exports.deleteStationByIDForSpecificUser = functions
   .region("europe-west1")
   .https.onCall(async (data, context) => {
       try{
@@ -173,7 +223,7 @@ exports.deleteStation = functions
         }), data);
         const resp = await db.collection("chargingstations").doc(data.id).delete();
         
-          return { result: null, message: `Successfully deleted station with id '${data.id}'` };
+        return { result: null, message: `Successfully deleted station with id '${data.id}'` };
 
       } catch (e) {
         return { result: null, error: true, message: e.message };
@@ -199,52 +249,3 @@ exports.getStationData = functions.region("europe-west1").https.onCall(async(dat
     let querySnapshot = await db.collection('chargingstations').doc(stationID).get();
     return ({result:(querySnapshot.data())});
 });
-exports.addCar=functions.region("europe-west1").https.onCall(async( data,context)=>{
-  const uid = context.auth.uid;
-db.collection("userdata").doc(uid).collection("cars").add({
-      name:data.nume,
-      color:data.culoare,
-      distantaMax:data.distantaMax,
-      capacBaterie:data.capacBaterie,
-      numarKm:data.numarKm,
-      caiPutere:data.caiPutere
-  })
-  .then(docRef=>{
-      db.collection("userdata").doc(uid).collection("cars").doc(docRef.id).update({uid:docRef.id});
-  })
-.catch(err=>{
-      console.log(err);
-  });
-  
-});
-
-exports.getCars = functions.region("europe-west1").https.onCall(async(data, context)=>{
-  const uid = context.auth.uid;
-  let querySnapshot = await db.collection("userdata").doc(uid).collection('cars').get();
-  var cars=[];
-  querySnapshot.docs.forEach(doc=>
-  {
-      cars.push(doc.data());
-      console.log(cars);
-  })
-   return cars;
-});
-
-exports.deleteCar=functions.region("europe-west1").https.onCall(async(data, context)=>{
-  const uid = context.auth.uid;
-  db.collection('userdata').doc(uid).collection('cars').doc(data.uid).delete();
-});
-
-exports.updateCar = functions.region("europe-west1").https.onCall(async (data, context)=> {
-       const uid = context.auth.uid;
-      db.collection('userdata').doc(uid).collection('cars').doc(data.uid).set({
-           uid: data.uid,
-           name: data.name,
-           color: data.color,
-           distantaMax: data.distantaMax,
-           capacBaterie: data.capacBaterie,
-           numarKm: data.numarKm,
-           caiPutere: data.caiPutere,
-           uid:data.uid
-       });
-   });
