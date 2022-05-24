@@ -148,14 +148,16 @@ const ManageStations = ({ navigation }) => {
               </ScrollView>
             </>
           ) : (
-            <View style={[styles.mainContainer, styles.containerProps]}>
-              <Text
-                style={{ fontSize: 18, fontWeight: "bold", color: "white" }}
-              >
-                {
-                  loading === true ? "Loading..." : "You have no stations yet"
-                }
-              </Text>
+            <View style={{width}}>
+              <View style={[styles.containerProps]}>
+                <Text
+                  style={{ fontSize: 18, fontWeight: "bold", color: "white" }}
+                >
+                  {
+                    loading === true ? "Loading..." : "You have no stations yet"
+                  }
+                </Text>
+              </View>
             </View>
           )}
         </ImageBackground>

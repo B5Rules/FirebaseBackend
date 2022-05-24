@@ -146,9 +146,10 @@ const EditStation = ({ navigation, route }) => {
   }
 
   useEffect(() => {
-    // console.log(response);
-    if(response.message === "") return;
-    if(response.error === true) {
+    console.log(response);
+    if(!response || !response?.data || response.data.message === "") return;
+
+    if(response?.data?.error === true) {
       setFailModalVisible(true);
     } else {
       setModalVisible(true);
