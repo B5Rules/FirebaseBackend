@@ -10,7 +10,7 @@ import {
   ScrollView,
   Button,
   ImageBackground,
-  Pressable,
+  TouchableOpacity,
   TouchableHighlight,
   Alert,
   Modal,
@@ -263,13 +263,15 @@ const EditStation = ({ navigation, route }) => {
                   </View>
                 </View>
 
-                <Pressable style={styles.button1} onPress={goToMap}>
+                <TouchableOpacity accessible={true}
+                activeOpacity={0.5} style={styles.button1} onPress={goToMap}>
                   <Text style={styles.textButton1}>{locationButtonText}</Text>
-                </Pressable>
+                </TouchableOpacity>
                                                                              {/* setFailModalVisible(true) */}
-                <Pressable style={styles.button2} onPress={onSubmit}>
+                <TouchableOpacity accessible={true}
+                activeOpacity={0.5} style={styles.button2} onPress={onSubmit}>
                   <Text style={styles.textButton2}>{submitButtonText}</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
 
               {/* popup for succes */}
@@ -293,12 +295,13 @@ const EditStation = ({ navigation, route }) => {
 
                   <View style={{flexDirection: "row", width, alignItems: "center", justifyContent: "center"}}>
 
-                    <Pressable
+                    <TouchableOpacity accessible={true}
+                    activeOpacity={0.5}
                       style={[styles.button, styles.buttonClose]}
                       onPress={() => {setModalVisible(!modalVisible) ; navigation.navigate("Manage Stations")}}
                     >
                       <Text style={styles.textStyle}>Close</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
@@ -326,12 +329,13 @@ const EditStation = ({ navigation, route }) => {
 
                   <View style={{flexDirection: "row", width, alignItems: "center", justifyContent: "center"}}>
 
-                    <Pressable
+                    <TouchableOpacity accessible={true}
+                    activeOpacity={0.5}
                       style={[styles.button, styles.buttonClose]}
                       onPress={() => {setFailModalVisible(!failModalVisible) ; navigation.navigate("Manage Stations")}}
                     >
                       <Text style={styles.textStyle}>Close</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>

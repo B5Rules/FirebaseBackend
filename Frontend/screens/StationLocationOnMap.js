@@ -6,7 +6,7 @@ import {
   Dimensions,
   Button,
   Image,
-  Pressable,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   Modal,
 } from "react-native";
@@ -43,13 +43,13 @@ const StationLocationOnMap = ({ navigation }) => {
   useEffect(() => {
     if(!isFocused) return;
     const data = async () => {
-      await setInitialPosition({
-        longitude: getGlobalState("stationChangeMode")?.coordinates?.longitude || origin?.location?.longitude,
-        latitude: getGlobalState("stationChangeMode")?.coordinates?.latitude || origin?.location?.latitude,
+      setInitialPosition({
+        longitude: getGlobalState("stationChangeMode").coordinates.longitude || origin?.location?.longitude,
+        latitude: getGlobalState("stationChangeMode").coordinates.latitude || origin?.location?.latitude,
         longitudeDelta: mapDelta,
         latitudeDelta: mapDelta,
       })
-      await setRegion(initialPosition);
+      setRegion(initialPosition);
       console.log('Location Position:', initialPosition, region)
     } 
     data();  
@@ -111,18 +111,22 @@ const StationLocationOnMap = ({ navigation }) => {
 
             <View style={{flexDirection: "row", width, alignItems: "center", justifyContent: "center"}}>
 
-              <Pressable
+              <TouchableOpacity
+               accessible={true}
+               activeOpacity={0.5}
                 style={[styles.button, styles.buttonClose]}
                 onPress={pressStationBack}
               >
                 <Text style={styles.textStyle}>Confirm</Text>
-              </Pressable>
-              <Pressable
+              </TouchableOpacity>
+              <TouchableOpacity
+              accessible={true}
+              activeOpacity={0.5}
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisible(!modalVisible)}
               >
                 <Text style={styles.textStyle}>Close</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -264,7 +268,7 @@ const styles = StyleSheet.create({
     width,
   },
 
-
+ 
 });
 
 export default StationLocationOnMap;

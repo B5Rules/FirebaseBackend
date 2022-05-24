@@ -8,6 +8,7 @@ import {
   ScrollView,
   ImageBackground,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -72,7 +73,8 @@ const ManageStations = ({ navigation }) => {
         </View>
 
         <View style={{ marginBottom: 5 }}>
-          <Pressable style={[styles.button1, styles.shadowProp]}>
+          <TouchableOpacity accessible={true}
+                activeOpacity={0.5} style={[styles.button1, styles.shadowProp]}>
             <Text
               style={styles.textButton1}
               onPress={() => {
@@ -82,7 +84,7 @@ const ManageStations = ({ navigation }) => {
             >
               Add Station
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -96,7 +98,8 @@ const ManageStations = ({ navigation }) => {
             <>
               <ScrollView style={{ width }}>
                 {stations.map((station) => (
-                <Pressable
+                <TouchableOpacity accessible={true}
+                activeOpacity={0.5}
                   key={station.id}
                   style={[styles.button, styles.shadowProp]}
                   onPress={() => pressStation(station)}
@@ -110,7 +113,7 @@ const ManageStations = ({ navigation }) => {
                     <Text style={styles.textButton}>Type:</Text>
                     <Text style={styles.textDetails}> {station.type} kWh </Text>
                   </View>
-                </Pressable>
+                </TouchableOpacity>
                 ))}
               </ScrollView>
             </>
