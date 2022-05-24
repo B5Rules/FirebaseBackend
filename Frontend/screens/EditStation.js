@@ -181,7 +181,7 @@ const EditStation = ({ navigation, route }) => {
                 <View>
                   <Text
                     style={{
-                      fontSize: 20,
+                      fontSize: 25,
                       fontWeight: "bold",
                       color: "white",
                       marginBottom: 5,
@@ -396,6 +396,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.7)",
     borderRadius: 40,
     padding: 20,
+    borderColor: "#3B9683", 
+    borderWidth: 1, 
+    paddingTop: 10
   },
 
   // form
@@ -487,9 +490,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 3,
     backgroundColor: "#182724",
-    marginTop: 30,
+    marginTop: 20,
     marginLeft: 30,
     marginRight: 30,
+    borderColor: "white", 
+    borderWidth: 0.5, 
   },
 
   textButton1: {
@@ -506,7 +511,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 3,
     backgroundColor: "#01A78F",
-    marginTop: 30,
+    marginTop: 20,
     marginLeft: 70,
     marginRight: 75,
   },

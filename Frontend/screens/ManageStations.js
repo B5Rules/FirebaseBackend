@@ -9,6 +9,7 @@ import {
   ImageBackground,
   Pressable,
   TouchableOpacity,
+  Modal
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -25,6 +26,7 @@ const { width } = Dimensions.get("screen");
 
 const ManageStations = ({ navigation }) => {
   const [stations, setStations] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
 
@@ -65,26 +67,18 @@ const ManageStations = ({ navigation }) => {
             style={{ marginRight: 10, width: 48, height:48 }}
             source={require('../images/electric-station.png')}
           />
-          <View>
-            <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
+          <View >
+            <Text style={{ fontSize: 25, fontWeight: "bold", color: "white", fontFamily: 'San Francisco' }}>
               Provider account
             </Text>
           </View>
         </View>
 
-        <View style={{ marginBottom: 5 }}>
-          <TouchableOpacity accessible={true}
-                activeOpacity={0.5} style={[styles.button1, styles.shadowProp]}>
-            <Text
-              style={styles.textButton1}
-              onPress={() => {
-                setGlobalState("stationChargeModeEdit", 2);
-                navigation.navigate("Edit Station");
-              }}
-            >
-              Add Station
+        <View  style={styles.labelStations}>
+        <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
+              Your Stations
             </Text>
-          </TouchableOpacity>
+
         </View>
       </View>
 
@@ -104,14 +98,31 @@ const ManageStations = ({ navigation }) => {
                   style={[styles.button, styles.shadowProp]}
                   onPress={() => pressStation(station)}
                 >
-                  <View style={styles.inline}>
-                    <Text style={styles.textButton}>Station:</Text>
-                    <Text style={styles.textDetails}> {station.name} </Text>
+                  <View style={styles.inlinePositioning}>
+
+                  <View >
+                      <View >
+                        <Text style={styles.textButton}> {station.name} </Text>
+                      </View>
+
+                      <View style={styles.inline}>
+                        <Text style={styles.textDetails}> {station.type} kWh  | {station.price} RON</Text> 
+                      </View> 
                   </View>
 
-                  <View style={styles.inline}>
-                    <Text style={styles.textButton}>Type:</Text>
-                    <Text style={styles.textDetails}> {station.type} kWh </Text>
+                  <TouchableOpacity  
+                   accessible={true}
+                   activeOpacity={0.5} 
+                   style={styles.deleteButton}
+                   onPress={() => setModalVisible(true)}
+                    >
+                    <Image
+                    style={{  width: 35, height: 35 }}
+                    source={require('../images/icons-delete.png')}
+                  />
+                  </TouchableOpacity>
+
+
                   </View>
                 </TouchableOpacity>
                 ))}
@@ -130,6 +141,60 @@ const ManageStations = ({ navigation }) => {
           )}
         </ImageBackground>
       </View>
+
+      <View style={{marginBottom: 10, marginTop: 10}}>
+          <TouchableOpacity accessible={true}
+              activeOpacity={0.5} style={[styles.button1, styles.shadowProp]}>
+            <Text
+              style={styles.textButton1}
+              onPress={() => {
+                setGlobalState("stationChargeModeEdit", 2);
+                navigation.navigate("Edit Station");
+              }}
+            >
+              Add Station
+            </Text>
+      </TouchableOpacity>
+
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onStartShouldSetResponder={() => true}
+        // on
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Are you sure you want to delete this station? </Text>
+
+            <View style={{flexDirection: "row", width, alignItems: "center", justifyContent: "center"}}>
+
+              <TouchableOpacity
+               accessible={true}
+               activeOpacity={0.5}
+                style={[styles.buttonModal, styles.buttonYes]}
+              >
+                <Text style={styles.textStyle}>Yes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+              accessible={true}
+              activeOpacity={0.5}
+                style={[styles.buttonModal, styles.buttonNo]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>No</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      </View>
+
     </SafeAreaView>
   );
 };
@@ -153,14 +218,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flex: 1,
+    borderColor: "#0A1613",
+    borderBottomColor: "#3B9683", 
+    borderWidth: 1, 
   },
 
   headerContainer: {
     width,
     flex: 0.2,
-    borderRadius: 40,
     paddingTop: 30,
-    paddingBottom: 30,
+    paddingBottom: 20,
   },
 
   image: {
@@ -174,22 +241,35 @@ const styles = StyleSheet.create({
   },
 
   containerProps: {
-    marginLeflt: 10,
+    marginLeft: 10,
     alignItems: "center",
     justifyContent: "center",
+  },
+  
+  labelStations:{
+    marginTop: 20, 
+    width, 
+    justifyContent: "center", 
+    alignItems: "center", 
+    borderTopColor: "#3B9683", 
+    borderBottomColor: "#3B9683", 
+    borderWidth: 1, 
+    padding: 10
   },
 
   //buttons
 
   button: {
     paddingVertical: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     borderRadius: 10,
     elevation: 3,
     backgroundColor: "#182724",
-    marginLeft: 55,
-    marginRight: 55,
-    marginTop: 30,
+    marginLeft: 45,
+    marginRight: 45,
+    marginBottom: 30,
+    borderColor: "#00FFDA", 
+    borderWidth: 0.3, 
   },
 
   textButton: {
@@ -198,12 +278,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     letterSpacing: 0.25,
     color: "white",
+    marginBottom: 2
+
   },
 
   textDetails: {
-    fontSize: 18,
+    marginTop: 2,
+    fontSize: 15,
     lineHeight: 21,
-    fontWeight: "bold",
     letterSpacing: 0.25,
     color: "#00FFDA",
   },
@@ -211,26 +293,38 @@ const styles = StyleSheet.create({
   inline: {
     flexDirection: "row",
     flex: 0.2,
+
+  },
+
+  inlinePositioning: {
+    flexDirection: "row",
+    flex: 0.2,
+    alignItems: "center",
+    justifyContent: "space-between",
+
   },
 
   button1: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 8,
+    paddingBottom: 8,
+    paddingTop: 10,
     borderRadius: 25,
     backgroundColor: "#3B9683",
     marginTop: 10,
     paddingHorizontal: 15,
+
   },
 
   textButton1: {
-    fontSize: 16,
+    fontSize: 18,
     lineHeight: 21,
     fontWeight: "bold",
     letterSpacing: 0.25,
     color: "white",
     marginBottom: 5,
   },
+
 
   shadowProp: {
     shadowColor: "black",
@@ -242,6 +336,72 @@ const styles = StyleSheet.create({
 
   lightning: {
     height: 100,
+  },
+
+  //Modal
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 700,
+    borderRadius: 20,
+  
+  },
+  
+  
+  modalView: {    
+    backgroundColor: "#182724",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    bottom: 0,
+    margin: 0,
+    flex: 1, 
+    paddingTop:  20
+
+  },
+  
+  buttonModal: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginRight:10,
+    width: 150,
+
+  },
+  buttonYes: {
+    backgroundColor: "#16a085",
+  },
+
+  buttonNo: {
+    backgroundColor: "#FF5D5D",
+  },
+
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center", 
+    fontSize: 18
+  },
+
+  modalText: {
+    marginBottom: 20,
+    color: "white",
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: "center",
+    borderBottomColor: "white",
+    borderBottomWidth: 2,
+    width,
   },
 });
 
