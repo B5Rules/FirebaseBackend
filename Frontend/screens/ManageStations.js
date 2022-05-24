@@ -9,7 +9,7 @@ import {
   ImageBackground,
   Pressable,
   TouchableOpacity,
-  Modal
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -34,19 +34,19 @@ const ManageStations = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
-  const [stationDeleteID, setStationForDelete] = useState('');
+  const [stationDeleteID, setStationForDelete] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
 
   useEffect(() => {
-    if(shouldRefetch === false && isFocused === false) return;
+    if (shouldRefetch === false && isFocused === false) return;
     // console.log('Fetching data again')
     getAllStationsForSpecificUser().then((res) => {
       setStations(res.data.result);
       setLoading(false);
     });
     setShouldRefetch(false);
-    if(isFocused) {
-      setGlobalState('stationChargeModeEdit', 0);
+    if (isFocused) {
+      setGlobalState("stationChargeModeEdit", 0);
       setGlobalState("stationChangeModeActive", false);
       setLoading(true);
     }
@@ -55,22 +55,22 @@ const ManageStations = ({ navigation }) => {
   const pressStation = (station) => {
     setGlobalState("stationChargeModeEdit", 1);
     navigation.navigate("Edit Station", {
-        ...station,
-        coordinates: {
-          latitude: station?.coordinates?._latitude,
-          longitude: station?.coordinates?._longitude
-        }
+      ...station,
+      coordinates: {
+        latitude: station?.coordinates?._latitude,
+        longitude: station?.coordinates?._longitude,
+      },
     });
   };
 
   const handleDeleteStation = async () => {
     const response = await deleteStationByIDForSpecificUser({
-      id: stationDeleteID
-    })
+      id: stationDeleteID,
+    });
     setShouldRefetch(true);
     setModalVisible(false);
     // console.log(response)
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -83,21 +83,20 @@ const ManageStations = ({ navigation }) => {
           }}
         >
           <Image
-            style={{ marginRight: 10, width: 48, height:48 }}
-            source={require('../images/electric-station.png')}
+            style={{ marginRight: 10, width: 48, height: 48 }}
+            source={require("../images/electric-station.png")}
           />
-          <View >
+          <View>
             <Text style={{ fontSize: 25, fontWeight: "bold", color: "white" }}>
               Provider account
             </Text>
           </View>
         </View>
 
-        <View  style={styles.labelStations}>
-        <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
-              Your Stations
-            </Text>
-
+        <View style={styles.labelStations}>
+          <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
+            Your Stations
+          </Text>
         </View>
       </View>
 
@@ -111,51 +110,56 @@ const ManageStations = ({ navigation }) => {
             <>
               <ScrollView style={{ width }}>
                 {stations.map((station) => (
-                <TouchableOpacity accessible={true}
-                activeOpacity={0.5}
-                  key={station.id}
-                  style={[styles.button, styles.shadowProp]}
-                  onPress={() => pressStation(station)}
-                >
-                  <View style={styles.inlinePositioning}>
+                  <TouchableOpacity
+                    accessible={true}
+                    activeOpacity={0.5}
+                    key={station.id}
+                    style={[styles.button, styles.shadowProp]}
+                    onPress={() => pressStation(station)}
+                  >
+                    <View style={styles.inlinePositioning}>
+                      <View>
+                        <View>
+                          <Text style={styles.textButton}>
+                            {" "}
+                            {station.name}{" "}
+                          </Text>
+                        </View>
 
-                  <View >
-                      <View >
-                        <Text style={styles.textButton}> {station.name} </Text>
+                        <View style={styles.inline}>
+                          <Text style={styles.textDetails}>
+                            {" "}
+                            {station.type} kWh | {station.price} RON
+                          </Text>
+                        </View>
                       </View>
 
-                      <View style={styles.inline}>
-                        <Text style={styles.textDetails}> {station.type} kWh  | {station.price} RON</Text> 
-                      </View> 
-                  </View>
-
-                  <TouchableOpacity  
-                   accessible={true}
-                   activeOpacity={0.5} 
-                   style={styles.deleteButton}
-                   onPress={() => {setStationForDelete(station.id); setModalVisible(true)}}
-                    >
-                    <Image
-                    style={{  width: 35, height: 35 }}
-                    source={require('../images/icons-delete.png')}
-                  />
+                      <TouchableOpacity
+                        accessible={true}
+                        activeOpacity={0.5}
+                        style={styles.deleteButton}
+                        onPress={() => {
+                          setStationForDelete(station.id);
+                          setModalVisible(true);
+                        }}
+                      >
+                        <Image
+                          style={{ width: 35, height: 35 }}
+                          source={require("../images/icons-delete.png")}
+                        />
+                      </TouchableOpacity>
+                    </View>
                   </TouchableOpacity>
-
-
-                  </View>
-                </TouchableOpacity>
                 ))}
               </ScrollView>
             </>
           ) : (
-            <View style={{width}}>
+            <View style={{ width }}>
               <View style={[styles.containerProps]}>
                 <Text
                   style={{ fontSize: 18, fontWeight: "bold", color: "white" }}
                 >
-                  {
-                    loading === true ? "Loading..." : "You have no stations yet"
-                  }
+                  {loading === true ? "Loading..." : "You have no stations yet"}
                 </Text>
               </View>
             </View>
@@ -163,59 +167,64 @@ const ManageStations = ({ navigation }) => {
         </ImageBackground>
       </View>
 
-      <View style={{marginBottom: 10, marginTop: 10}}>
-          <TouchableOpacity accessible={true}
-              activeOpacity={0.5} style={[styles.button1, styles.shadowProp]}>
-            <Text
-              style={styles.textButton1}
-              onPress={() => {
-                setGlobalState("stationChargeModeEdit", 2);
-                navigation.navigate("Edit Station");
-              }}
-            >
-              Add Station
-            </Text>
-      </TouchableOpacity>
+      <View style={{ marginBottom: 10, marginTop: 10 }}>
+        <TouchableOpacity
+          accessible={true}
+          activeOpacity={0.5}
+          style={[styles.button1, styles.shadowProp]}
+          onPress={() => {
+            setGlobalState("stationChargeModeEdit", 2);
+            navigation.navigate("Edit Station");
+          }}
+        >
+          <Text style={styles.textButton1}>Add Station</Text>
+        </TouchableOpacity>
 
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onStartShouldSetResponder={() => true}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Are you sure you want to delete this station?{" "}
+              </Text>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onStartShouldSetResponder={() => true}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Are you sure you want to delete this station? </Text>
-
-            <View style={{flexDirection: "row", width, alignItems: "center", justifyContent: "center"}}>
-
-              <TouchableOpacity
-               accessible={true}
-               activeOpacity={0.5}
-                style={[styles.buttonModal, styles.buttonYes]}
-                onPress={handleDeleteStation}
+              <View
+                style={{
+                  flexDirection: "row",
+                  width,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               >
-                <Text style={styles.textStyle} >Yes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-              accessible={true}
-              activeOpacity={0.5}
-                style={[styles.buttonModal, styles.buttonNo]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>No</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  accessible={true}
+                  activeOpacity={0.5}
+                  style={[styles.buttonModal, styles.buttonYes]}
+                  onPress={handleDeleteStation}
+                >
+                  <Text style={styles.textStyle}>Yes</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  accessible={true}
+                  activeOpacity={0.5}
+                  style={[styles.buttonModal, styles.buttonNo]}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={styles.textStyle}>No</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
       </View>
-
     </SafeAreaView>
   );
 };
@@ -240,8 +249,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1,
     borderColor: "#0A1613",
-    borderBottomColor: "#3B9683", 
-    borderWidth: 1, 
+    borderBottomColor: "#3B9683",
+    borderWidth: 1,
   },
 
   headerContainer: {
@@ -266,16 +275,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  
-  labelStations:{
-    marginTop: 20, 
-    width, 
-    justifyContent: "center", 
-    alignItems: "center", 
-    borderTopColor: "#3B9683", 
-    borderBottomColor: "#3B9683", 
-    borderWidth: 1, 
-    padding: 10
+
+  labelStations: {
+    marginTop: 20,
+    width,
+    justifyContent: "center",
+    alignItems: "center",
+    borderTopColor: "#3B9683",
+    borderBottomColor: "#3B9683",
+    borderWidth: 1,
+    padding: 10,
   },
 
   //buttons
@@ -289,8 +298,8 @@ const styles = StyleSheet.create({
     marginLeft: 45,
     marginRight: 45,
     marginBottom: 30,
-    borderColor: "#00FFDA", 
-    borderWidth: 0.3, 
+    borderColor: "#00FFDA",
+    borderWidth: 0.3,
   },
 
   textButton: {
@@ -299,8 +308,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     letterSpacing: 0.25,
     color: "white",
-    marginBottom: 2
-
+    marginBottom: 2,
   },
 
   textDetails: {
@@ -314,7 +322,6 @@ const styles = StyleSheet.create({
   inline: {
     flexDirection: "row",
     flex: 0.2,
-
   },
 
   inlinePositioning: {
@@ -322,7 +329,6 @@ const styles = StyleSheet.create({
     flex: 0.2,
     alignItems: "center",
     justifyContent: "space-between",
-
   },
 
   button1: {
@@ -334,7 +340,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#3B9683",
     marginTop: 10,
     paddingHorizontal: 15,
-
   },
 
   textButton1: {
@@ -345,7 +350,6 @@ const styles = StyleSheet.create({
     color: "white",
     marginBottom: 5,
   },
-
 
   shadowProp: {
     shadowColor: "black",
@@ -367,11 +371,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 700,
     borderRadius: 20,
-  
   },
-  
-  
-  modalView: {    
+
+  modalView: {
     backgroundColor: "#182724",
     borderRadius: 20,
     padding: 35,
@@ -379,25 +381,23 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
     bottom: 0,
     margin: 0,
-    flex: 1, 
-    paddingTop:  20
-
+    flex: 1,
+    paddingTop: 20,
   },
-  
+
   buttonModal: {
     borderRadius: 20,
     padding: 10,
     elevation: 2,
-    marginRight:10,
+    marginRight: 10,
     width: 150,
-
   },
   buttonYes: {
     backgroundColor: "#16a085",
@@ -410,15 +410,15 @@ const styles = StyleSheet.create({
   textStyle: {
     color: "white",
     fontWeight: "bold",
-    textAlign: "center", 
-    fontSize: 18
+    textAlign: "center",
+    fontSize: 18,
   },
 
   modalText: {
     marginBottom: 20,
     color: "white",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     textAlign: "center",
     borderBottomColor: "white",
     borderBottomWidth: 2,
