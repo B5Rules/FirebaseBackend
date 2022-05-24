@@ -194,8 +194,9 @@ const Map = (props, ref) => {
                 title="Destination"
                
               >
-                <MapView.Callout tooltip style={styles.customView} onPress={() => navigation.navigate("Station Info")}>
-                    
+                <MapView.Callout tooltip style={styles.customView} onPress={() => navigation.navigate("Station Info", {
+                  station
+                })}>
                   <View style={styles.marker}>
                     <Text style={styles.markerText}>Price: {station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
                       {`Type: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`} ...See more details</Text>
