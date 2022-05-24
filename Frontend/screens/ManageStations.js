@@ -38,8 +38,8 @@ const ManageStations = ({ navigation }) => {
   const [shouldRefetch, setShouldRefetch] = useState(true);
 
   useEffect(() => {
-    if(shouldRefetch === false || isFocused === false) return;
-
+    if(shouldRefetch === false && isFocused === false) return;
+    // console.log('Fetching data again')
     getAllStationsForSpecificUser().then((res) => {
       setStations(res.data.result);
       setLoading(false);
