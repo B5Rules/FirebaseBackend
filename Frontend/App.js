@@ -24,6 +24,11 @@ import StationInfo from './screens/StationInfo';
 import AddKwh from './screens/AddKwh';
 import StationLocationOnMap from './screens/StationLocationOnMap';
 import {Platform} from 'react-native';
+import AddCar from "./screens/AddCar";
+import CarListOriginal from "./screens/CarListOriginal";
+import CarDetailOriginal from "./screens/CarDetailOriginal";
+import CarUpdate from "./screens/CarUpdate";
+import CarsMenu from "./screens/CarsMenu";
 
 
 
@@ -76,6 +81,13 @@ export default function App() {
           <Stack.Screen options={{headerShown:false}} name="StationLocationOnMap" component={StationLocationOnMap}/>
           <Stack.Screen  options={{headerShown:false}} name="Station Info" component={StationInfo}/>
           <Stack.Screen  options={{headerShown:false}} name="Add kWh" component={AddKwh}/>
+
+          {/* beneficiary pages */}
+          <Stack.Screen options={{headerShown:true}} name="CarsMenu" component={CarsMenu}/>
+          <Stack.Screen options={{headerShown:true}} name="CarListOriginal"  component={CarListOriginal}/>
+          <Stack.Screen  options={{headerShown:true}} name="CarDetailOriginal" component={CarDetailOriginal}/>
+          <Stack.Screen options={{headerShown:true}} name="CarUpdate" component={CarUpdate}/>
+          <Stack.Screen options={{headerShown:true}}name="AddCar" component={AddCar}/>
 
         </Stack.Navigator>
       </NavigationContainer>
