@@ -1,6 +1,8 @@
 import React from 'react';
 import {StyleSheet,Text, View,TextInput,Image,Dimensions, ScrollView, Button, ImageBackground, Pressable, TouchableHighlight, Alert} from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from "@react-navigation/native";
+
 
 // import { NavigationContainer } from "@react-navigation/native";
 // import { createStackNavigator } from "@react-navigation/stack";
@@ -20,6 +22,7 @@ const StationInfo = () => {
   const [voltage, onChangeVoltage] = React.useState("Working Voltage");
   const [protection, onChangeProtection] = React.useState("Protection Level");
 
+  const navigation = useNavigation();
   
     return (
       <SafeAreaView style={styles.container}>
@@ -116,9 +119,17 @@ const StationInfo = () => {
           source={require('../images/ArrowBack.png')}
           />
 
-          </Pressable>
+            </Pressable>
+            
 
           </View>
+
+
+          <TouchableHighlight style={styles.buttonCharge} onPress={() => navigation.navigate("Enter_kwh")}>
+            <Text style={styles.buttonChargeText}>Charge Now</Text>
+          </TouchableHighlight>
+
+          
         </ScrollView>
       </SafeAreaView>
     )
@@ -202,7 +213,26 @@ const styles = StyleSheet.create({
 
   button1:{
     marginRight: 10,
-  }
+  },
+
+  buttonCharge: {
+    backgroundColor: "#04ae95",
+    width: "65%",
+    maxHeight: 65,
+    marginTop: 30,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: 50
+  },
+
+  buttonChargeText: {
+    fontSize: 32,
+    color: "white",
+  },
 
 });
 

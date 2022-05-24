@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, View, Button, TouchableHighlight } from "react-native";
+import { Dimensions, StyleSheet, Text, View, Button, TouchableHighlight, TouchableOpacity } from "react-native";
 import React, {
   useState,
   useEffect,
@@ -15,6 +15,7 @@ import { selectDestination, selectOrigin, selectNearByStations, selectStaions } 
 import { decode } from "@mapbox/polyline";
 import { useDispatch } from "react-redux";
 import Constants from "expo-constants";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -85,15 +86,19 @@ const Map = (props, ref) => {
 
   const onMapPress = (e) => {
     setRouteDestination(null);
-    setDestination(e.nativeEvent.coordinate);
+
+    const reg = e?.nativeEvent?.coordinate || origin?.location
+    setDestination(reg);
     const myRegion = {
-      latitude: e.nativeEvent.coordinate.latitude,
-      longitude: e.nativeEvent.coordinate.longitude,
+      latitude: reg?.latitude,
+      longitude: reg?.longitude,
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
     };
     mapRef.current.animateToRegion(myRegion, 1000);
   };
+
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
@@ -184,13 +189,13 @@ const Map = (props, ref) => {
                 title="Destination"
                
               >
-              <MapView.Callout tooltip style={styles.customView}>
-                  <TouchableHighlight onPress= {()=>this.markerClick()} underlayColor='#dddddd'>
-                      <View style={styles.marker}>
-                      <Text style={styles.markerText}>Price:{station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
-                            {`Type: ${station?._fieldsProto?.type?.integerValue} kWh\n`}</Text>
-                      </View>
-                  </TouchableHighlight>
+                <MapView.Callout tooltip style={styles.customView} onPress={() => navigation.navigate("Station Info")}>
+                    
+                  <View style={styles.marker}>
+                    <Text style={styles.markerText}>Price: {station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
+                      {`Type: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`} ...See more details</Text>
+                  </View>
+                    
                 </MapView.Callout>
               </Marker>
           );
@@ -230,5 +235,5 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
-  },
+  }
 });
