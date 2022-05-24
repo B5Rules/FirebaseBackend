@@ -86,10 +86,12 @@ const Map = (props, ref) => {
 
   const onMapPress = (e) => {
     setRouteDestination(null);
-    setDestination(e.nativeEvent.coordinate);
+
+    const reg = e?.nativeEvent?.coordinate || origin?.location
+    setDestination(reg);
     const myRegion = {
-      latitude: e.nativeEvent.coordinate.latitude,
-      longitude: e.nativeEvent.coordinate.longitude,
+      latitude: reg?.latitude,
+      longitude: reg?.longitude,
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
     };
