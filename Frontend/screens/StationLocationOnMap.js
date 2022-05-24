@@ -22,7 +22,7 @@ import { useIsFocused } from "@react-navigation/native";
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
-const mapDelta = 0.001;
+const mapDelta = 0.007;
 
 const StationLocationOnMap = ({ navigation }) => {
   const [region, setRegion] = useState({
@@ -44,8 +44,8 @@ const StationLocationOnMap = ({ navigation }) => {
     if(!isFocused) return;
     const data = async () => {
       setInitialPosition({
-        longitude: getGlobalState("stationChangeMode").coordinates.longitude || origin?.location?.longitude,
-        latitude: getGlobalState("stationChangeMode").coordinates.latitude || origin?.location?.latitude,
+        longitude: getGlobalState("stationChangeMode")?.coordinates?.longitude || origin?.location?.longitude,
+        latitude: getGlobalState("stationChangeMode")?.coordinates?.latitude || origin?.location?.latitude,
         longitudeDelta: mapDelta,
         latitudeDelta: mapDelta,
       })
