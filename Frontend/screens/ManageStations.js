@@ -68,7 +68,7 @@ const ManageStations = ({ navigation }) => {
             source={require('../images/electric-station.png')}
           />
           <View >
-            <Text style={{ fontSize: 25, fontWeight: "bold", color: "white", fontFamily: 'San Francisco' }}>
+            <Text style={{ fontSize: 25, fontWeight: "bold", color: "white" }}>
               Provider account
             </Text>
           </View>
