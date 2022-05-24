@@ -31,7 +31,7 @@ const AddKwh = () => {
           </View>
 
         </View>       
-        <ScrollView style={{ width }}>
+        
         <View style={styles.smallcontainer}>
 
           <View style={styles.form}>
@@ -56,7 +56,7 @@ const AddKwh = () => {
           </View>
           </View>
 
-        </ScrollView>
+        
       </SafeAreaView>
     )
 };
