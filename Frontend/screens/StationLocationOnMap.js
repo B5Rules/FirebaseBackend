@@ -4,10 +4,8 @@ import {
   Text,
   View,
   Dimensions,
-  Button,
-  Image,
   TouchableOpacity,
-  TouchableWithoutFeedback,
+  Alert,
   Modal,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
@@ -19,6 +17,7 @@ import { getGlobalState, setGlobalState } from "../globals/global";
 import Constants from "expo-constants";
 import MarkerComponent from '../components/Marker'; 
 import { useIsFocused } from "@react-navigation/native";
+import { useBackButton } from "../hocs/backButtonHandler";
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
@@ -37,23 +36,23 @@ const StationLocationOnMap = ({ navigation }) => {
     longitudeDelta: mapDelta,
     latitudeDelta: mapDelta,
   })
+  useBackButton(() => {navigation.goBack(); return true;});
+  
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
   const isFocused = useIsFocused();
   const origin = useSelector(selectOrigin);
   useEffect(() => {
     if(!isFocused) return;
-    const data = async () => {
-      setInitialPosition({
-        longitude: getGlobalState("stationChangeMode")?.coordinates?.longitude || origin?.location?.longitude,
-        latitude: getGlobalState("stationChangeMode")?.coordinates?.latitude || origin?.location?.latitude,
-        longitudeDelta: mapDelta,
-        latitudeDelta: mapDelta,
-      })
-      setRegion(initialPosition);
-      // console.log('Location Position:', initialPosition, region)
-    } 
-    data();  
-  },[]);
+    setInitialPosition({
+      longitude: getGlobalState("stationChangeMode")?.coordinates?.longitude || origin?.location?.longitude,
+      latitude: getGlobalState("stationChangeMode")?.coordinates?.latitude || origin?.location?.latitude,
+      longitudeDelta: mapDelta,
+      latitudeDelta: mapDelta,
+    })
+    setRegion(initialPosition);
+    setLoading(false);
+  },[isFocused]);
   const pressStationBack = (station) => {
     setGlobalState("stationChangeModeActive", true);
     const data = {
@@ -78,16 +77,20 @@ const StationLocationOnMap = ({ navigation }) => {
           <>
             <View style={styles.mapContainer}>
               {/*Render our MapView*/}
-              <MapView
-                provider={PROVIDER_GOOGLE}
-                style={styles.map}
-                showsUserLocation={true}
-                zoomEnable={true}
-                toolbarEnabled={true}
-                showsMyLocationButton={true}
-                initialRegion={initialPosition}
-                onRegionChange={changeRegion}
-              />
+              {
+                loading === false ? (
+                  <MapView
+                    provider={PROVIDER_GOOGLE}
+                    style={styles.map}
+                    showsUserLocation={true}
+                    zoomEnable={true}
+                    toolbarEnabled={true}
+                    showsMyLocationButton={true}
+                    initialRegion={initialPosition}
+                    onRegionChange={changeRegion}
+                  />
+                ) : (<Text>"Loading..."</Text>)
+              }
             </View>
             <View style={styles.markerFixed}>
               <MarkerComponent style={styles.marker} onPress={() => setModalVisible(true)} />
