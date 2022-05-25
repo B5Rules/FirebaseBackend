@@ -39,6 +39,7 @@ const StationLocationOnMap = ({ navigation }) => {
     latitudeDelta: mapDelta,
   })
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
   const isFocused = useIsFocused();
   const origin = useSelector(selectOrigin);
   useEffect(() => {
@@ -50,6 +51,7 @@ const StationLocationOnMap = ({ navigation }) => {
       latitudeDelta: mapDelta,
     })
     setRegion(initialPosition);
+    setLoading(false);
   },[]);
   const pressStationBack = (station) => {
     setGlobalState("stationChangeModeActive", true);
@@ -75,16 +77,20 @@ const StationLocationOnMap = ({ navigation }) => {
           <>
             <View style={styles.mapContainer}>
               {/*Render our MapView*/}
-              <MapView
-                provider={PROVIDER_GOOGLE}
-                style={styles.map}
-                showsUserLocation={true}
-                zoomEnable={true}
-                toolbarEnabled={true}
-                showsMyLocationButton={true}
-                initialRegion={initialPosition}
-                onRegionChange={changeRegion}
-              />
+              {
+                loading === false ? (
+                  <MapView
+                    provider={PROVIDER_GOOGLE}
+                    style={styles.map}
+                    showsUserLocation={true}
+                    zoomEnable={true}
+                    toolbarEnabled={true}
+                    showsMyLocationButton={true}
+                    initialRegion={initialPosition}
+                    onRegionChange={changeRegion}
+                  />
+                ) : (<Text>"Loading..."</Text>)
+              }
             </View>
             <View style={styles.markerFixed}>
               <MarkerComponent style={styles.marker} onPress={() => setModalVisible(true)} />
