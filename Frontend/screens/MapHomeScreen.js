@@ -1,7 +1,24 @@
-import { TextInput, StyleSheet, Text, View, Button, Component, Image } from "react-native";
-import React, {useState,  useEffect, useRef } from "react";
+import {
+  TextInput,
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Component,
+  Image,
+} from "react-native";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { selectStaions, setDestination, setOrigin, setStations, selectOrigin, setNearByStaions, selectNearByStations, selectDestination } from "../slices/navSlice";
+import {
+  selectStaions,
+  setDestination,
+  setOrigin,
+  setStations,
+  selectOrigin,
+  setNearByStaions,
+  selectNearByStations,
+  selectDestination,
+} from "../slices/navSlice";
 // Google
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 //import { GOOGLE_MAPS_APIKEY } from "@env";
@@ -16,7 +33,7 @@ import * as Location from "expo-location";
 import { fireApp, fireAuth, fireFunc } from "../globals/firebase";
 import { httpsCallable } from "firebase/functions";
 import Constants from "expo-constants";
-import deletee from '../assets/delete.png';
+import deletee from "../assets/delete.png";
 import { PressabilityDebugView } from "react-native/Libraries/Pressability/PressabilityDebug";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import { TouchableOpacity } from "react-native";
@@ -41,17 +58,16 @@ const getDistanceBetweenPoints = async (pointA, pointB) => {
   return data.rows[0].elements[0].distance.value;
 };
 
-const MapHomeScreen = ({navigation}) => {
-
+const MapHomeScreen = ({ navigation }) => {
   const getAllStations = httpsCallable(fireFunc, "getAllStations");
   const dispatch = useDispatch();
   const childRef = useRef();
-  let  stations = useSelector(selectStaions);
+  let stations = useSelector(selectStaions);
   const origin = useSelector(selectOrigin);
   const nearByStations = useSelector(selectNearByStations);
-  const [showTheThing, setShow]=useState(false);
-  const [autonomy,setAutonomy]=useState("");
-  const [dest,setDest]=useState({});
+  const [showTheThing, setShow] = useState(false);
+  const [autonomy, setAutonomy] = useState("");
+  const [dest, setDest] = useState({});
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -70,7 +86,6 @@ const MapHomeScreen = ({navigation}) => {
     );
   };
 
-
   useEffect(() => {
     getAllStations()
       .then((res) => {
@@ -80,55 +95,57 @@ const MapHomeScreen = ({navigation}) => {
           let distancesAux = [];
 
           let counter = 0;
-         
+
           const location = await Location.getLastKnownPositionAsync();
           const statii = res.data.result;
-          for(const station of statii) {
+          for (const station of statii) {
             let dist;
             //console.log(station?._fieldsProto?.coordinates?.geoPointValue);
-            if(station?._fieldsProto?.coordinates?.geoPointValue == undefined)
-               dist = 99999999;
+            if (station?._fieldsProto?.coordinates?.geoPointValue == undefined)
+              dist = 99999999;
             else {
-              if(station?._fieldsProto?.coordinates?.geoPointValue !== undefined) {
-                dist = await getDistanceBetweenPoints(station._fieldsProto.coordinates.geoPointValue, location.coords);
+              if (
+                station?._fieldsProto?.coordinates?.geoPointValue !== undefined
+              ) {
+                dist = await getDistanceBetweenPoints(
+                  station._fieldsProto.coordinates.geoPointValue,
+                  location.coords
+                );
               }
             }
 
-            if(counter < 3) {
-               stationsAux[counter] = station;
-               
-               distancesAux[counter] = dist;
-             } else if(dist < distancesAux[0]){
-               distancesAux[0] = dist;
-               stationsAux[0] = station;
-             }
-             else if(dist < distancesAux[1]){ 
-               distancesAux[1] = dist;
-               stationsAux[1] = station; 
-             }
-             else if(dist < distancesAux[2]){
-               distancesAux[2] = dist;
-               stationsAux[2] = station;
-             }
-             counter = counter + 1;
+            if (counter < 3) {
+              stationsAux[counter] = station;
+
+              distancesAux[counter] = dist;
+            } else if (dist < distancesAux[0]) {
+              distancesAux[0] = dist;
+              stationsAux[0] = station;
+            } else if (dist < distancesAux[1]) {
+              distancesAux[1] = dist;
+              stationsAux[1] = station;
+            } else if (dist < distancesAux[2]) {
+              distancesAux[2] = dist;
+              stationsAux[2] = station;
+            }
+            counter = counter + 1;
           }
-          
-          for(i = 0; i < 3; i++) {
+
+          for (i = 0; i < 3; i++) {
             stationsAux[i] = stationsAux[i]._fieldsProto;
             let aux1 = {};
-            for(const prop in stationsAux[i]) {
+            for (const prop in stationsAux[i]) {
               aux1[prop] = stationsAux[i][prop];
             }
-            aux1['distance'] =  {doubleValue: distancesAux[i], valueType: "doubleValue"};
-            
+            aux1["distance"] = {
+              doubleValue: distancesAux[i],
+              valueType: "doubleValue",
+            };
+
             stationsAux[i] = aux1;
           }
-          dispatch(
-            setNearByStaions(stationsAux)
-          );
-
-        
-        }
+          dispatch(setNearByStaions(stationsAux));
+        };
 
         func();
       })
@@ -152,14 +169,13 @@ const MapHomeScreen = ({navigation}) => {
               backgroundColor: "#27423A",
               fontSize: 17,
               paddingLeft: 20,
-             // height:30,
+              // height:30,
               color: "white",
             },
             textInputContainer: {
               backgroundColor: "#27423A",
             },
-            container: {
-            },
+            container: {},
           }}
           textInputProps={{
             placeholderTextColor: "white",
@@ -167,17 +183,22 @@ const MapHomeScreen = ({navigation}) => {
           }}
           onPress={(data, details = null) => {
             setShow(true);
-            setDest({latitude: details.geometry.location.lat, longitude: details.geometry.location.lng});
+            setDest({
+              latitude: details.geometry.location.lat,
+              longitude: details.geometry.location.lng,
+            });
             dispatch(
               setDestination({
-                location: { latitude: details.geometry.location.lat, longitude: details.geometry.location.lng },
+                location: {
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                },
                 description: data.description,
               })
             );
-           
+
             childRef.current.goToDestination();
-          }
-        }
+          }}
           fetchDetails={true}
           returnKeyType={"search"}
           enablePoweredByContainer={false}
@@ -188,31 +209,37 @@ const MapHomeScreen = ({navigation}) => {
           }}
           nearbyPlacesAPI="GooglePlacesSearch"
           debounce={300}
-          GooglePlacesSearchQuery={{rankby: 'distance'}}
+          GooglePlacesSearchQuery={{ rankby: "distance" }}
         />
-        
       </View>
 
-      {showTheThing && <View style={styles.searchBarJos}>
-        {console.log("la afisare:"+showTheThing)}
+      {showTheThing && (
+        <View style={styles.searchBarJos}>
+          {console.log("la afisare:" + showTheThing)}
           <View style={styles.stanga}>
-              <Text style={styles.textAutonomie}>Could you please introduce the current autonomy?</Text>
-              <TextInput style = {styles.input}
-                        underlineColorAndroid = "transparent"
-                        placeholder = "autonomy.."
-                        placeholderTextColor = "white"
-                        autoCapitalize = "none"
-                        onChangeText={text=>setAutonomy(text)}/>
-                        
+            <Text style={styles.textAutonomie}>
+              Could you please introduce the current autonomy?
+            </Text>
+            <TextInput
+              style={styles.input}
+              underlineColorAndroid="transparent"
+              placeholder="autonomy.."
+              placeholderTextColor="white"
+              autoCapitalize="none"
+              onChangeText={(text) => setAutonomy(text)}
+            />
           </View>
           <View style={styles.dreapta}>
-            <TouchableOpacity  onPress={()=> {
-              setShow(false)}}>
-              <Image source={deletee} style={styles.x}/>
+            <TouchableOpacity
+              onPress={() => {
+                setShow(false);
+              }}
+            >
+              <Image source={deletee} style={styles.x} />
             </TouchableOpacity>
-              
           </View>
-      </View> }
+        </View>
+      )}
 
       <View
         style={{
@@ -224,7 +251,7 @@ const MapHomeScreen = ({navigation}) => {
           <Map ref={childRef} />
         </View>
       </View>
-      </SafeAreaView>
+    </SafeAreaView>
   );
 };
 
@@ -238,53 +265,52 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     justifyContent: "space-around",
     flexDirection: "row",
-    flexWrap:'wrap',
+    flexWrap: "wrap",
     //minHeight:'25%',
-    backgroundColor:'red',
+    backgroundColor: "red",
   },
 
   map: {
     ...StyleSheet.absoluteFillObject,
   },
 
-  searchBarJos:{
+  searchBarJos: {
     //display:'none',
-    alignItems:'center',
-    backgroundColor:"black",
-    flexDirection:'row',
-    width:'100%',
-    paddingVertical:10,
-    paddingHorizontal:10,
+    alignItems: "center",
+    backgroundColor: "black",
+    flexDirection: "row",
+    width: "100%",
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     //marginTop:1,
     //height:80,
   },
 
-  textAutonomie:{
-    color:'white',
+  textAutonomie: {
+    color: "white",
   },
 
   input: {
-    backgroundColor: 'rgba(40, 47, 45, 1)',
+    backgroundColor: "rgba(40, 47, 45, 1)",
     height: 40,
     //margin: 2,
-    marginTop:3,
+    marginTop: 3,
     borderWidth: 1,
     padding: 10,
     color: "white",
     // borderColor: 'green',
-    width:'90%',
+    width: "90%",
   },
-  stanga:{
-    width:'90%'
+  stanga: {
+    width: "90%",
   },
-  dreapta:{
-    width:'10%',
+  dreapta: {
+    width: "10%",
   },
-  x:{
-    width:30,
-    height:30,
-  }
-
+  x: {
+    width: 30,
+    height: 30,
+  },
 });
 
 export default MapHomeScreen;
