@@ -86,6 +86,7 @@ const StationLocationOnMap = ({ navigation }) => {
                     zoomEnable={true}
                     toolbarEnabled={true}
                     showsMyLocationButton={true}
+                    region={initialPosition}
                     initialRegion={initialPosition}
                     onRegionChange={changeRegion}
                   />
