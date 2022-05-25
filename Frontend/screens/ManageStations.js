@@ -17,6 +17,7 @@ import { httpsCallable } from "firebase/functions";
 import { fireFunc } from "../globals/firebase";
 import { useIsFocused } from "@react-navigation/native";
 import { setGlobalState } from "../globals/global";
+import { useBackButton } from "../hocs/backButtonHandler";
 
 const getAllStationsForSpecificUser = httpsCallable(
   fireFunc,
@@ -36,6 +37,9 @@ const ManageStations = ({ navigation }) => {
   const isFocused = useIsFocused();
   const [stationDeleteID, setStationForDelete] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
+  
+  useBackButton(() => {navigation.goBack()});
+
 
   useEffect(() => {
     if (shouldRefetch === false && isFocused === false) return;

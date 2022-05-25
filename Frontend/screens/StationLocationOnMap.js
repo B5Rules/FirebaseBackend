@@ -19,6 +19,7 @@ import { getGlobalState, setGlobalState } from "../globals/global";
 import Constants from "expo-constants";
 import MarkerComponent from '../components/Marker'; 
 import { useIsFocused } from "@react-navigation/native";
+import * as NavigationBar from 'expo-navigation-bar';
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
@@ -42,17 +43,13 @@ const StationLocationOnMap = ({ navigation }) => {
   const origin = useSelector(selectOrigin);
   useEffect(() => {
     if(!isFocused) return;
-    const data = async () => {
-      setInitialPosition({
-        longitude: getGlobalState("stationChangeMode")?.coordinates?.longitude || origin?.location?.longitude,
-        latitude: getGlobalState("stationChangeMode")?.coordinates?.latitude || origin?.location?.latitude,
-        longitudeDelta: mapDelta,
-        latitudeDelta: mapDelta,
-      })
-      setRegion(initialPosition);
-      // console.log('Location Position:', initialPosition, region)
-    } 
-    data();  
+    setInitialPosition({
+      longitude: getGlobalState("stationChangeMode")?.coordinates?.longitude || origin?.location?.longitude,
+      latitude: getGlobalState("stationChangeMode")?.coordinates?.latitude || origin?.location?.latitude,
+      longitudeDelta: mapDelta,
+      latitudeDelta: mapDelta,
+    })
+    setRegion(initialPosition);
   },[]);
   const pressStationBack = (station) => {
     setGlobalState("stationChangeModeActive", true);
