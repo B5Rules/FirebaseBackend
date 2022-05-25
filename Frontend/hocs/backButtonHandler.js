@@ -8,10 +8,10 @@ export const defaultBackHandler = (navigator) => {
 
 export const useBackButton = (handler) => {
     useEffect(() => {
-      const back = BackHandler.addEventListener("hardwareBackPress", handler);
+      BackHandler.addEventListener("hardwareBackPress", handler);
   
       return () => {
-        back.remove();
+        BackHandler.removeEventListener("hardwareBackPress", handler);
       };
     }, [handler]);
   }

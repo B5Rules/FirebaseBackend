@@ -38,7 +38,7 @@ const ManageStations = ({ navigation }) => {
   const [stationDeleteID, setStationForDelete] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
   
-  useBackButton(() => {navigation.goBack()});
+  useBackButton(() => {navigation.goBack(); return true;});
 
 
   useEffect(() => {
