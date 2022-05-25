@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, Button, Component, Image } from "react-native";
-import React, { useEffect, useRef } from "react";
+import { TextInput, StyleSheet, Text, View, Button, Component, Image } from "react-native";
+import React, {useState,  useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { selectStaions, setDestination, setOrigin, setStations, selectOrigin, setNearByStaions, selectNearByStations } from "../slices/navSlice";
+import { selectStaions, setDestination, setOrigin, setStations, selectOrigin, setNearByStaions, selectNearByStations, selectDestination } from "../slices/navSlice";
 // Google
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 //import { GOOGLE_MAPS_APIKEY } from "@env";
@@ -16,7 +16,10 @@ import * as Location from "expo-location";
 import { fireApp, fireAuth, fireFunc } from "../globals/firebase";
 import { httpsCallable } from "firebase/functions";
 import Constants from "expo-constants";
-import { useIsFocused } from "@react-navigation/native";
+import deletee from '../assets/delete.png';
+import { PressabilityDebugView } from "react-native/Libraries/Pressability/PressabilityDebug";
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
+import { TouchableOpacity } from "react-native";
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -32,15 +35,11 @@ const getDistanceBetweenPoints = async (pointA, pointB) => {
     pointB.longitude +
     "&key=" +
     GOOGLE_MAPS_APIKEY;
-  try {
-    const res = await fetch(urlToFetchDistance);
-    const data = await res.json();
-    return data.rows[0].elements[0].distance.value;
-  }catch(e) {
-    return 99999999;
-  }
-};
 
+  const res = await fetch(urlToFetchDistance);
+  const data = await res.json();
+  return data.rows[0].elements[0].distance.value;
+};
 
 const MapHomeScreen = ({navigation}) => {
 
@@ -50,12 +49,15 @@ const MapHomeScreen = ({navigation}) => {
   let  stations = useSelector(selectStaions);
   const origin = useSelector(selectOrigin);
   const nearByStations = useSelector(selectNearByStations);
- 
+  const [showTheThing, setShow]=useState(false);
+  const [autonomy,setAutonomy]=useState("");
+  const [dest,setDest]=useState({});
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
 
     const location = await Location.getLastKnownPositionAsync();
+
     dispatch(
       setOrigin({
         location: {
@@ -68,11 +70,8 @@ const MapHomeScreen = ({navigation}) => {
     );
   };
 
-  const isFocused = useIsFocused();
 
   useEffect(() => {
-    // this should be added  because we want to fetch data every time we enter this screen
-    if(!isFocused) return;
     getAllStations()
       .then((res) => {
         dispatch(setStations(res.data.result));
@@ -124,11 +123,6 @@ const MapHomeScreen = ({navigation}) => {
             
             stationsAux[i] = aux1;
           }
-
-          stationsAux.sort(function(a, b) {
-            let x = a['distance'].doubleValue; let y = b.distance.doubleValue;
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-          });
           dispatch(
             setNearByStaions(stationsAux)
           );
@@ -139,9 +133,10 @@ const MapHomeScreen = ({navigation}) => {
         func();
       })
       .catch((err) => {
-        console.error("getAllStations: Map.js",err);
+        //console.log("getAllStations: Map.js");
+        console.log("err");
       });
-  }, [isFocused]);
+  }, []);
 
   useEffect(() => {
     getLocation();
@@ -157,27 +152,32 @@ const MapHomeScreen = ({navigation}) => {
               backgroundColor: "#27423A",
               fontSize: 17,
               paddingLeft: 20,
+             // height:30,
               color: "white",
             },
             textInputContainer: {
               backgroundColor: "#27423A",
             },
-            container: {},
+            container: {
+            },
           }}
           textInputProps={{
             placeholderTextColor: "white",
+            //width:10,
           }}
           onPress={(data, details = null) => {
-            // console.log(data);
+            setShow(true);
+            setDest({latitude: details.geometry.location.lat, longitude: details.geometry.location.lng});
             dispatch(
               setDestination({
                 location: { latitude: details.geometry.location.lat, longitude: details.geometry.location.lng },
                 description: data.description,
               })
             );
-
+           
             childRef.current.goToDestination();
-          }}
+          }
+        }
           fetchDetails={true}
           returnKeyType={"search"}
           enablePoweredByContainer={false}
@@ -190,7 +190,29 @@ const MapHomeScreen = ({navigation}) => {
           debounce={300}
           GooglePlacesSearchQuery={{rankby: 'distance'}}
         />
+        
       </View>
+
+      {showTheThing && <View style={styles.searchBarJos}>
+        {console.log("la afisare:"+showTheThing)}
+          <View style={styles.stanga}>
+              <Text style={styles.textAutonomie}>Could you please introduce the current autonomy?</Text>
+              <TextInput style = {styles.input}
+                        underlineColorAndroid = "transparent"
+                        placeholder = "autonomy.."
+                        placeholderTextColor = "white"
+                        autoCapitalize = "none"
+                        onChangeText={text=>setAutonomy(text)}/>
+                        
+          </View>
+          <View style={styles.dreapta}>
+            <TouchableOpacity  onPress={()=> {
+              setShow(false)}}>
+              <Image source={deletee} style={styles.x}/>
+            </TouchableOpacity>
+              
+          </View>
+      </View> }
 
       <View
         style={{
@@ -216,11 +238,53 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     justifyContent: "space-around",
     flexDirection: "row",
+    flexWrap:'wrap',
+    //minHeight:'25%',
+    backgroundColor:'red',
   },
 
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+
+  searchBarJos:{
+    //display:'none',
+    alignItems:'center',
+    backgroundColor:"black",
+    flexDirection:'row',
+    width:'100%',
+    paddingVertical:10,
+    paddingHorizontal:10,
+    //marginTop:1,
+    //height:80,
+  },
+
+  textAutonomie:{
+    color:'white',
+  },
+
+  input: {
+    backgroundColor: 'rgba(40, 47, 45, 1)',
+    height: 40,
+    //margin: 2,
+    marginTop:3,
+    borderWidth: 1,
+    padding: 10,
+    color: "white",
+    // borderColor: 'green',
+    width:'90%',
+  },
+  stanga:{
+    width:'90%'
+  },
+  dreapta:{
+    width:'10%',
+  },
+  x:{
+    width:30,
+    height:30,
+  }
+
 });
 
 export default MapHomeScreen;

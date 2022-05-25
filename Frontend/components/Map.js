@@ -16,6 +16,7 @@ import { decode } from "@mapbox/polyline";
 import { useDispatch } from "react-redux";
 import Constants from "expo-constants";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -192,7 +193,7 @@ const Map = (props, ref) => {
                     
                   <View style={styles.marker}>
                     <Text style={styles.markerText}>Price: {station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
-                      {`Type: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`} ...See more details</Text>
+                      {`Charging speed: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`} ...See more details</Text>
                   </View>
                     
                 </MapView.Callout>
@@ -201,9 +202,12 @@ const Map = (props, ref) => {
           })}
       </MapView>
 
-
-      <Button onPress={() => createRoute()} title="Route" />
-          
+      <TouchableOpacity
+        style={styles.recenterBtn}
+        onPress={() => createRoute()}
+      >
+        <MaterialCommunityIcons name="directions" color="#4285F4" size={40} />
+      </TouchableOpacity>    
 
       {/*Display user's current region:*/}
       {/*<Text style={styles.text}>Current latitude: {region.latitude}</Text>
@@ -234,5 +238,11 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
-  }
+  },
+  recenterBtn: {
+    alignSelf: 'flex-end',
+    flex: 2,
+    margin: 10,
+    marginTop: 55,
+  },
 });
