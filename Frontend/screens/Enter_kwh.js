@@ -53,15 +53,6 @@ const getStationData = httpsCallable(fireFunc, "getStationData");
   
           <ImageBackground source={require("../images/streets.png")} style={styles.image}>
             <Text style={styles.title}> Introduce number of kwH you want to charge: </Text>
-            
-            <TextInput style={styles.input} 
-              placeholder="StationID" 
-              placeholderTextColor="#BCBCBC" 
-              onChangeText={setStationID} 
-              keyboardType="default"
-              >
-            </TextInput>
-
 
             <TextInput style={styles.input} 
               placeholder="KwH" 
@@ -77,27 +68,16 @@ const getStationData = httpsCallable(fireFunc, "getStationData");
             <TouchableOpacity
               style={styles.buttonCharge}
               onPress={() => {
-                if (!isNaN(value) && value >= 10 && value < 100) {
+                
+                if ((!isNaN(value)) && (value >= 10) && (value <= parseFloat(getGlobalState('carData').chargingCap))) {
+                  //todo this screen comes right after the car selection screen and instead of 100,
+                  //the app will use the car's battery cap as the max value
                   //console.log(value);
                   //console.log(stationID);
-                  getStationData({stationID: stationID}).then(response => {
-                    //console.log(response.data);
-                    setGlobalState("currentStationData",{
-                      id: stationID,
-                      lat: "", //todo
-                      long: "", //todo
-                      //etc
-                      price: response.data.result.price
-                    });
-                    setGlobalState("kwhToCharge", value);
-                    //console.log(getGlobalState("kwhToCharge"));
-                    navigation.navigate("LoadingScreen");
-                  }).catch(error => {
-                    alert("StationID not found");
-                    console.log(error);
-                  });
+                  setGlobalState("kwhToCharge", value);
+                  navigation.navigate("LoadingScreen");
                 } else {
-                  alert("You have to enter a numeric value between 10 and 100");
+                  alert("You have to enter a numeric value between 10 and "+getGlobalState('carData').chargingCap);
                 }
               }}
             >

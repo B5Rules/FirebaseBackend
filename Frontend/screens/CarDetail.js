@@ -10,29 +10,39 @@ import iconMasina2 from '../assets/bmw2.png';
 import iconMasina3 from '../assets/bmw3.png';
 import deletee from '../assets/delete.png';
 import { onAuthStateChanged } from 'firebase/auth';
-import { fireAuth, fireFunc } from '../firebase';
+import {fireAuth, fireFunc} from '../globals/firebase';
+
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
 import { httpsCallable } from 'firebase/functions';
-import { NavigationContainer } from '@react-navigation/native';
-import SliderNativeComponent from 'react-native/Libraries/Components/Slider/SliderNativeComponent';
-import { useGlobalState } from '../state';
+
 const deleteCar=httpsCallable(fireFunc,'deleteCar');
 var carss;
-export default class Pg3 extends React.Component {
+export default class CarDetail extends React.Component {
 
     componentDidMount(){
-        onAuthStateChanged(fireAuth, user => {
-          if (user == null) this.props.navigate('SignIn')
-        });
+        // onAuthStateChanged(fireAuth, user => {
+        //   if (user == null) this.props.navigate('SignIn')
+        // });
        }
     render() {
-        this.state=this.props.route.params//Aici preiau starea si accesez un camp cu state.atribut
+        this.state=this.props.route.params
+        carss=this.state
         console.log(this.state);
         return (
         <View style={styles.container}>
           <ImageBackground source={imgBack} resizeMode="cover" style={styles.bgImage}>
               <View style={styles.container}>
+                  <View style={styles.container2}>
+                      <Image source={iconProfil} style={styles.imagine1} /> 
+                      <View style={styles.container3}>
+                          <Text style={styles.text1}>Beneficiary Uster</Text>
+                          <Text style={styles.text2}>Pavel Silviu</Text>
+                      </View>
+                  </View>
                   <View style={styles.containerJos}>
+                    <View style={styles.containerJos0}>
+                      <Text style={styles.text3}>Detalii masina</Text>
+                    </View>
                     <View style={styles.containerJos1}>
 
                       <View style={styles.paddingMasina}>
@@ -58,12 +68,52 @@ export default class Pg3 extends React.Component {
                         <View style={styles.containerJos1Linie}>
                           <Text style={styles.text5}>Cai putere:</Text><Text style={styles.text4}>{this.state.caiPutere}</Text>
                         </View>
+                        
                       </View>
+                      
+                      <View style={styles.galerieMasini}>
+                        <Image source={iconMasina1} style={styles.imgMasinaGalerie} /> 
+                        <Image source={iconMasina2} style={styles.imgMasinaGalerie} /> 
+                        <Image source={iconMasina3} style={styles.imgMasinaGalerie} /> 
+                        {/* <View style={styles.imgMasinaGalerie2}>
+                          <Image source={Add} style={styles.Add} /> 
+                        </View> */}
+                      </View>
+                      
+                    </View>
+                    <View style={styles.containerJos2}>
+                      <Pressable onPress={()=>this.props.navigation.navigate('Car Update',this.state)}>
+                      <Image source={setari} /> 
+                      </Pressable>
+                      <Pressable onPress={async ()=>{ 
+                       await  deleteCar(this.state);
+                       setTimeout(()=>{
+                        this.props.navigation.goBack();
+                       },2000)
+                      
 
+                       }}>
+                      <Image source={deletee}/>
+                      </Pressable>
+                      <Pressable onPress={()=>this.props.navigation.goBack()}>
+                      <Image source={leftArrow} />
+                      </Pressable> 
                     </View>
                   </View>
+                  {/* <TouchableOpacity onPress={()=> this.props.pageChange(2)}>
+                  <Text style={styles.textInainte}>
+                      Go to page 2
+                  </Text>
+                  </TouchableOpacity> */}
+
               </View>
           </ImageBackground>
+          {/* <Text> page 2</Text>
+          <TouchableOpacity onPress={()=> this.props.pageChange(1)}>
+            <Text>
+              Go to page 1
+            </Text>
+          </TouchableOpacity> */}
         </View>
       );
     }
@@ -78,7 +128,7 @@ const styles = StyleSheet.create({
   container: {
     flex:1,
     flexDirection:"column",
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     // paddingTop: Constants.statusBarHeight,
     // padding: 8,
   },
@@ -86,7 +136,7 @@ const styles = StyleSheet.create({
     padding:'5%',
     flexDirection:"column",
     flex:1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems:'center',
   },
   containerJos0:{
