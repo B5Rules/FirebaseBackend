@@ -82,6 +82,14 @@ const Map = (props, ref) => {
   }));
 
   useEffect(() => {
+    //console.log(21321321312);
+    //console.log(providedDestination);
+    console.log(Object.keys(providedDestination).length)
+    if(Object.keys(providedDestination).length > 0)
+      goToDestination();
+  }, [providedDestination]);
+
+  useEffect(() => {
     setRouteOrigin(origin);
   }, []);
 

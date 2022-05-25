@@ -86,6 +86,8 @@ const MapHomeScreen = ({ navigation }) => {
     );
   };
 
+  
+
   useEffect(() => {
     getAllStations()
       .then((res) => {
