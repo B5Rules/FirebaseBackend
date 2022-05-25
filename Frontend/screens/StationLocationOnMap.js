@@ -4,10 +4,7 @@ import {
   Text,
   View,
   Dimensions,
-  Button,
-  Image,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Modal,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
@@ -19,7 +16,7 @@ import { getGlobalState, setGlobalState } from "../globals/global";
 import Constants from "expo-constants";
 import MarkerComponent from '../components/Marker'; 
 import { useIsFocused } from "@react-navigation/native";
-import * as NavigationBar from 'expo-navigation-bar';
+import { useBackButton } from "../hocs/backButtonHandler";
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
@@ -38,6 +35,8 @@ const StationLocationOnMap = ({ navigation }) => {
     longitudeDelta: mapDelta,
     latitudeDelta: mapDelta,
   })
+  useBackButton(() => {navigation.goBack(); return true;});
+  
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const isFocused = useIsFocused();
@@ -52,7 +51,7 @@ const StationLocationOnMap = ({ navigation }) => {
     })
     setRegion(initialPosition);
     setLoading(false);
-  },[]);
+  },[isFocused]);
   const pressStationBack = (station) => {
     setGlobalState("stationChangeModeActive", true);
     const data = {
@@ -86,7 +85,6 @@ const StationLocationOnMap = ({ navigation }) => {
                     zoomEnable={true}
                     toolbarEnabled={true}
                     showsMyLocationButton={true}
-                    region={initialPosition}
                     initialRegion={initialPosition}
                     onRegionChange={changeRegion}
                   />

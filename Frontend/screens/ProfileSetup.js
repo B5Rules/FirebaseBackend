@@ -10,7 +10,7 @@ import * as NavigationBar from 'expo-navigation-bar';
 import EditButton from '../images/editButton';
 import { useIsFocused } from '@react-navigation/native';
 import {Platform} from 'react-native';
-import { useBackButton } from '../hocs/backButtonHandler';
+import { useBackButton } from "../hocs/backButtonHandler";
 
 const insertProfile = httpsCallable(fireFunc, 'insertProfile');
 
@@ -31,7 +31,7 @@ const ProfileSetup = ({navigation}) => {
   const [firstName,setFirstName] = useState('');
   const [lastName,setLastName] = useState('');
   const [phone,setPhone] = useState('');
-  const useBackButton = useBackButton(handleBackButton);
+  useBackButton(handleBackButton);
 
   useEffect(() => {
     if(!getGlobalState('needUpdate')){
