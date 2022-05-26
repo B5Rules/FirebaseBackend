@@ -22,6 +22,7 @@ import {
   selectOrigin,
   selectNearByStations,
   selectStaions,
+  setOrigin,
 } from "../slices/navSlice";
 //import { setNearByStaions } from '../navSlice';
 //import { GOOGLE_MAPS_APIKEY } from "@env";
@@ -44,7 +45,7 @@ const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
 //LogBox.ignoreLogs(['Setting a timer']);
 
-const getDistanceBetweenPoints = async (pointA, pointB) => {
+export const getDistanceBetweenPoints = async (pointA, pointB) => {
   var urlToFetchDistance =
     "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
     pointA.latitude +
@@ -65,6 +66,8 @@ const getDistanceBetweenPoints = async (pointA, pointB) => {
 const Map = (props, ref) => {
   const { width, height } = Dimensions.get("window");
   const [coords, setCoords] = useState([]);
+  const dispatch = useDispatch();
+
   const stations = useSelector(selectStaions);
   const mapRef = useRef(1);
   const origin = useSelector(selectOrigin);
@@ -84,8 +87,6 @@ const Map = (props, ref) => {
   }));
 
   useEffect(() => {
-    //console.log(21321321312);
-    //console.log(providedDestination);
     console.log(Object.keys(providedDestination).length);
     if (Object.keys(providedDestination).length > 0) goToDestination();
   }, [providedDestination]);
@@ -110,7 +111,7 @@ const Map = (props, ref) => {
 
   const getLiveLocation = async () => {
     const res = await getCurrentLocation();
-
+    
     const originF = {
       location: {
         latitude: res.coords.latitude,
@@ -119,11 +120,13 @@ const Map = (props, ref) => {
         longitudeDelta: 0.08,
       },
     };
+
      if (
     //   //origin is the same
-       routeOrigin.location.latitude !== originF.location.latitude &&
-       routeOrigin.location.longitude !== originF.location.longitude
+       routeOrigin?.location.latitude !== originF.location.latitude &&
+       routeOrigin?.location.longitude !== originF.location.longitude
      ) {
+        dispatch(setOrigin(originF));
        setRouteOrigin(originF);
        console.log("location updated!");
      }
@@ -328,15 +331,10 @@ const Map = (props, ref) => {
         onPress={() => {
           stopRouting();
         }}
-      >
-<<<<<<< HEAD
-       <MaterialCommunityIcons name="stop-circle" color="#27423A" size={40} />
-      </TouchableOpacity> }
-=======
+        >
         <MaterialCommunityIcons name="stop-circle" color="#27423A" size={40} />
-      </TouchableOpacity>
->>>>>>> 6bc3bbac5854fc5d9e3e9b472bc1cb7fab8382ba
-
+        </TouchableOpacity>
+      }
       {/*Display user's current region:*/}
       {/*<Text style={styles.text}>Current latitude: {region.latitude}</Text>
      <Text style={styles.text}>Current longitude: {region.longitude}</Text>*/}
@@ -367,19 +365,11 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-<<<<<<< HEAD
-  
-    stopBtn:{
-    alignSelf:"flex-end",
-    marginBottom:"110%",
-    marginRight:8,
-=======
 
   stopBtn: {
     alignSelf: "flex-end",
     marginBottom: "130%",
     marginRight: 8,
->>>>>>> 6bc3bbac5854fc5d9e3e9b472bc1cb7fab8382ba
   },
 
   recenterBtn: {

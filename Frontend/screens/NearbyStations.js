@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import {
-  selectNearByStations,
   setDestination,
   selectDestination,
+  selectOrigin,
+  selectStaions,
 } from "../slices/navSlice";
 import { useDispatch } from "react-redux";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -15,14 +16,78 @@ import {
   Image,
   component,
 } from "react-native";
-import Map from "../components/Map";
+import { getDistanceBetweenPoints } from "./MapHomeScreen";
+
 function NearbyStations({ navigation }) {
-  const nearByStations = useSelector(selectNearByStations);
+  const [nearByStations, setNearByStaions] = useState([]);
   const childRef = useRef();
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //   console.log(nearByStations);
-  // });
+  const origin = useSelector(selectOrigin);
+  const stations = useSelector(selectStaions);
+
+  useEffect(() => {
+    const func = async () => {
+      let stationsAux = [];
+      let distancesAux = [];
+
+      let counter = 0;
+
+      const location = origin;
+      const statii = stations;
+      
+      for (const station of statii) {
+        let dist;
+         //console.log(station?._fieldsProto?.coordinates?.geoPointValue);
+         if (station?._fieldsProto?.coordinates?.geoPointValue == undefined)
+           dist = 99999999;
+         else {
+           if (
+             station?._fieldsProto?.coordinates?.geoPointValue !== undefined
+           ) {
+             
+             dist = await getDistanceBetweenPoints(
+               station._fieldsProto.coordinates.geoPointValue,
+               location.location
+             );
+           }
+         }
+
+         if (counter < 3) {
+           stationsAux[counter] = station;
+
+           distancesAux[counter] = dist;
+         } else if (dist < distancesAux[0]) {
+           distancesAux[0] = dist;
+           stationsAux[0] = station;
+         } else if (dist < distancesAux[1]) {
+         distancesAux[1] = dist;
+           stationsAux[1] = station;
+         } else if (dist < distancesAux[2]) {
+         distancesAux[2] = dist;
+           stationsAux[2] = station;
+         }
+         counter = counter + 1;
+       }
+
+      for (i = 0; i < 3; i++) {
+        stationsAux[i] = stationsAux[i]._fieldsProto;
+        let aux1 = {};
+        for (const prop in stationsAux[i]) {
+          aux1[prop] = stationsAux[i][prop];
+        }
+        aux1["distance"] = {
+          doubleValue: distancesAux[i],
+          valueType: "doubleValue",
+        };
+
+        stationsAux[i] = aux1;
+      }
+      
+      setNearByStaions(stationsAux);
+    };
+    func();
+    //getDistanceBetweenPoints(origin, origin);
+  }, [origin]);
 
   const goToStation = (nr) => {
     dispatch(
