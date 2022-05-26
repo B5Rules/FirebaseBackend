@@ -15,11 +15,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-<<<<<<< HEAD
 import { Chip } from "react-native-paper";
 import { httpsCallable } from "firebase/functions";
 import { fireFunc } from "../globals/firebase";
-=======
 import { getGlobalState } from '../globals/global';
 import { useBackButton } from '../hocs/backButtonHandler';
 
@@ -27,7 +25,6 @@ import { useBackButton } from '../hocs/backButtonHandler';
 // import { createStackNavigator } from "@react-navigation/stack";
 // import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
->>>>>>> 54fe9746b814efc720e38fe0c40c46d9afc79adb
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
