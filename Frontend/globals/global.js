@@ -34,6 +34,10 @@ const {setGlobalState, getGlobalState} = createGlobalState({
     },
     stationChangeModeActive: false,
     stationChargeModeEdit: 0, // 1 - edit, 2 - add
+    carData:{
+        chargingCap: 0,
+    },
+    cars:[],
 });
 
 export {setGlobalState, getGlobalState};

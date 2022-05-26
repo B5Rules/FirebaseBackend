@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,KeyboardAvoidingView, TextInput,TouchableHighlight,Alert,Image } from 'react-native'
+import { StyleSheet, Text, View,KeyboardAvoidingView, TextInput,TouchableHighlight,Alert,BackHandler,Image } from 'react-native'
 import React,{ useEffect, useState } from 'react'
 import { Picker } from '@react-native-picker/picker';
 import { useValidation } from 'react-native-form-validator';
@@ -10,7 +10,7 @@ import * as NavigationBar from 'expo-navigation-bar';
 import EditButton from '../images/editButton';
 import { useIsFocused } from '@react-navigation/native';
 import {Platform} from 'react-native';
-import { useBackButton } from "../hocs/backButtonHandler";
+import { useBackButton } from '../hocs/backButtonHandler';
 
 const insertProfile = httpsCallable(fireFunc, 'insertProfile');
 
@@ -31,7 +31,7 @@ const ProfileSetup = ({navigation}) => {
   const [firstName,setFirstName] = useState('');
   const [lastName,setLastName] = useState('');
   const [phone,setPhone] = useState('');
-  useBackButton(handleBackButton);
+  useBackButton(handleBackButton)
 
   useEffect(() => {
     if(!getGlobalState('needUpdate')){
@@ -41,7 +41,6 @@ const ProfileSetup = ({navigation}) => {
       setPhone(getGlobalState('userData').phone);
     }
     Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#182724')
-    
   }, [isFocused]);
   
   const { validate, isFieldInError, getErrorMessages} =

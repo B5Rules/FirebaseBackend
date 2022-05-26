@@ -3,6 +3,7 @@ import {StyleSheet,Text, View,TextInput,Image,Dimensions, ScrollView, Button, Im
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "@react-navigation/native";
 import { getGlobalState } from '../globals/global';
+import { useBackButton } from '../hocs/backButtonHandler';
 
 // import { NavigationContainer } from "@react-navigation/native";
 // import { createStackNavigator } from "@react-navigation/stack";
@@ -23,6 +24,30 @@ const StationInfo = () => {
   const [voltage, onChangeVoltage] = React.useState("Working Voltage");
   const [protection, onChangeProtection] = React.useState("Protection Level");
 
+  const tmp = ()=>{
+    Alert.alert(
+      "Warning",
+      "You will lose your changes. Are you sure you want to go back?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => {
+          navigation.goBack();
+          return true;
+        } }
+      ],
+      { cancelable: false }
+    );
+    return true
+  }
+
+  useBackButton(()=>{
+    navigation.goBack();
+    return true;
+  });
   const navigation = useNavigation();
   
     return (

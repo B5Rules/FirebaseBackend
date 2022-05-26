@@ -16,6 +16,7 @@ import { decode } from "@mapbox/polyline";
 import { useDispatch } from "react-redux";
 import Constants from "expo-constants";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { getGlobalState,setGlobalState } from "../globals/global";
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -84,6 +85,7 @@ const Map = (props, ref) => {
     setRouteDestination(destination);
   };
 
+  //refocuseaza harta pe locul unde a fost apasata
   const onMapPress = (e) => {
     setRouteDestination(null);
 
@@ -189,7 +191,20 @@ const Map = (props, ref) => {
                 title="Destination"
                
               >
-                <MapView.Callout tooltip style={styles.customView} onPress={() => navigation.navigate("Station Info")}>
+                <MapView.Callout tooltip style={styles.customView} onPress={() => {
+                  jsonStationData = {
+                    id:'',
+                    owneruid:'',
+                    service_flags: [],
+                    price: station?._fieldsProto?.price?.doubleValue,
+                    lat: station?._fieldsProto?.coordinates?.geoPointValue.latitude,
+                    long: station?._fieldsProto?.coordinates?.geoPointValue.longitude,
+                    type: station?._fieldsProto?.type?.integerValue,
+                  };
+                  setGlobalState("currentStationData", jsonStationData);
+                  navigation.navigate("Station Info");
+                  
+                }}>
                     
                   <View style={styles.marker}>
                     <Text style={styles.markerText}>Price: {station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
