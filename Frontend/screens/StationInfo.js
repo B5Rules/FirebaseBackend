@@ -1,7 +1,23 @@
-import React from 'react';
-import {StyleSheet,Text, View,TextInput,Image,Dimensions, ScrollView, Button, ImageBackground, Pressable, TouchableHighlight, Alert} from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Image,
+  Dimensions,
+  ScrollView,
+  Button,
+  ImageBackground,
+  Pressable,
+  TouchableHighlight,
+  Alert,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import { Chip } from "react-native-paper";
+import { httpsCallable } from "firebase/functions";
+import { fireFunc } from "../globals/firebase";
 import { getGlobalState } from '../globals/global';
 import { useBackButton } from '../hocs/backButtonHandler';
 
@@ -12,184 +28,264 @@ import { useBackButton } from '../hocs/backButtonHandler';
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
+const getStationById = httpsCallable(
+  fireFunc,
+  "getStationById"
+);
+const changeStationStatus = httpsCallable(
+  fireFunc,
+  "changeStationStatus"
+)
+
+const getTextFromType = (type) => {
+  console.log('Station type:', type)
+  if(type === undefined) return "";
+  return {
+    0: "free",
+    1: "busy",
+    2: "reserved",
+  }[type];
+
+}
 
 
-const StationInfo = () => {
-  const stationData = getGlobalState("currentStationData");
+const StationInfo = ({ navigation, route }) => {
+  const [station, setStation] = useState({});
+  const [shouldUpdate, setShouldUpdate] = useState(true);
 
-  const [name, onChangeName] = React.useState("(removethis)"); //"Station name" please remove, un nickname setabil de utilizator nu e un lux pe care ni-l permitem
-  const [charger, onChangeCharger] = React.useState("Charging Plug");
-  const [plug, onChangePlug] = React.useState("Power Plug");
-  const [current, onChangeCurrent] = React.useState("Adjustable Current"); //Adjustable Current
-  const [voltage, onChangeVoltage] = React.useState("Working Voltage");
-  const [protection, onChangeProtection] = React.useState("Protection Level");
+  useEffect(() => {
+    if(shouldUpdate === false) return;
 
-  const tmp = ()=>{
-    Alert.alert(
-      "Warning",
-      "You will lose your changes. Are you sure you want to go back?",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OK", onPress: () => {
-          navigation.goBack();
-          return true;
-        } }
-      ],
-      { cancelable: false }
-    );
-    return true
+    setShouldUpdate(false);
+    getStationById(route?.params?.station?._fieldsProto?.id?.stringValue).then(res => {
+      setStation(res.data.result);
+    }).catch(err => {
+      console.error('Error:', err);
+    })
+  }, [shouldUpdate]);
+
+  const cancelReservation = async () => {
+    const response = await changeStationStatus({
+      id: station.id,
+      status: 0
+    })
+    console.log(response)
+    setShouldUpdate(true);    
   }
 
-  useBackButton(()=>{
-    navigation.goBack();
-    return true;
-  });
-  const navigation = useNavigation();
-  
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={[styles.headerContainer, styles.containerProps]}>
-          <Image
-            style={{marginRight: 20 }}
-            source={require('../images/Blue-circle.png')}
-          />
-          <View> 
-            <Text style={{ fontSize: 20, fontWeight: "bold", color:"#6B6464", marginBottom: 5 }}>
-              Provider account
-            </Text>
-            <Text style={{ fontSize: 24, fontWeight: "bold", color: "white" }}>
-                Provider Name
-            </Text>
-          </View>
+  const reserveStation = async () => {
+    const response = await changeStationStatus({
+      id: station.id,
+      status: 2
+    })
+    console.log(response)
+    setShouldUpdate(true);
+  }
 
-        </View>       
-        <ScrollView style={{ width }}>
-        <View style={styles.smallcontainer}>
-            <View style={{    alignItems: "center", justifyContent: "center"}}>
-              <Image
-              source={require('../images/car-photo.png')}
-              />
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={[styles.mainContainer, styles.containerProps]}>
+        <ImageBackground
+          source={require("../images/streets.png")}
+          resizeMode="cover"
+          style={styles.image}
+        >
+          <ScrollView
+            nestedScrollEnabled={true}
+            style={[width, styles.scrollView]}
+          >
+            <View style={styles.darkcontainer}>
+              <View style={styles.headerContainer}>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 25,
+                      fontWeight: "bold",
+                      color: "white",
+                      margin: 20,
+                    }}
+                  >
+                    {station.name}
+                  </Text>
+                </View>
+              </View>
+
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginHorizontal: 100,
+                }}
+              >
+                <Image
+                  style={{ width: 200, height: 100, borderRadius: 50 }}
+                  source={require("../images/charging-car2.jpg")}
+                />
+              </View>
+              <View>
+                <Text style={styles.label}>Price</Text>
+                <View style={styles.detail}>
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
+                  >
+                    {station.price} Ron
+                  </Text>
+                </View>
+
+                <Text style={styles.label}>Charge</Text>
+                <View style={styles.detail}>
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
+                  >
+                    {station.type} kWh
+                  </Text>
+                </View>
+
+                <Text style={styles.label}>Services</Text>
+                <View style={styles.chips}>
+                  <View style={styles.chipsContent}>
+                    {station?.services?.map((stationChip) => (
+                    <Chip
+                      key={`chip-${stationChip}`}
+                      style={styles.chip}
+                      mode="flat"
+                      selectedColor="#01A78F"
+                    >
+                      {` ${stationChip} `}
+                    </Chip>
+                    ))}
+                  </View>
+                </View>
+
+                <View style={styles.inlineContainer}>
+                  <Text style={styles.label}>Distance from your place</Text>
+                  <View style={styles.detail}>
+                    <Text
+                      style={{
+                        flex: 1,
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "white",
+                      }}
+                    >
+                      22,3 km
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.inlineContainer}>
+                  <Text style={styles.label}>Time</Text>
+                  <View style={styles.detail}>
+                    <Text
+                      style={{
+                        flex: 1,
+                        fontSize: 18,
+                        fontWeight: "bold",
+                        color: "white",
+                      }}
+                    >
+                      30 min
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.inlineContainer}>
+                  <Text style={styles.label}>Disponibility</Text>
+                  <View
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <Pressable style={[styles.stationStatus, styles[getTextFromType(station.status)]]}>
+                      <Text style={styles.textStyle}>{getTextFromType(station.status).toUpperCase()}</Text>
+                    </Pressable>
+                  </View>
+                </View>
+
+                <TouchableHighlight
+                  accessible={true}
+                  activeOpacity={0.5}
+                  style={styles.button2}
+                  onPress={() => navigation.navigate("Enter_kwh")}
+                >
+                  <Text style={styles.textButton2}>Charge Now</Text>
+                </TouchableHighlight>
+                {
+                  station?.status === 0 ? (
+                    <TouchableHighlight
+                  accessible={true}
+                  activeOpacity={0.5}
+                  style={[styles.button2, styles.button3]}
+                  onPress={reserveStation}
+                >
+                  <Text style={[styles.textButton2, styles.textButton3]}>
+                    Reserve
+                  </Text>
+                </TouchableHighlight>
+                  ) : (
+                    <TouchableHighlight
+                  accessible={true}
+                  activeOpacity={0.5}
+                  style={[styles.button2, styles.button3]}
+                  onPress={cancelReservation}
+                >
+                  <Text style={[styles.textButton2, styles.textButton4]}>
+                    Cancel Reservation
+                  </Text>
+                </TouchableHighlight>
+                  )
+                }
+              </View>
             </View>
-            <View>
-              <View style={styles.detail}>
-              <Text style={{ fontSize: 20, color: "white", marginRight: 5 }}>
-                Station Details: 
-              </Text>
-              <Text style={{ fontSize: 20, color: "#00FFDA" }}>
-                X Station
-              </Text>
-
-              </View>
-              <View style={styles.detail}>
-              <Text style={{ fontSize: 20, color: "white", marginRight: 5 }}>
-                Charging Plug: 
-              </Text>
-              <Text style={{ fontSize: 20, color: "#00FFDA" }}>
-                Type 1 Plug
-              </Text>
-
-              </View>
-              <View style={styles.detail}>
-              <Text style={{ fontSize: 20, color: "white", marginRight: 5 }}>
-                Power Plug: 
-              </Text>
-              <Text style={{ fontSize: 20, color: "#00FFDA" }}>
-              Nema 5-15 plug
-              </Text>
-              </View>
-              <View style={styles.detail}>
-              <Text style={{ fontSize: 20, color: "white", marginRight: 5 }}>
-              Adjustable Curren: 
-              </Text>
-              <Text style={{ fontSize: 20, color: "#00FFDA" }}>
-              6A/8A/10A
-              </Text>
-
-              </View>
-              <View style={styles.detail}>
-              <Text style={{ fontSize: 20, color: "white", marginRight: 5 }}>
-              Working Voltage: 
-              </Text>
-              <Text style={{ fontSize: 20, color: "#00FFDA" }}>
-              110V AC
-              </Text>
-              </View>
-
-              <View style={styles.detail}>
-              <Text style={{ fontSize: 20, color: "white", marginRight: 5 }}>
-              Protection Level :
-              </Text>
-              <Text style={{ fontSize: 20, color: "#00FFDA" }}>
-              IP65
-              </Text>
-              </View>
-
-            </View>
-
-          </View>
-          <View style={styles.btncontainer}>
-
-          <Pressable style={styles.button}>
-          <Image
-          source={require('../images/Settings.png')}
-          />
-
-          </Pressable>
-
-          <Pressable style={styles.button1}>
-          <Image
-          source={require('../images/ArrowBack.png')}
-          />
-
-            </Pressable>
-            
-
-          </View>
-
-
-          <TouchableHighlight style={styles.buttonCharge} onPress={() => {
-            //navigation.navigate("Enter_kwh")
-            navigation.navigate("Car List Payment")
-            }}>
-            <Text style={styles.buttonChargeText}>Charge Now</Text>
-          </TouchableHighlight>
-
-          
-        </ScrollView>
-      </SafeAreaView>
-    )
+          </ScrollView>
+        </ImageBackground>
+      </View>
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
+  mainView: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
   container: {
     flex: 1,
-    backgroundColor: "black",
+    backgroundColor: "#0A1613",
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom:'45%'
   },
-   
+
   headerContainer: {
-    flexDirection:'row',
+    flex: 0.2,
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom:10,
   },
 
   image: {
     flex: 1,
-    justifyContent: "center"
+    justifyContent: "center",
+  },
+
+  scrollView: {
+    paddingTop: 10,
   },
 
   mainContainer: {
-    backgroundColor: "black",
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#0A1613",
+    alignItems: "center",
+    justifyContent: "center",
     flex: 1,
   },
 
@@ -199,50 +295,56 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  smallcontainer: {
-    marginTop:20,
-    backgroundColor: '#182724',
-    borderRadius: 20,
+  darkcontainer: {
+    margin: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    borderRadius: 40,
     padding: 20,
-    marginRight:30,
-    marginLeft:30
+    borderColor: "#3B9683",
+    borderWidth: 1,
+    paddingTop: 10,
+    marginRight: 10,
+    marginLeft: 10,
   },
-
 
   detail: {
     flex: 1,
-    padding:10,
-    flexWrap: 'wrap',
-    alignContent: "space-between",
-    flexDirection: 'row',
-    backgroundColor:"#182724",
-    borderBottomColor:"white",
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    backgroundColor: "#182724",
+    borderBottomColor: "white",
     borderBottomWidth: 2,
     marginBottom: 10,
     borderRadius: 5,
-    
+  },
+  label: {
+    flex: 1,
+    fontSize: 18,
+    color: "white",
+    marginLeft: 10,
+    marginBottom: 5,
+    fontWeight: "bold",
+  },
+
+  inlineContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+
+  label2: {
+    flex: 1,
+    fontSize: 18,
+    color: "white",
+    marginLeft: 10,
+    marginBottom: 5,
+    fontWeight: "bold",
   },
 
   // Buttons
-  btncontainer: {
-    
-    flex: 1,
-    paddingTop:20,
-    paddingLeft:40,
-    paddingRight:40,
-    marginRight:40,
-    marginLeft:40,
-    flexDirection: 'row',
-
-  },
-
-  button:{
-    flex:1,
-  },
-
-  button1:{
-    marginRight: 10,
-  },
 
   buttonCharge: {
     backgroundColor: "#04ae95",
@@ -255,7 +357,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: "auto",
     marginRight: "auto",
-    marginBottom: 50
+    marginBottom: 50,
   },
 
   buttonChargeText: {
@@ -263,6 +365,109 @@ const styles = StyleSheet.create({
     color: "white",
   },
 
+  button2: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 15,
+    paddingHorizontal: 5,
+    borderRadius: 20,
+    elevation: 3,
+    backgroundColor: "#046b53",
+    marginTop: 10,
+    marginLeft: 70,
+    marginRight: 70,
+  },
+
+  button3: {
+    backgroundColor: "#fdca40",
+    marginTop: 20,
+    marginLeft: 100,
+    marginRight: 100,
+  },
+
+  textButton2: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "white",
+  },
+
+  textButton3: {
+    fontSize: 18,
+  },
+
+  textButton4: {
+    fontSize: 14,
+  },
+
+  stationStatus: {
+    borderRadius: 5,
+    padding: 10,
+    elevation: 2,
+    width: 170,
+    backgroundColor: "white",
+    color: "#01A78F",
+    borderWidth: 2,
+  },
+  free: {
+    borderColor: "#01A78F",
+    backgroundColor: "#01A78F",
+  },
+  busy: {
+    borderColor: "#FF5D5D",
+    backgroundColor: "#FF5D5D",
+  },
+  reserved: {
+    borderColor: "#fdca40",
+    backgroundColor: "#fdca40",
+  },
+
+  textStyle: {
+    color: "#FFF",
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 20,
+  },
+  textBusy: {
+    color: "#FF5D5D",
+  },
+
+  textReserved: {
+    color: "#fdca40",
+  },
+
+  //chips:
+
+  chips: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    color: "white",
+    backgroundColor: "#182724",
+    borderBottomColor: "white",
+    borderBottomWidth: 2,
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+
+  textChips: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+    marginBottom: 10,
+    marginLeft: 7,
+  },
+
+  chipsContent: {
+    justifyContent: "center",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    borderRadius: 5,
+  },
+
+  chip: {
+    margin: 5,
+    color: "#00FFDA",
+  },
 });
 
 export default StationInfo;
