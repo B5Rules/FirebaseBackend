@@ -329,8 +329,13 @@ const Map = (props, ref) => {
           stopRouting();
         }}
       >
+<<<<<<< HEAD
        <MaterialCommunityIcons name="stop-circle" color="#27423A" size={40} />
       </TouchableOpacity> }
+=======
+        <MaterialCommunityIcons name="stop-circle" color="#27423A" size={40} />
+      </TouchableOpacity>
+>>>>>>> 6bc3bbac5854fc5d9e3e9b472bc1cb7fab8382ba
 
       {/*Display user's current region:*/}
       {/*<Text style={styles.text}>Current latitude: {region.latitude}</Text>
@@ -362,13 +367,21 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+<<<<<<< HEAD
   
     stopBtn:{
     alignSelf:"flex-end",
     marginBottom:"110%",
     marginRight:8,
+=======
+
+  stopBtn: {
+    alignSelf: "flex-end",
+    marginBottom: "130%",
+    marginRight: 8,
+>>>>>>> 6bc3bbac5854fc5d9e3e9b472bc1cb7fab8382ba
   },
-  
+
   recenterBtn: {
     alignSelf: "flex-end",
     flex: 2,
