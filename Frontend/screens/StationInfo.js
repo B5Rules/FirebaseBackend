@@ -63,6 +63,7 @@ const StationInfo = ({ navigation, route }) => {
       console.error('Error:', err);
     })
   }, [shouldUpdate]);
+  useBackButton(() => {navigation.goBack(); return true;})
 
   const cancelReservation = async () => {
     const response = await changeStationStatus({
