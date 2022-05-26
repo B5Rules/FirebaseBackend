@@ -1,7 +1,25 @@
-import { StyleSheet, Text, View, Button, Component, Image } from "react-native";
-import React, { useEffect, useRef } from "react";
+import {
+  TextInput,
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Component,
+  Image,
+} from "react-native";
+import { Feather } from '@expo/vector-icons'; 
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { selectStaions, setDestination, setOrigin, setStations, selectOrigin, setNearByStaions, selectNearByStations } from "../slices/navSlice";
+import {
+  selectStaions,
+  setDestination,
+  setOrigin,
+  setStations,
+  selectOrigin,
+  setNearByStaions,
+  selectNearByStations,
+  selectDestination,
+} from "../slices/navSlice";
 // Google
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 //import { GOOGLE_MAPS_APIKEY } from "@env";
@@ -16,7 +34,10 @@ import * as Location from "expo-location";
 import { fireApp, fireAuth, fireFunc } from "../globals/firebase";
 import { httpsCallable } from "firebase/functions";
 import Constants from "expo-constants";
-import { useIsFocused } from "@react-navigation/native";
+import deletee from "../assets/delete.png";
+import { PressabilityDebugView } from "react-native/Libraries/Pressability/PressabilityDebug";
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
+import { TouchableOpacity } from "react-native";
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -32,30 +53,28 @@ export const getDistanceBetweenPoints = async (pointA, pointB) => {
     pointB.longitude +
     "&key=" +
     GOOGLE_MAPS_APIKEY;
-  try {
-    const res = await fetch(urlToFetchDistance);
-    const data = await res.json();
-    return data.rows[0].elements[0].distance.value;
-  }catch(e) {
-    return 99999999;
-  }
+
+  const res = await fetch(urlToFetchDistance);
+  const data = await res.json();
+  return data.rows[0].elements[0].distance.value;
 };
 
-
-const MapHomeScreen = ({navigation}) => {
-
+const MapHomeScreen = ({ navigation }) => {
   const getAllStations = httpsCallable(fireFunc, "getAllStations");
   const dispatch = useDispatch();
   const childRef = useRef();
-  let  stations = useSelector(selectStaions);
+  let stations = useSelector(selectStaions);
   const origin = useSelector(selectOrigin);
   const nearByStations = useSelector(selectNearByStations);
- 
+  const [showTheThing, setShow] = useState(false);
+  const [autonomy, setAutonomy] = useState("");
+  const [dest, setDest] = useState({});
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
 
     const location = await Location.getLastKnownPositionAsync();
+
     dispatch(
       setOrigin({
         location: {
@@ -68,11 +87,9 @@ const MapHomeScreen = ({navigation}) => {
     );
   };
 
-  const isFocused = useIsFocused();
+  
 
   useEffect(() => {
-    // this should be added  because we want to fetch data every time we enter this screen
-    if(!isFocused) return;
     getAllStations()
       .then((res) => {
         dispatch(setStations(res.data.result));
@@ -81,62 +98,65 @@ const MapHomeScreen = ({navigation}) => {
           let distancesAux = [];
 
           let counter = 0;
-         
+
           const location = await Location.getLastKnownPositionAsync();
           const statii = res.data.result;
-          for(const station of statii) {
+          for (const station of statii) {
             let dist;
             //console.log(station?._fieldsProto?.coordinates?.geoPointValue);
-            if(station?._fieldsProto?.coordinates?.geoPointValue == undefined)
-               dist = 99999999;
+            if (station?._fieldsProto?.coordinates?.geoPointValue == undefined)
+              dist = 99999999;
             else {
-              if(station?._fieldsProto?.coordinates?.geoPointValue !== undefined) {
-                dist = await getDistanceBetweenPoints(station._fieldsProto.coordinates.geoPointValue, location.coords);
+              if (
+                station?._fieldsProto?.coordinates?.geoPointValue !== undefined
+              ) {
+                dist = await getDistanceBetweenPoints(
+                  station._fieldsProto.coordinates.geoPointValue,
+                  location.coords
+                );
               }
             }
 
-            if(counter < 3) {
-               stationsAux[counter] = station;
-               
-               distancesAux[counter] = dist;
-             } else if(dist < distancesAux[0]){
-               distancesAux[0] = dist;
-               stationsAux[0] = station;
-             }
-             else if(dist < distancesAux[1]){ 
-               distancesAux[1] = dist;
-               stationsAux[1] = station; 
-             }
-             else if(dist < distancesAux[2]){
-               distancesAux[2] = dist;
-               stationsAux[2] = station;
-             }
-             counter = counter + 1;
+            if (counter < 3) {
+              stationsAux[counter] = station;
+
+              distancesAux[counter] = dist;
+            } else if (dist < distancesAux[0]) {
+              distancesAux[0] = dist;
+              stationsAux[0] = station;
+            } else if (dist < distancesAux[1]) {
+              distancesAux[1] = dist;
+              stationsAux[1] = station;
+            } else if (dist < distancesAux[2]) {
+              distancesAux[2] = dist;
+              stationsAux[2] = station;
+            }
+            counter = counter + 1;
           }
-          
-          for(i = 0; i < 3; i++) {
+
+          for (i = 0; i < 3; i++) {
             stationsAux[i] = stationsAux[i]._fieldsProto;
             let aux1 = {};
-            for(const prop in stationsAux[i]) {
+            for (const prop in stationsAux[i]) {
               aux1[prop] = stationsAux[i][prop];
             }
-            aux1['distance'] =  {doubleValue: distancesAux[i], valueType: "doubleValue"};
-            
+            aux1["distance"] = {
+              doubleValue: distancesAux[i],
+              valueType: "doubleValue",
+            };
+
             stationsAux[i] = aux1;
           }
-          dispatch(
-            setNearByStaions(stationsAux)
-          );
-
-        
-        }
+          dispatch(setNearByStaions(stationsAux));
+        };
 
         func();
       })
       .catch((err) => {
-        console.error("getAllStations: Map.js",err);
+        //console.log("getAllStations: Map.js");
+        console.log("err");
       });
-  }, [isFocused]);
+  }, []);
 
   useEffect(() => {
     getLocation();
@@ -152,6 +172,7 @@ const MapHomeScreen = ({navigation}) => {
               backgroundColor: "#27423A",
               fontSize: 17,
               paddingLeft: 20,
+              // height:30,
               color: "white",
             },
             textInputContainer: {
@@ -161,12 +182,20 @@ const MapHomeScreen = ({navigation}) => {
           }}
           textInputProps={{
             placeholderTextColor: "white",
+            //width:10,
           }}
           onPress={(data, details = null) => {
-            // console.log(data);
+            setShow(true);
+            setDest({
+              latitude: details.geometry.location.lat,
+              longitude: details.geometry.location.lng,
+            });
             dispatch(
               setDestination({
-                location: { latitude: details.geometry.location.lat, longitude: details.geometry.location.lng },
+                location: {
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                },
                 description: data.description,
               })
             );
@@ -183,9 +212,37 @@ const MapHomeScreen = ({navigation}) => {
           }}
           nearbyPlacesAPI="GooglePlacesSearch"
           debounce={300}
-          GooglePlacesSearchQuery={{rankby: 'distance'}}
+          GooglePlacesSearchQuery={{ rankby: "distance" }}
         />
       </View>
+
+      {showTheThing && (
+        <View style={styles.searchBarJos}>
+          {console.log("la afisare:" + showTheThing)}
+          <View style={styles.stanga}>
+            <Text style={styles.textAutonomie}>
+              
+            </Text>
+            <TextInput
+              style={styles.input}
+              underlineColorAndroid="transparent"
+              placeholder="Introduce battery autonomy.."
+              placeholderTextColor="white"
+              autoCapitalize="none"
+              onChangeText={(text) => setAutonomy(text)}
+            />
+          </View>
+          <View style={styles.dreapta}>
+            <TouchableOpacity
+              onPress={() => {
+                setShow(false);
+              }}
+            >
+              <Feather name="x-square" size={32} color="#01F2CF" style={styles.Icon} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
       <View
         style={{
@@ -197,7 +254,7 @@ const MapHomeScreen = ({navigation}) => {
           <Map ref={childRef} />
         </View>
       </View>
-      </SafeAreaView>
+    </SafeAreaView>
   );
 };
 
@@ -211,10 +268,49 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     justifyContent: "space-around",
     flexDirection: "row",
+    flexWrap: "wrap",
+    //minHeight:'25%',
+    backgroundColor: "red",
   },
 
   map: {
     ...StyleSheet.absoluteFillObject,
+  },
+
+  searchBarJos: {
+    alignItems: "center",
+    backgroundColor: "black",
+    flexDirection: "row",
+    width: "100%",
+    paddingLeft:8,
+    marginBottom:12,
+    marginTop:-12,
+    paddingRight:15,
+  },
+
+  textAutonomie: {
+    color: "white",
+  },
+
+  input: {
+    backgroundColor: "rgba(40, 47, 45, 1)",
+    height: 40,
+    //margin: 2,
+    marginTop: 3,
+    borderWidth: 1,
+    padding: 10,
+    color: "white",
+    // borderColor: 'green',
+    width: "90%",
+  },
+  stanga: {
+    width: "90%",
+  },
+  dreapta: {
+    width: "10%",
+  },
+  Icon: {
+  marginTop:22,
   },
 });
 

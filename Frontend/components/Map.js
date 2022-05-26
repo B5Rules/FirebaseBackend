@@ -1,4 +1,12 @@
-import { Dimensions, StyleSheet, Text, View, Button, TouchableHighlight, TouchableOpacity } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TouchableHighlight,
+  TouchableOpacity,
+} from "react-native";
 import React, {
   useState,
   useEffect,
@@ -9,13 +17,24 @@ import React, {
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { useSelector } from "react-redux";
-import { selectDestination, selectOrigin, selectNearByStations, selectStaions } from "../slices/navSlice";
+import {
+  selectDestination,
+  selectOrigin,
+  selectNearByStations,
+  selectStaions,
+} from "../slices/navSlice";
 //import { setNearByStaions } from '../navSlice';
 //import { GOOGLE_MAPS_APIKEY } from "@env";
 import { decode } from "@mapbox/polyline";
 import { useDispatch } from "react-redux";
 import Constants from "expo-constants";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import {
+  locationPermission,
+  getCurrentLocation,
+} from "../slices/helperFunction";
 import { routeCalculator } from "../slices/routeCalculator";
 import { getGlobalState,setGlobalState } from "../globals/global";
 
@@ -52,16 +71,65 @@ const Map = (props, ref) => {
   const providedDestination = useSelector(selectDestination);
   const [destination, setDestination] = useState(null);
   const [routeDestination, setRouteDestination] = useState(null);
+  const [routeOrigin, setRouteOrigin] = useState(null);
   //const [nearByStations, setNearByStations]  = useState([]);
   const region = useRef({});
-
   useImperativeHandle(ref, () => ({
     goToDestination: () => {
       goToDestination();
     },
+    createRoute: () => {
+      createRoute();
+    },
   }));
 
-  
+  useEffect(() => {
+    //console.log(21321321312);
+    //console.log(providedDestination);
+    console.log(Object.keys(providedDestination).length)
+    if(Object.keys(providedDestination).length > 0)
+      goToDestination();
+  }, [providedDestination]);
+
+  useEffect(() => {
+    setRouteOrigin(origin);
+  }, []);
+
+  useEffect(() => {
+    // console.log("provided destination:");
+    // if (Object.keys(providedDestination).length > 0) {
+    //   createRoute();
+    // }
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getLiveLocation();
+    }, 3000);
+    return () => clearInterval(interval);
+  });
+
+  const getLiveLocation = async () => {
+    const res = await getCurrentLocation();
+
+    const originF = {
+      location: {
+        latitude: res.coords.latitude,
+        longitude: res.coords.longitude,
+        latitudeDelta: 0.08,
+        longitudeDelta: 0.08,
+      },
+    };
+    setRouteOrigin(originF);
+  };
+
+  const changeDestination = () => {
+    const destinationF = {
+      latitude: providedDestination.location.latitude,
+      longitude: providedDestination.location.longitude,
+    };
+    setDestination(destinationF);
+  };
 
   const goToDestination = () => {
     const myRegion = {
@@ -73,12 +141,7 @@ const Map = (props, ref) => {
 
     //Animate the user to new region. Complete this animation in 3 seconds
     mapRef.current.animateToRegion(myRegion, 1000);
-
-    const destinationF = {
-      latitude: providedDestination.location.latitude,
-      longitude: providedDestination.location.longitude,
-    };
-    setDestination(destinationF);
+    changeDestination();
     setRouteDestination(null);
   };
 
@@ -88,14 +151,19 @@ const Map = (props, ref) => {
       latitude: origin?.location.latitude,
       longitude: origin?.location.longitude,
     }, destination);
+    changeDestination();
     setRouteDestination(destination);
   };
 
   //refocuseaza harta pe locul unde a fost apasata
-  const onMapPress = (e) => {
+const stopRouting = () => {
+  setDestination(null);
+  setRouteDestination(null);
+};  
+const onMapPress = (e) => {
     setRouteDestination(null);
 
-    const reg = e?.nativeEvent?.coordinate || origin?.location
+    const reg = e?.nativeEvent?.coordinate || origin?.location;
     setDestination(reg);
     const myRegion = {
       latitude: reg?.latitude,
@@ -126,7 +194,7 @@ const Map = (props, ref) => {
       >
         {routeDestination && (
           <MapViewDirections
-            origin={origin?.location}
+            origin={routeOrigin?.location}
             destination={routeDestination}
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={4}
@@ -145,8 +213,8 @@ const Map = (props, ref) => {
               mapRef.current.fitToCoordinates(result.coordinates, {
                 edgePadding: {
                   top: 50,
-                  right: 20,
-                  left: 20,
+                  right: 50,
+                  left: 50,
                   bottom: 50,
                 },
               });
@@ -157,7 +225,7 @@ const Map = (props, ref) => {
           />
         )}
 
-        {origin?.location !== undefined && 
+        {/* {origin?.location !== undefined && 
           <Marker
             coordinate={{
               latitude: origin?.location.latitude,
@@ -165,21 +233,21 @@ const Map = (props, ref) => {
             }}
             title="Origin"
             identifier="origin"
-            />
-              
-        }
+            />   
+        } */}
 
-        {destination?.latitude !==undefined && destination?.longitude !== undefined && (
-          // console.log(stations),
-          <Marker
-            coordinate={{
-              latitude: destination.latitude,
-              longitude: destination.longitude,
-            }}
-            title="Destination"
-            identifier="destination"
-          />
-        )}  
+        {destination?.latitude !== undefined &&
+          destination?.longitude !== undefined && (
+            // console.log(stations),
+            <Marker
+              coordinate={{
+                latitude: destination.latitude,
+                longitude: destination.longitude,
+              }}
+              title="Destination"
+              identifier="destination"
+            />
+          )}
 
         {stations?.length > 0 &&
           stations.map((station, index) => {
@@ -202,7 +270,7 @@ const Map = (props, ref) => {
                 })}>
                   <View style={styles.marker}>
                     <Text style={styles.markerText}>Price: {station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
-                      {`Type: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`} ...See more details</Text>
+                      {`Charging speed: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`} ...See more details</Text>
                   </View>
                     
                 </MapView.Callout>
@@ -211,9 +279,23 @@ const Map = (props, ref) => {
           })}
       </MapView>
 
+      <TouchableOpacity
+        style={styles.recenterBtn}
+        onPress={() => {
+          createRoute();
+        }}
+      >
+        <MaterialCommunityIcons name="directions" color="#4285F4" size={40} />
+      </TouchableOpacity>
 
-      <Button onPress={() => createRoute()} title="Route" />
-          
+      <TouchableOpacity
+        style={styles.recenterBtn}
+        onPress={() => {
+          stopRouting();
+        }}
+      >
+        <MaterialCommunityIcons name="stop-circle" color="red" size={40} />
+      </TouchableOpacity>
 
       {/*Display user's current region:*/}
       {/*<Text style={styles.text}>Current latitude: {region.latitude}</Text>
@@ -235,14 +317,20 @@ const styles = StyleSheet.create({
     width: 150,
     backgroundColor: "#27423A",
     borderWidth: 3,
-    borderColor:"grey",
+    borderColor: "grey",
     borderRadius: 10,
-    paddingLeft:6,
+    paddingLeft: 6,
   },
-  markerText:{
-    color:"white",
+  markerText: {
+    color: "white",
   },
   map: {
     ...StyleSheet.absoluteFillObject,
-  }
+  },
+  recenterBtn: {
+    alignSelf: "flex-end",
+    flex: 2,
+    margin: 10,
+    marginTop: 55,
+  },
 });

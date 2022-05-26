@@ -37,7 +37,7 @@ const ManageStations = ({ navigation }) => {
   const isFocused = useIsFocused();
   const [stationDeleteID, setStationForDelete] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
-
+  useBackButton(() => {navigation.goBack(); return true;})
   useEffect(() => {
     if (shouldRefetch === false && isFocused === false) return;
     // console.log('Fetching data again')
