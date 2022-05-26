@@ -16,7 +16,7 @@ import {
   component,
 } from "react-native";
 import Map from "../components/Map";
-function NearbyStations(navigation) {
+function NearbyStations({navigation}) {
   const nearByStations = useSelector(selectNearByStations);
   const childRef = useRef();
   const dispatch = useDispatch();
@@ -105,6 +105,7 @@ function NearbyStations(navigation) {
                 },
               })
             );
+            navigation.navigate("Map");
           }}
         >
           <MaterialCommunityIcons name="directions" color="#01F2CF" size={36} />
