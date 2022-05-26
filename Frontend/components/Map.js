@@ -119,14 +119,14 @@ const Map = (props, ref) => {
         longitudeDelta: 0.08,
       },
     };
-    if (
-      //origin is the same
-      origin.location.latitude !== origin.location.latitude &&
-      origin.location.longitude !== origin.location.longitude
-    ) {
-      setRouteOrigin(originF);
-      console.log("location updated!");
-    }
+     if (
+    //   //origin is the same
+       routeOrigin.location.latitude !== originF.location.latitude &&
+       routeOrigin.location.longitude !== originF.location.longitude
+     ) {
+       setRouteOrigin(originF);
+       console.log("location updated!");
+     }
   };
 
   const changeDestination = () => {
@@ -153,13 +153,13 @@ const Map = (props, ref) => {
 
   const createRoute = () => {
     // TODO: Draw the route using this!
-    routeCalculator(
-      {
-        latitude: origin?.location.latitude,
-        longitude: origin?.location.longitude,
-      },
-      destination
-    );
+    // routeCalculator(
+    //   {
+    //     latitude: origin?.location.latitude,
+    //     longitude: origin?.location.longitude,
+    //   },
+    //   destination
+    // );
     changeDestination();
     setRouteDestination(destination);
   };
@@ -320,17 +320,17 @@ const Map = (props, ref) => {
           createRoute();
         }}
       >
-        <MaterialCommunityIcons name="directions" color="#27423A"" size={40} />
+        <MaterialCommunityIcons name="directions" color="#27423A" size={40} />
       </TouchableOpacity>
 
-      <TouchableOpacity
+      { <TouchableOpacity
         style={styles.stopBtn}
         onPress={() => {
           stopRouting();
         }}
       >
        <MaterialCommunityIcons name="stop-circle" color="#27423A" size={40} />
-      </TouchableOpacity>
+      </TouchableOpacity> }
 
       {/*Display user's current region:*/}
       {/*<Text style={styles.text}>Current latitude: {region.latitude}</Text>
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
   
     stopBtn:{
     alignSelf:"flex-end",
-    marginBottom:"130%",
+    marginBottom:"110%",
     marginRight:8,
   },
   
