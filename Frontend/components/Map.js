@@ -320,16 +320,16 @@ const Map = (props, ref) => {
           createRoute();
         }}
       >
-        <MaterialCommunityIcons name="directions" color="#4285F4" size={40} />
+        <MaterialCommunityIcons name="directions" color="#27423A"" size={40} />
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.recenterBtn}
+        style={styles.stopBtn}
         onPress={() => {
           stopRouting();
         }}
       >
-        <MaterialCommunityIcons name="stop-circle" color="red" size={40} />
+       <MaterialCommunityIcons name="stop-circle" color="#27423A" size={40} />
       </TouchableOpacity>
 
       {/*Display user's current region:*/}
@@ -362,6 +362,13 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+  
+    stopBtn:{
+    alignSelf:"flex-end",
+    marginBottom:"130%",
+    marginRight:8,
+  },
+  
   recenterBtn: {
     alignSelf: "flex-end",
     flex: 2,
