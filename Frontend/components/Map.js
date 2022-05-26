@@ -121,8 +121,8 @@ const Map = (props, ref) => {
     };
     if (
       //origin is the same
-      routeOrigin.location.latitude !== originF.location.latitude &&
-      routeOrigin.location.longitude !== originF.location.longitude
+      origin.location.latitude !== origin.location.latitude &&
+      origin.location.longitude !== origin.location.longitude
     ) {
       setRouteOrigin(originF);
       console.log("location updated!");
