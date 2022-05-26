@@ -7,6 +7,7 @@ import {
   Component,
   Image,
 } from "react-native";
+import { Feather } from '@expo/vector-icons'; 
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import {
@@ -220,12 +221,12 @@ const MapHomeScreen = ({ navigation }) => {
           {console.log("la afisare:" + showTheThing)}
           <View style={styles.stanga}>
             <Text style={styles.textAutonomie}>
-              Could you please introduce the current autonomy?
+              
             </Text>
             <TextInput
               style={styles.input}
               underlineColorAndroid="transparent"
-              placeholder="autonomy.."
+              placeholder="Introduce battery autonomy.."
               placeholderTextColor="white"
               autoCapitalize="none"
               onChangeText={(text) => setAutonomy(text)}
@@ -237,7 +238,7 @@ const MapHomeScreen = ({ navigation }) => {
                 setShow(false);
               }}
             >
-              <Image source={deletee} style={styles.x} />
+              <Feather name="x-square" size={32} color="#01F2CF" style={styles.Icon} />
             </TouchableOpacity>
           </View>
         </View>
@@ -277,15 +278,14 @@ const styles = StyleSheet.create({
   },
 
   searchBarJos: {
-    //display:'none',
     alignItems: "center",
     backgroundColor: "black",
     flexDirection: "row",
     width: "100%",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    //marginTop:1,
-    //height:80,
+    paddingLeft:8,
+    marginBottom:12,
+    marginTop:-12,
+    paddingRight:15,
   },
 
   textAutonomie: {
@@ -309,9 +309,8 @@ const styles = StyleSheet.create({
   dreapta: {
     width: "10%",
   },
-  x: {
-    width: 30,
-    height: 30,
+  Icon: {
+  marginTop:22,
   },
 });
 
