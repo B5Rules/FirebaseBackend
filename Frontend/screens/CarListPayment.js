@@ -7,11 +7,13 @@ import vezidetalii from '../assets/Buton-1.png';
 import { httpsCallable } from 'firebase/functions';
  import {fireAuth, fireFunc} from '../globals/firebase';
 import { async } from '@firebase/util';
-import { getGlobalState } from '../globals/global';
+import { getGlobalState, setGlobalState } from '../globals/global';
 
 const getCars=httpsCallable(fireFunc,'getCars');
 
-export default class CarList extends React.Component {
+export default class CarListPayment extends React.Component {
+
+  
   state={
     cars:[]    
   }
@@ -61,8 +63,13 @@ fetchData=async()=>{this.setState({isLoading:true},async () =>{
                         </View>
                       </View>
                       
-                      <Pressable  style={styles.button} onPress={() =>this.props.navigation.navigate("Car Detail",element)}>
-                        <Text style={styles.text3}>Vezi mai multe detalii</Text>
+                      <Pressable  style={styles.button} onPress={() =>{
+                          console.log("CAPACITY",element.capacBaterie);
+                          setGlobalState('carData',{chargingCap:parseFloat(element.capacBaterie)})
+                          this.props.navigation.navigate("Enter_kwh",element)
+                        
+                        }}>
+                        <Text style={styles.text3}>Select this car</Text>
                       </Pressable>
 
           </View>)
@@ -90,13 +97,6 @@ fetchData=async()=>{this.setState({isLoading:true},async () =>{
                       <ScrollView style ={styles.scrollview}>
                         {carsList}
                       </ScrollView>
-                    </View>
-                    
-                    <View style={styles.containerJos2}>
-                      <Pressable  style={styles.Touchable} onPress= {()=>this.props.navigation.navigate('Car Add')} >
-                        {/* <Text style={styles.text3}>Vezi mai multe detalii</Text> */}
-                        <Image source={vezidetalii} style={styles.vezidetaliile} /> 
-                     </Pressable>
                     </View>
                    
                   </View>
