@@ -23,6 +23,11 @@ import EditStation from './screens/EditStation';
 import StationInfo from './screens/StationInfo';
 import AddKwh from './screens/AddKwh';
 import StationLocationOnMap from './screens/StationLocationOnMap';
+import CarDetail from './screens/CarDetail';
+import CarMenu from './screens/CarMenu';
+import CarUpdate from './screens/CarUpdate';
+import CarAdd from './screens/CarAdd';
+import CarListPayment from './screens/CarListPayment';
 import {Platform} from 'react-native';
 
 
@@ -76,7 +81,12 @@ export default function App() {
           <Stack.Screen options={{headerShown:false}} name="StationLocationOnMap" component={StationLocationOnMap}/>
           <Stack.Screen  options={{headerShown:false}} name="Station Info" component={StationInfo}/>
           <Stack.Screen  options={{headerShown:false}} name="Add kWh" component={AddKwh}/>
-
+          <Stack.Screen options={{headerShown:false}} name="Car List" component={CarList}/>
+          <Stack.Screen options={{headerShown:false}} name="Car List Payment" component={CarListPayment}/>
+          <Stack.Screen options={{headerShown:false}} name="Car Detail" component={CarDetail}/>
+          <Stack.Screen options={{headerShown:false}} name="Car Menu" component={CarMenu}/>
+          <Stack.Screen options={{headerShown:false}} name="Car Update" component={CarUpdate}/>
+          <Stack.Screen options={{headerShown:false}} name="Car Add" component={CarAdd}/>
         </Stack.Navigator>
       </NavigationContainer>
     </ImageBackground>

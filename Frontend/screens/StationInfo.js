@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet,Text, View,TextInput,Image,Dimensions, ScrollView, Button, ImageBackground, Pressable, TouchableHighlight, Alert} from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "@react-navigation/native";
-
+import { getGlobalState } from '../globals/global';
 
 // import { NavigationContainer } from "@react-navigation/native";
 // import { createStackNavigator } from "@react-navigation/stack";
@@ -14,8 +14,9 @@ const { height } = Dimensions.get("screen");
 
 
 const StationInfo = () => {
+  const stationData = getGlobalState("currentStationData");
 
-  const [name, onChangeName] = React.useState("Name Station");
+  const [name, onChangeName] = React.useState("(removethis)"); //"Station name" please remove, un nickname setabil de utilizator nu e un lux pe care ni-l permitem
   const [charger, onChangeCharger] = React.useState("Charging Plug");
   const [plug, onChangePlug] = React.useState("Power Plug");
   const [current, onChangeCurrent] = React.useState("Adjustable Current"); //Adjustable Current
@@ -125,7 +126,10 @@ const StationInfo = () => {
           </View>
 
 
-          <TouchableHighlight style={styles.buttonCharge} onPress={() => navigation.navigate("Enter_kwh")}>
+          <TouchableHighlight style={styles.buttonCharge} onPress={() => {
+            //navigation.navigate("Enter_kwh")
+            navigation.navigate("Car List Payment")
+            }}>
             <Text style={styles.buttonChargeText}>Charge Now</Text>
           </TouchableHighlight>
 
