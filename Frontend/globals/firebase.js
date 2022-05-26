@@ -16,7 +16,7 @@ const fireFunc = getFunctions(fireApp);
 // }
 if (__DEV__) {
   console.log("Switching to local Firebase instance...");
-  const origin = "10.20.0.69";
+  const origin = "10.20.0.92";
 
   //firebase.auth().useEmulator(`http://${origin}:9099/`);
   //firebase.firestore().useEmulator(origin, 8080);

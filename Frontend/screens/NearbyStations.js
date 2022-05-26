@@ -16,7 +16,7 @@ import {
   component,
 } from "react-native";
 import Map from "../components/Map";
-function NearbyStations({navigation}) {
+function NearbyStations({ navigation }) {
   const nearByStations = useSelector(selectNearByStations);
   const childRef = useRef();
   const dispatch = useDispatch();
@@ -24,25 +24,25 @@ function NearbyStations({navigation}) {
   //   console.log(nearByStations);
   // });
 
+  const goToStation = (nr) => {
+    dispatch(
+      setDestination({
+        location: {
+          latitude: nearByStations[nr]?.coordinates?.geoPointValue.latitude,
+          longitude: nearByStations[nr]?.coordinates?.geoPointValue.longitude,
+        },
+      })
+    );
+    navigation.navigate("Map");
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.rectangle}>
         <TouchableOpacity
           style={styles.direction}
           onPress={() => {
-            console.log(nearByStations[0]?.coordinates?.geoPointValue);
-
-            dispatch(
-              setDestination({
-                location: {
-                  latitude:
-                    nearByStations[0]?.coordinates?.geoPointValue.latitude,
-                  longitude:
-                    nearByStations[0]?.coordinates?.geoPointValue.longitude,
-                },
-              })
-            );
-            navigation.navigate("Map");
+            goToStation(0);
           }}
         >
           <MaterialCommunityIcons name="directions" color="#01F2CF" size={36} />
@@ -96,17 +96,7 @@ function NearbyStations({navigation}) {
         <TouchableOpacity
           style={styles.direction}
           onPress={() => {
-            dispatch(
-              setDestination({
-                location: {
-                  latitude:
-                    nearByStations[1]?.coordinates?.geoPointValue.latitude,
-                  longitude:
-                    nearByStations[1]?.coordinates?.geoPointValue.longitude,
-                },
-              })
-            );
-            navigation.navigate("Map");
+            goToStation(1);
           }}
         >
           <MaterialCommunityIcons name="directions" color="#01F2CF" size={36} />
@@ -160,17 +150,7 @@ function NearbyStations({navigation}) {
         <TouchableOpacity
           style={styles.direction}
           onPress={() => {
-            dispatch(
-              setDestination({
-                location: {
-                  latitude:
-                    nearByStations[2]?.coordinates?.geoPointValue.latitude,
-                  longitude:
-                    nearByStations[2]?.coordinates?.geoPointValue.longitude,
-                },
-              })
-            );
-            navigation.navigate("Map");
+            goToStation(2);
           }}
         >
           <MaterialCommunityIcons name="directions" color="#01F2CF" size={36} />

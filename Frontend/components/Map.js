@@ -36,7 +36,7 @@ import {
   getCurrentLocation,
 } from "../slices/helperFunction";
 import { routeCalculator } from "../slices/routeCalculator";
-import { getGlobalState,setGlobalState } from "../globals/global";
+import { getGlobalState, setGlobalState } from "../globals/global";
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -86,9 +86,8 @@ const Map = (props, ref) => {
   useEffect(() => {
     //console.log(21321321312);
     //console.log(providedDestination);
-    console.log(Object.keys(providedDestination).length)
-    if(Object.keys(providedDestination).length > 0)
-      goToDestination();
+    console.log(Object.keys(providedDestination).length);
+    if (Object.keys(providedDestination).length > 0) goToDestination();
   }, [providedDestination]);
 
   useEffect(() => {
@@ -120,7 +119,14 @@ const Map = (props, ref) => {
         longitudeDelta: 0.08,
       },
     };
-    setRouteOrigin(originF);
+    if (
+      //origin is the same
+      routeOrigin.location.latitude !== originF.location.latitude &&
+      routeOrigin.location.longitude !== originF.location.longitude
+    ) {
+      setRouteOrigin(originF);
+      console.log("location updated!");
+    }
   };
 
   const changeDestination = () => {
@@ -147,20 +153,32 @@ const Map = (props, ref) => {
 
   const createRoute = () => {
     // TODO: Draw the route using this!
-    routeCalculator({
-      latitude: origin?.location.latitude,
-      longitude: origin?.location.longitude,
-    }, destination);
+    routeCalculator(
+      {
+        latitude: origin?.location.latitude,
+        longitude: origin?.location.longitude,
+      },
+      destination
+    );
     changeDestination();
     setRouteDestination(destination);
   };
 
   //refocuseaza harta pe locul unde a fost apasata
-const stopRouting = () => {
-  setDestination(null);
-  setRouteDestination(null);
-};  
-const onMapPress = (e) => {
+  const stopRouting = () => {
+    setDestination(null);
+    setRouteDestination(null);
+    const myRegion = {
+      latitude: origin.location.latitude,
+      longitude: origin.location.longitude,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    };
+
+    //Animate the user to new region. Complete this animation in 3 seconds
+    mapRef.current.animateToRegion(myRegion, 1000);
+  };
+  const onMapPress = (e) => {
     setRouteDestination(null);
 
     const reg = e?.nativeEvent?.coordinate || origin?.location;
@@ -252,30 +270,47 @@ const onMapPress = (e) => {
         {stations?.length > 0 &&
           stations.map((station, index) => {
             const str = `Station ${index}`;
-            if(station?._fieldsProto?.coordinates?.geoPointValue.latitude !== undefined && station?._fieldsProto?.coordinates?.geoPointValue.longitude !== undefined)
-            return (
-              <Marker key= {index}
-                coordinate={{
-                  latitude:
-                    station?._fieldsProto?.coordinates?.geoPointValue.latitude,
-                  longitude:
-                    station?._fieldsProto?.coordinates?.geoPointValue.longitude,
-                }}
-                onPress={onMapPress}
-                title="Destination"
-               
-              >
-                <MapView.Callout tooltip style={styles.customView} onPress={() => navigation.navigate("Station Info", {
-                  station
-                })}>
-                  <View style={styles.marker}>
-                    <Text style={styles.markerText}>Price: {station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
-                      {`Charging speed: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`} ...See more details</Text>
-                  </View>
-                    
-                </MapView.Callout>
-              </Marker>
-          );
+            if (
+              station?._fieldsProto?.coordinates?.geoPointValue.latitude !==
+                undefined &&
+              station?._fieldsProto?.coordinates?.geoPointValue.longitude !==
+                undefined
+            )
+              return (
+                <Marker
+                  key={index}
+                  coordinate={{
+                    latitude:
+                      station?._fieldsProto?.coordinates?.geoPointValue
+                        .latitude,
+                    longitude:
+                      station?._fieldsProto?.coordinates?.geoPointValue
+                        .longitude,
+                  }}
+                  onPress={onMapPress}
+                  title="Destination"
+                >
+                  <MapView.Callout
+                    tooltip
+                    style={styles.customView}
+                    onPress={() =>
+                      navigation.navigate("Station Info", {
+                        station,
+                      })
+                    }
+                  >
+                    <View style={styles.marker}>
+                      <Text style={styles.markerText}>
+                        Price: {station?._fieldsProto?.price?.doubleValue}{" "}
+                        RON/kWh{"\n"}
+                        {"\n"}
+                        {`Charging speed: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`}{" "}
+                        ...See more details
+                      </Text>
+                    </View>
+                  </MapView.Callout>
+                </Marker>
+              );
           })}
       </MapView>
 
