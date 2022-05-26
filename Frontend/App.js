@@ -31,6 +31,7 @@ import CarUpdate from './screens/CarUpdate';
 import CarAdd from './screens/CarAdd';
 import CarListPayment from './screens/CarListPayment';
 import Enter_password from './screens/Enter_password';
+import MapHomeScreen from './screens/MapHomeScreen';
 
 
 
@@ -72,7 +73,7 @@ export default function App() {
           <Stack.Screen options={{headerShown:false}} name="Pay" component={ComponentStripeProvider} />
           <Stack.Screen options={{headerShown:false}} name="MapNavigator" component={MapNavigator} />
           <Stack.Screen options={{headerShown:false}} name="NearbyStations" component={NearbyStations} />
-
+          <Stack.Screen options={{headerShown:false}} name="MapHomeScreen" component={MapHomeScreen} />
           {/* provider pages */}
 
           <Stack.Screen options={{headerShown:false}} name="Provider Homepage" component={HomeScreen}/>
