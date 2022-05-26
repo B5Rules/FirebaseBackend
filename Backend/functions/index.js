@@ -68,12 +68,8 @@ exports.insertProfile = functions
     else return {status:0, uid: uid};
 
 });
-
-
-
 exports.getProfileData = functions.region("europe-west1").https.onCall(async(data, context)=>{
-    
-    let uid= context.auth.uid;
+    let uid = context.auth.uid;
     if(!context.auth){
         throw new functions.https.HttpsError('unauthenticated','You must be authenticated to use this function');
     }
@@ -102,10 +98,27 @@ exports.helloWorld = functions
   });
 
 exports.getAllStations = functions.region("europe-west1").https.onCall(async(data, context)=>{
-    let querySnapshot = await db.collection('chargingstations').get();
+    let querySnapshot = await db.collection('chargingstations').where("status", "==", 0).get();
 
     return ({result:querySnapshot.docs});
 
+});
+
+exports.getAllStationsData = functions.region("europe-west1").https.onCall(async(data, context)=>{
+  let querySnapshot = await db.collection('chargingstations').where("status", "==", 0).get();
+  let stations = [];
+
+  querySnapshot.forEach(doc => {
+    stations.push({id: doc.id, ...doc.data()})
+  });
+  return ({result:stations});
+
+});
+
+exports.getStationById = functions.region("europe-west1").https.onCall(async(data, context)=>{
+  console.log(data)
+  let querySnapshot = await db.collection('chargingstations').doc(data).get()
+  return ({result:{id: querySnapshot.id, ...querySnapshot.data()}});
 });
 
 exports.getAllStationsForSpecificUser = functions.region("europe-west1").https.onCall(async(data, context)=>{
@@ -157,6 +170,7 @@ exports.createStation = functions
         }),
         data
       );
+      data.status = 0;
       data.price = parseFloat(data.price);
       data.type = parseInt(data.type);
       data.coordinates = new firestore.GeoPoint(data.coordinates.latitude, data.coordinates.longitude);
@@ -181,6 +195,37 @@ exports.createStation = functions
  }, '')
  */
 
+exports.changeStationStatus = functions
+.region("europe-west1")
+.https.onCall(async (data, context) => {
+  try{
+    validateObject(Joi.object({
+      id: Joi.string().required(),
+      status: Joi.number().valid(0, 1, 2),
+    }), data);
+    if(data.status !== 0) {
+      data.reservedBy = context.auth.uid;
+    } else {
+      data.reservedBy = '';
+    }
+    await db.collection("chargingstations").doc(data.id).update(data);
+    // functions.pubsub.schedule('in 10 seconds').onRun((context) => {
+    //   console.log('This will run now!');
+    //   db.collection("chargingstations").add({
+    //     status: 10
+    //   })
+
+    //   return null;
+    // })
+    return {
+      result: null,
+      message: 'Successfully changed status',
+    }
+  } catch(e){
+    return {result:null,error:true,message:e.message};
+  }
+})
+
 exports.updateStation = functions
 .region("europe-west1")
 .https.onCall(async (data, context) => {
@@ -200,10 +245,13 @@ exports.updateStation = functions
     if(querySnapshot.data().userID != context.auth.uid){
       return {result:null, error:true, message:"You are not the owner of this station"}
     }
-    data.price = parseFloat(data.price);
-    data.type = parseInt(data.type); 
+    data.price && (data.price = parseFloat(data.price));
+    data.type && (data.type = parseInt(data.type)); 
+
     data.userID = context.auth.uid;
-    data.coordinates = new firestore.GeoPoint(data.coordinates.latitude, data.coordinates.longitude);
+    if(data.coordinates) {
+      data.coordinates = new firestore.GeoPoint(data.coordinates.latitude, data.coordinates.longitude);
+    }
 
     await db.collection("chargingstations").doc(data.id).update(data);
   } catch(e) {
@@ -249,3 +297,54 @@ exports.getStationData = functions.region("europe-west1").https.onCall(async(dat
     let querySnapshot = await db.collection('chargingstations').doc(stationID).get();
     return ({result:(querySnapshot.data())});
 });
+
+
+exports.addCar=functions.region("europe-west1").https.onCall(async( data,context)=>{
+  const uid = context.auth.uid;
+db.collection("userdata").doc(uid).collection("cars").add({
+      name:data.nume,
+      color:data.culoare,
+      distantaMax:data.distantaMax,
+      capacBaterie:data.capacBaterie,
+      numarKm:data.numarKm,
+      caiPutere:data.caiPutere
+  })
+  .then(docRef=>{
+      db.collection("userdata").doc(uid).collection("cars").doc(docRef.id).update({uid:docRef.id});
+  })
+.catch(err=>{
+      console.log(err);
+  });
+  
+});
+
+exports.getCars = functions.region("europe-west1").https.onCall(async(data, context)=>{
+  const uid = context.auth.uid;
+  let querySnapshot = await db.collection("userdata").doc(uid).collection('cars').get();
+  var cars=[];
+  querySnapshot.docs.forEach(doc=>
+  {
+      cars.push(doc.data());
+      console.log(cars);
+  })
+   return cars;
+});
+
+exports.deleteCar=functions.region("europe-west1").https.onCall(async(data, context)=>{
+  const uid = context.auth.uid;
+  db.collection('userdata').doc(uid).collection('cars').doc(data.uid).delete();
+});
+
+exports.updateCar = functions.region("europe-west1").https.onCall(async (data, context)=> {
+       const uid = context.auth.uid;
+      db.collection('userdata').doc(uid).collection('cars').doc(data.uid).set({
+           uid: data.uid,
+           name: data.name,
+           color: data.color,
+           distantaMax: data.distantaMax,
+           capacBaterie: data.capacBaterie,
+           numarKm: data.numarKm,
+           caiPutere: data.caiPutere,
+           uid:data.uid
+       });
+   });

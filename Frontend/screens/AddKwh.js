@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet,Text, View,TextInput,Image,Dimensions, ScrollView, Button, ImageBackground, Pressable, TouchableHighlight, Alert} from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { getGlobalState } from '../globals/global';
 // import { NavigationContainer } from "@react-navigation/native";
 // import { createStackNavigator } from "@react-navigation/stack";
 // import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
@@ -31,7 +31,7 @@ const AddKwh = () => {
           </View>
 
         </View>       
-        <ScrollView style={{ width }}>
+        
         <View style={styles.smallcontainer}>
 
           <View style={styles.form}>
@@ -56,7 +56,7 @@ const AddKwh = () => {
           </View>
           </View>
 
-        </ScrollView>
+        
       </SafeAreaView>
     )
 };

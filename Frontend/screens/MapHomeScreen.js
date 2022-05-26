@@ -41,7 +41,7 @@ import { TouchableOpacity } from "react-native";
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
-const getDistanceBetweenPoints = async (pointA, pointB) => {
+export const getDistanceBetweenPoints = async (pointA, pointB) => {
   var urlToFetchDistance =
     "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
     pointA.latitude +

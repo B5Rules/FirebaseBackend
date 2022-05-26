@@ -4,9 +4,12 @@ import {
   Text,
   View,
   Dimensions,
+  Button,
+  Image,
   TouchableOpacity,
-  Alert,
+  TouchableWithoutFeedback,
   Modal,
+  Alert
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useSelector } from "react-redux";
@@ -36,10 +39,11 @@ const StationLocationOnMap = ({ navigation }) => {
     longitudeDelta: mapDelta,
     latitudeDelta: mapDelta,
   })
+
   useBackButton(() => {navigation.goBack(); return true;});
-  
+
   const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading,setLoading] = useState(true);
   const isFocused = useIsFocused();
   const origin = useSelector(selectOrigin);
   useEffect(() => {

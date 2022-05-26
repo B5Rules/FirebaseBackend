@@ -77,8 +77,8 @@ const StripeApp = ({ navigation }) => {
         <StatusBar backgroundColor="#1C2E2B" barStyle="white-content" />
 
       <View style={styles.container}>
-        <ImageBackground source={require("./streets.png")} style={styles.image}>
-          <Image source={require("./Logo.png")} style={styles.logo}></Image>
+        <ImageBackground source={require("../images/streets.png")} style={styles.image}>
+          <Image source={require("../images/Logo.png")} style={styles.logo}></Image>
 
           <TextInput
             autoCapitalize="none"
