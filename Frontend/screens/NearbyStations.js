@@ -37,7 +37,9 @@ function NearbyStations({ navigation }) {
 
       for (const station of statii) {
         let dist;
-        //console.log(station?._fieldsProto?.coordinates?.geoPointValue);
+        console.log(station?._fieldsProto?.coordinates?.geoPointValue);
+        console.log(location.location);
+
         if (station?._fieldsProto?.coordinates?.geoPointValue == undefined)
           dist = 99999999;
         else {
@@ -95,7 +97,6 @@ function NearbyStations({ navigation }) {
         },
       })
     );
-
     navigation.navigate("Map");
   };
 
@@ -133,12 +134,12 @@ function NearbyStations({ navigation }) {
           </Text>
         </View>
 
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <Text style={styles.txtLeft}>Status:</Text>
           <Text style={styles.txtRight}>Text</Text>
-        </View>
+        </View> */}
 
-        <View style={styles.row}>
+        <View style={styles.rowServices}>
           {nearByStations[0]?.services?.arrayValue?.values.length > 0 && (
             <Text style={styles.txtLeft}>Services:</Text>
           )}
@@ -187,12 +188,12 @@ function NearbyStations({ navigation }) {
           </Text>
         </View>
 
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <Text style={styles.txtLeft}>Status:</Text>
           <Text style={styles.txtRight}>Text</Text>
-        </View>
+        </View> */}
 
-        <View style={styles.row}>
+        <View style={styles.rowServices}>
           {nearByStations[1]?.services?.arrayValue?.values.length > 0 && (
             <Text style={styles.txtLeft}>Services:</Text>
           )}
@@ -241,12 +242,13 @@ function NearbyStations({ navigation }) {
           </Text>
         </View>
 
+        {/* 
         <View style={styles.row}>
           <Text style={styles.txtLeft}>Status:</Text>
           <Text style={styles.txtRight}>Text</Text>
-        </View>
+        </View> */}
 
-        <View style={styles.row}>
+        <View style={styles.rowServices}>
           {nearByStations[2]?.services?.arrayValue?.values.length > 0 && (
             <Text style={styles.txtLeft}>Services:</Text>
           )}
@@ -292,6 +294,16 @@ const styles = StyleSheet.create({
     marginLeft: "7%",
     flex: 1,
   },
+  rowServices: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    // padding: '2%',
+    marginLeft: "7%",
+    flex: 2,
+    flexWrap: "wrap",
+    marginBottom: 20,
+  },
   rectangle: {
     marginTop: 22,
     width: "80%",
@@ -299,7 +311,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#182724",
     borderRadius: 20,
     justifyContent: "flex-start",
-    alignItems: "center",
+    // alignItems: 'center',
   },
 
   txtLeft: {
@@ -312,6 +324,14 @@ const styles = StyleSheet.create({
     color: "#01F2CF",
     marginRight: 10,
     fontSize: 18,
+  },
+  txtRightServices: {
+    fontWeight: "bold",
+    color: "#01F2CF",
+    marginRight: 10,
+    fontSize: 18,
+    textAlign: "left",
+    width: 50,
   },
 });
 

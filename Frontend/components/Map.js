@@ -32,7 +32,16 @@ import { useDispatch } from "react-redux";
 import Constants from "expo-constants";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { getDistance, getPreciseDistance } from "geolib";
+import { getPreciseDistance } from "geolib";
+
+//import { setNearByStaions } from '../navSlice';
+//import { GOOGLE_MAPS_APIKEY } from "@env";
+import { decode } from "@mapbox/polyline";
+import { useDispatch } from "react-redux";
+import Constants from "expo-constants";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import {
   locationPermission,
   getCurrentLocation,
@@ -300,23 +309,29 @@ const Map = (props, ref) => {
           })}
       </MapView>
 
-      <TouchableOpacity
-        style={styles.recenterBtn}
-        onPress={() => {
-          createRoute();
-        }}
-      >
-        <MaterialCommunityIcons name="directions" color="#27423A" size={40} />
-      </TouchableOpacity>
-
-      {/* <TouchableOpacity
-        style={styles.stopBtn}
-        onPress={() => {
-          stopRouting();
-        }}
+      <View style={styles.btnsView}>
+        <TouchableOpacity
+          style={styles.btnStyle}
+          onPress={() => {
+            createRoute();
+          }}
         >
-        <MaterialCommunityIcons name="stop-circle" color="#27423A" size={40} />
-      </TouchableOpacity> */}
+          <MaterialCommunityIcons name="directions" color="#27423A" size={40} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.btnStyle}
+          onPress={() => {
+            stopRouting();
+          }}
+        >
+          <MaterialCommunityIcons
+            name="stop-circle"
+            color="#27423A"
+            size={40}
+          />
+        </TouchableOpacity>
+      </View>
 
       {/*Display user's current region:*/}
       {/*<Text style={styles.text}>Current latitude: {region.latitude}</Text>
@@ -349,15 +364,15 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
 
-  stopBtn: {
+  btnsView: {
     alignSelf: "flex-end",
-    marginBottom: "130%",
-    marginRight: 8,
+    marginTop: 50,
+    flex: 2,
   },
 
-  recenterBtn: {
+  btnStyle: {
     alignSelf: "flex-end",
-    margin: 10,
-    marginBottom: 360,
+    marginRight: 8,
+    marginTop: 8,
   },
 });
