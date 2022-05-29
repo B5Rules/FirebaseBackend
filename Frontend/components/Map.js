@@ -88,6 +88,7 @@ const Map = (props, ref) => {
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
   const [routeDestination, setRouteDestination] = useState(null);
+  const nearbyStation = useSelector(selectIsStation);
   //const [nearByStations, setNearByStations]  = useState([]);
   const region = useRef({});
   useImperativeHandle(ref, () => ({
@@ -99,7 +100,15 @@ const Map = (props, ref) => {
   useEffect(() => {
     if (Object.keys(destination).length > 0) {
       goToDestination();
-      //createRoute();
+      console.log(nearbyStation);
+      if (nearbyStation.isStation == true) {
+        createRoute();
+        dispatch(
+          setIsStation({
+            isStation: false,
+          })
+        );
+      }
     }
   }, [destination]);
 
