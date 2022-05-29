@@ -22,6 +22,7 @@ import {
   selectOrigin,
   selectNearByStations,
   selectStaions,
+  setDestination,
 } from "../slices/navSlice";
 //import { setNearByStaions } from '../navSlice';
 //import { GOOGLE_MAPS_APIKEY } from "@env";
@@ -64,42 +65,28 @@ const getDistanceBetweenPoints = async (pointA, pointB) => {
 
 const Map = (props, ref) => {
   const { width, height } = Dimensions.get("window");
+  const dispatch = useDispatch();
   const [coords, setCoords] = useState([]);
   const stations = useSelector(selectStaions);
   const mapRef = useRef(1);
   const origin = useSelector(selectOrigin);
-  const providedDestination = useSelector(selectDestination);
-  const [destination, setDestination] = useState(null);
+  const destination = useSelector(selectDestination);
   const [routeDestination, setRouteDestination] = useState(null);
-  const [routeOrigin, setRouteOrigin] = useState(null);
   //const [nearByStations, setNearByStations]  = useState([]);
   const region = useRef({});
   useImperativeHandle(ref, () => ({
     goToDestination: () => {
       goToDestination();
     },
-    createRoute: () => {
-      createRoute();
-    },
   }));
 
   useEffect(() => {
-    //console.log(21321321312);
-    //console.log(providedDestination);
-    console.log(Object.keys(providedDestination).length);
-    if (Object.keys(providedDestination).length > 0) goToDestination();
-  }, [providedDestination]);
-
-  useEffect(() => {
-    setRouteOrigin(origin);
-  }, []);
-
-  useEffect(() => {
-    // console.log("provided destination:");
-    // if (Object.keys(providedDestination).length > 0) {
-    //   createRoute();
-    // }
-  });
+    console.log(Object.keys(destination).length);
+    if (Object.keys(destination).length > 0) {
+      goToDestination();
+      //createRoute();
+    }
+  }, [destination]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -111,7 +98,7 @@ const Map = (props, ref) => {
   const getLiveLocation = async () => {
     const res = await getCurrentLocation();
 
-    const originF = {
+    const newOrigin = {
       location: {
         latitude: res.coords.latitude,
         longitude: res.coords.longitude,
@@ -119,48 +106,39 @@ const Map = (props, ref) => {
         longitudeDelta: 0.08,
       },
     };
-    if (
-      //origin is the same
-      origin.location.latitude !== origin.location.latitude &&
-      origin.location.longitude !== origin.location.longitude
-    ) {
-      setRouteOrigin(originF);
-      console.log("location updated!");
-    }
-  };
-
-  const changeDestination = () => {
-    const destinationF = {
-      latitude: providedDestination.location.latitude,
-      longitude: providedDestination.location.longitude,
-    };
-    setDestination(destinationF);
+    // if (
+    //   //origin is the same
+    //   routeOrigin.location.latitude !== newOrigin.location.latitude &&
+    //   routeOrigin.location.longitude !== newOrigin.location.longitude
+    // ) {
+    //   //setRouteOrigin(originF);
+    //   //console.log("location updated!");
+    // }
   };
 
   const goToDestination = () => {
     const myRegion = {
-      latitude: providedDestination.location.latitude,
-      longitude: providedDestination.location.longitude,
+      latitude: destination?.location.latitude,
+      longitude: destination?.location.longitude,
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
     };
 
     //Animate the user to new region. Complete this animation in 3 seconds
     mapRef.current.animateToRegion(myRegion, 1000);
-    changeDestination();
     setRouteDestination(null);
   };
 
   const createRoute = () => {
     // TODO: Draw the route using this!
-    routeCalculator(
-      {
-        latitude: origin?.location.latitude,
-        longitude: origin?.location.longitude,
-      },
-      destination
-    );
-    changeDestination();
+    // routeCalculator(
+    //   {
+    //     latitude: origin?.location.latitude,
+    //     longitude: origin?.location.longitude,
+    //   },
+    //   destination
+    // );
+
     setRouteDestination(destination);
   };
 
@@ -175,14 +153,21 @@ const Map = (props, ref) => {
       longitudeDelta: 0.01,
     };
 
-    //Animate the user to new region. Complete this animation in 3 seconds
     mapRef.current.animateToRegion(myRegion, 1000);
   };
+
   const onMapPress = (e) => {
     setRouteDestination(null);
 
     const reg = e?.nativeEvent?.coordinate || origin?.location;
-    setDestination(reg);
+    dispatch(
+      setDestination({
+        location: {
+          latitude: reg?.latitude,
+          longitude: reg?.longitude,
+        },
+      })
+    );
     const myRegion = {
       latitude: reg?.latitude,
       longitude: reg?.longitude,
@@ -210,10 +195,10 @@ const Map = (props, ref) => {
         onPress={onMapPress}
         //onRegionChangeComplete={(region) => setRegion(region)}
       >
-        {routeDestination && (
+        {routeDestination?.location && (
           <MapViewDirections
-            origin={routeOrigin?.location}
-            destination={routeDestination}
+            origin={origin?.location}
+            destination={routeDestination?.location}
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={4}
             strokeColor="green"
@@ -254,13 +239,13 @@ const Map = (props, ref) => {
             />   
         } */}
 
-        {destination?.latitude !== undefined &&
-          destination?.longitude !== undefined && (
+        {destination?.location?.latitude !== undefined &&
+          destination?.location?.longitude !== undefined && (
             // console.log(stations),
             <Marker
               coordinate={{
-                latitude: destination.latitude,
-                longitude: destination.longitude,
+                latitude: destination.location.latitude,
+                longitude: destination.location.longitude,
               }}
               title="Destination"
               identifier="destination"
@@ -323,14 +308,14 @@ const Map = (props, ref) => {
         <MaterialCommunityIcons name="directions" color="#27423A" size={40} />
       </TouchableOpacity>
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.stopBtn}
         onPress={() => {
           stopRouting();
         }}
       >
         <MaterialCommunityIcons name="stop-circle" color="#27423A" size={40} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/*Display user's current region:*/}
       {/*<Text style={styles.text}>Current latitude: {region.latitude}</Text>
@@ -371,8 +356,7 @@ const styles = StyleSheet.create({
 
   recenterBtn: {
     alignSelf: "flex-end",
-    flex: 2,
     margin: 10,
-    marginTop: 55,
+    marginBottom: 360,
   },
 });
