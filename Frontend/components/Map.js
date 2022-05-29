@@ -23,6 +23,8 @@ import {
   selectNearByStations,
   selectStaions,
   setDestination,
+  selectIsStation,
+  setIsStation,
 } from '../slices/navSlice';
 //import { setNearByStaions } from '../navSlice';
 //import { GOOGLE_MAPS_APIKEY } from "@env";
@@ -73,6 +75,7 @@ const Map = (props, ref) => {
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
   const [routeDestination, setRouteDestination] = useState(null);
+  const nearbyStation = useSelector(selectIsStation);
   //const [nearByStations, setNearByStations]  = useState([]);
   const region = useRef({});
   useImperativeHandle(ref, () => ({
@@ -82,10 +85,18 @@ const Map = (props, ref) => {
   }));
 
   useEffect(() => {
-    console.log(Object.keys(destination).length);
+   
     if (Object.keys(destination).length > 0) {
       goToDestination();
-      //createRoute();
+      console.log(nearbyStation);
+      if(nearbyStation.isStation == true){
+      createRoute();
+       dispatch(
+        setIsStation({
+          isStation : false,
+        }),
+       );
+      }
     }
   }, [destination]);
 
