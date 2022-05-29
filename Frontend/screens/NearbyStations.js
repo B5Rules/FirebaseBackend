@@ -5,6 +5,8 @@ import {
   selectDestination,
   selectOrigin,
   selectStaions,
+  selectIsStation,
+  setIsStation,
 } from '../slices/navSlice';
 import { useDispatch } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -24,6 +26,7 @@ function NearbyStations({ navigation }) {
   const dispatch = useDispatch();
   const origin = useSelector(selectOrigin);
   const stations = useSelector(selectStaions);
+  const nearbyStation = useSelector(selectIsStation);
 
   useEffect(() => {
     const func = async () => {
@@ -97,6 +100,12 @@ function NearbyStations({ navigation }) {
         },
       })
     );
+    dispatch(
+      setIsStation({
+        isStation: true,
+      })
+    );
+    console.log(nearbyStation);
     navigation.navigate('Map');
   };
 
