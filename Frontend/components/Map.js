@@ -24,15 +24,11 @@ import {
   selectStaions,
   setDestination,
   setOrigin,
+  selectIsStation,
+  setIsStation,
 } from "../slices/navSlice";
 //import { setNearByStaions } from '../navSlice';
 //import { GOOGLE_MAPS_APIKEY } from "@env";
-import { decode } from "@mapbox/polyline";
-import { useDispatch } from "react-redux";
-import Constants from "expo-constants";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { getPreciseDistance } from "geolib";
 
 //import { setNearByStaions } from '../navSlice';
 //import { GOOGLE_MAPS_APIKEY } from "@env";
@@ -46,6 +42,7 @@ import {
   locationPermission,
   getCurrentLocation,
 } from "../slices/helperFunction";
+import { getPreciseDistance } from "geolib";
 import { routeCalculator } from "../slices/routeCalculator";
 import { getGlobalState, setGlobalState } from "../globals/global";
 
