@@ -6,38 +6,38 @@ import {
   Button,
   TouchableHighlight,
   TouchableOpacity,
-} from "react-native";
+} from 'react-native';
 import React, {
   useState,
   useEffect,
   useRef,
   useImperativeHandle,
   forwardRef,
-} from "react";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import MapViewDirections from "react-native-maps-directions";
-import { useSelector } from "react-redux";
+} from 'react';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
+import { useSelector } from 'react-redux';
 import {
   selectDestination,
   selectOrigin,
   selectNearByStations,
   selectStaions,
   setDestination,
-} from "../slices/navSlice";
+} from '../slices/navSlice';
 //import { setNearByStaions } from '../navSlice';
 //import { GOOGLE_MAPS_APIKEY } from "@env";
-import { decode } from "@mapbox/polyline";
-import { useDispatch } from "react-redux";
-import Constants from "expo-constants";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { decode } from '@mapbox/polyline';
+import { useDispatch } from 'react-redux';
+import Constants from 'expo-constants';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import {
   locationPermission,
   getCurrentLocation,
-} from "../slices/helperFunction";
-import { routeCalculator } from "../slices/routeCalculator";
-import { getGlobalState, setGlobalState } from "../globals/global";
+} from '../slices/helperFunction';
+import { routeCalculator } from '../slices/routeCalculator';
+import { getGlobalState, setGlobalState } from '../globals/global';
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -47,15 +47,15 @@ const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
 export const getDistanceBetweenPoints = async (pointA, pointB) => {
   var urlToFetchDistance =
-    "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
+    'https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=' +
     pointA.latitude +
-    "," +
+    ',' +
     pointA.longitude +
-    "&destinations=" +
+    '&destinations=' +
     pointB.latitude +
-    "%2C" +
+    '%2C' +
     pointB.longitude +
-    "&key=" +
+    '&key=' +
     GOOGLE_MAPS_APIKEY;
 
   const res = await fetch(urlToFetchDistance);
@@ -64,7 +64,7 @@ export const getDistanceBetweenPoints = async (pointA, pointB) => {
 };
 
 const Map = (props, ref) => {
-  const { width, height } = Dimensions.get("window");
+  const { width, height } = Dimensions.get('window');
   const dispatch = useDispatch();
   const [coords, setCoords] = useState([]);
 
@@ -156,7 +156,7 @@ const Map = (props, ref) => {
     mapRef.current.animateToRegion(myRegion, 1000);
   };
 
-  const onMapPress = (e) => {
+  const onMapPress = e => {
     setRouteDestination(null);
 
     const reg = e?.nativeEvent?.coordinate || origin?.location;
@@ -204,12 +204,12 @@ const Map = (props, ref) => {
             strokeColor="green"
             precision="high"
             resetOnChange={true}
-            onStart={(params) => {
+            onStart={params => {
               console.log(
                 `Started routing between "${params.origin}" and "${params.destination}"`
               );
             }}
-            onReady={(result) => {
+            onReady={result => {
               console.log(`Distance: ${result.distance} km`);
               console.log(`Duration: ${result.duration} min.`);
 
@@ -222,8 +222,8 @@ const Map = (props, ref) => {
                 },
               });
             }}
-            onError={(errorMessage) => {
-              console.log("GOT AN ERROR");
+            onError={errorMessage => {
+              console.log('GOT AN ERROR');
             }}
           />
         )}
@@ -279,17 +279,17 @@ const Map = (props, ref) => {
                     tooltip
                     style={styles.customView}
                     onPress={() =>
-                      navigation.navigate("Station Info", {
+                      navigation.navigate('Station Info', {
                         station,
                       })
                     }
                   >
                     <View style={styles.marker}>
                       <Text style={styles.markerText}>
-                        Price: {station?._fieldsProto?.price?.doubleValue}{" "}
-                        RON/kWh{"\n"}
-                        {"\n"}
-                        {`Charging speed: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`}{" "}
+                        Price: {station?._fieldsProto?.price?.doubleValue}{' '}
+                        RON/kWh{'\n'}
+                        {'\n'}
+                        {`Charging speed: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`}{' '}
                         ...See more details
                       </Text>
                     </View>
@@ -299,23 +299,29 @@ const Map = (props, ref) => {
           })}
       </MapView>
 
-      <TouchableOpacity
-        style={styles.recenterBtn}
-        onPress={() => {
-          createRoute();
-        }}
-      >
-        <MaterialCommunityIcons name="directions" color="#27423A" size={40} />
-      </TouchableOpacity>
-
-      {/* <TouchableOpacity
-        style={styles.stopBtn}
-        onPress={() => {
-          stopRouting();
-        }}
+      <View style={styles.btnsView}>
+        <TouchableOpacity
+          style={styles.btnStyle}
+          onPress={() => {
+            createRoute();
+          }}
         >
-        <MaterialCommunityIcons name="stop-circle" color="#27423A" size={40} />
-      </TouchableOpacity> */}
+          <MaterialCommunityIcons name="directions" color="#27423A" size={40} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.btnStyle}
+          onPress={() => {
+            stopRouting();
+          }}
+        >
+          <MaterialCommunityIcons
+            name="stop-circle"
+            color="#27423A"
+            size={40}
+          />
+        </TouchableOpacity>
+      </View>
 
       {/*Display user's current region:*/}
       {/*<Text style={styles.text}>Current latitude: {region.latitude}</Text>
@@ -330,33 +336,33 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     flex: 1, //the container will fill the whole screen.
-    justifyContent: "flex-end",
-    alignItems: "center",
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   marker: {
     width: 150,
-    backgroundColor: "#27423A",
+    backgroundColor: '#27423A',
     borderWidth: 3,
-    borderColor: "grey",
+    borderColor: 'grey',
     borderRadius: 10,
     paddingLeft: 6,
   },
   markerText: {
-    color: "white",
+    color: 'white',
   },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
 
-  stopBtn: {
-    alignSelf: "flex-end",
-    marginBottom: "130%",
-    marginRight: 8,
+  btnsView: {
+    alignSelf: 'flex-end',
+    marginTop: 50,
+    flex: 2,
   },
 
-  recenterBtn: {
-    alignSelf: "flex-end",
-    margin: 10,
-    marginBottom: 360,
+  btnStyle: {
+    alignSelf: 'flex-end',
+    marginRight: 8,
+    marginTop: 8,
   },
 });
