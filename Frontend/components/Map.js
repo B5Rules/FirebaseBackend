@@ -23,6 +23,7 @@ import {
   selectNearByStations,
   selectStaions,
   setDestination,
+  setOrigin,
 } from "../slices/navSlice";
 //import { setNearByStaions } from '../navSlice';
 //import { GOOGLE_MAPS_APIKEY } from "@env";
@@ -31,7 +32,7 @@ import { useDispatch } from "react-redux";
 import Constants from "expo-constants";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import { getDistance, getPreciseDistance } from "geolib";
 import {
   locationPermission,
   getCurrentLocation,
@@ -44,6 +45,11 @@ const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 //import { or } from "react-native-reanimated";
 
 //LogBox.ignoreLogs(['Setting a timer']);
+
+const calculateDistance = (origin, destination) => {
+  var dis = getPreciseDistance(origin.location, destination.location);
+  return dis;
+};
 
 export const getDistanceBetweenPoints = async (pointA, pointB) => {
   var urlToFetchDistance =
@@ -82,7 +88,6 @@ const Map = (props, ref) => {
   }));
 
   useEffect(() => {
-    console.log(Object.keys(destination).length);
     if (Object.keys(destination).length > 0) {
       goToDestination();
       //createRoute();
@@ -107,14 +112,10 @@ const Map = (props, ref) => {
         longitudeDelta: 0.08,
       },
     };
-    // if (
-    //   //origin is the same
-    //   routeOrigin.location.latitude !== newOrigin.location.latitude &&
-    //   routeOrigin.location.longitude !== newOrigin.location.longitude
-    // ) {
-    //   //setRouteOrigin(originF);
-    //   //console.log("location updated!");
-    // }
+    if (calculateDistance(origin, newOrigin) > 20) {
+      console.log(calculateDistance(origin, newOrigin));
+      dispatch(setOrigin(newOrigin));
+    }
   };
 
   const goToDestination = () => {

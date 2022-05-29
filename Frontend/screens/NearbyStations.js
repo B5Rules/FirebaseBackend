@@ -34,40 +34,37 @@ function NearbyStations({ navigation }) {
 
       const location = origin;
       const statii = stations;
-      
+
       for (const station of statii) {
         let dist;
-         //console.log(station?._fieldsProto?.coordinates?.geoPointValue);
-         if (station?._fieldsProto?.coordinates?.geoPointValue == undefined)
-           dist = 99999999;
-         else {
-           if (
-             station?._fieldsProto?.coordinates?.geoPointValue !== undefined
-           ) {
-             
-             dist = await getDistanceBetweenPoints(
-               station._fieldsProto.coordinates.geoPointValue,
-               location.location
-             );
-           }
-         }
+        //console.log(station?._fieldsProto?.coordinates?.geoPointValue);
+        if (station?._fieldsProto?.coordinates?.geoPointValue == undefined)
+          dist = 99999999;
+        else {
+          if (station?._fieldsProto?.coordinates?.geoPointValue !== undefined) {
+            dist = await getDistanceBetweenPoints(
+              station._fieldsProto.coordinates.geoPointValue,
+              location.location
+            );
+          }
+        }
 
-         if (counter < 3) {
-           stationsAux[counter] = station;
+        if (counter < 3) {
+          stationsAux[counter] = station;
 
-           distancesAux[counter] = dist;
-         } else if (dist < distancesAux[0]) {
-           distancesAux[0] = dist;
-           stationsAux[0] = station;
-         } else if (dist < distancesAux[1]) {
-         distancesAux[1] = dist;
-           stationsAux[1] = station;
-         } else if (dist < distancesAux[2]) {
-         distancesAux[2] = dist;
-           stationsAux[2] = station;
-         }
-         counter = counter + 1;
-       }
+          distancesAux[counter] = dist;
+        } else if (dist < distancesAux[0]) {
+          distancesAux[0] = dist;
+          stationsAux[0] = station;
+        } else if (dist < distancesAux[1]) {
+          distancesAux[1] = dist;
+          stationsAux[1] = station;
+        } else if (dist < distancesAux[2]) {
+          distancesAux[2] = dist;
+          stationsAux[2] = station;
+        }
+        counter = counter + 1;
+      }
 
       for (i = 0; i < 3; i++) {
         stationsAux[i] = stationsAux[i]._fieldsProto;
@@ -82,7 +79,7 @@ function NearbyStations({ navigation }) {
 
         stationsAux[i] = aux1;
       }
-      
+
       setNearByStaions(stationsAux);
     };
     func();
@@ -98,6 +95,7 @@ function NearbyStations({ navigation }) {
         },
       })
     );
+
     navigation.navigate("Map");
   };
 
