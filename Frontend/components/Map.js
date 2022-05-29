@@ -45,7 +45,7 @@ const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
 //LogBox.ignoreLogs(['Setting a timer']);
 
-const getDistanceBetweenPoints = async (pointA, pointB) => {
+export const getDistanceBetweenPoints = async (pointA, pointB) => {
   var urlToFetchDistance =
     "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
     pointA.latitude +
@@ -67,6 +67,7 @@ const Map = (props, ref) => {
   const { width, height } = Dimensions.get("window");
   const dispatch = useDispatch();
   const [coords, setCoords] = useState([]);
+
   const stations = useSelector(selectStaions);
   const mapRef = useRef(1);
   const origin = useSelector(selectOrigin);
@@ -138,7 +139,6 @@ const Map = (props, ref) => {
     //   },
     //   destination
     // );
-
     setRouteDestination(destination);
   };
 
@@ -313,7 +313,7 @@ const Map = (props, ref) => {
         onPress={() => {
           stopRouting();
         }}
-      >
+        >
         <MaterialCommunityIcons name="stop-circle" color="#27423A" size={40} />
       </TouchableOpacity> */}
 
