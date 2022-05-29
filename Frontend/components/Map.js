@@ -112,7 +112,7 @@ const Map = (props, ref) => {
   useEffect(() => {
     const interval = setInterval(() => {
       getLiveLocation();
-    }, 3000);
+    }, 4500);
     return () => clearInterval(interval);
   });
 
@@ -228,15 +228,22 @@ const Map = (props, ref) => {
             onReady={(result) => {
               console.log(`Distance: ${result.distance} km`);
               console.log(`Duration: ${result.duration} min.`);
+              const myRegion = {
+                latitude: origin.location.latitude,
+                longitude: origin.location.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              };
 
-              mapRef.current.fitToCoordinates(result.coordinates, {
-                edgePadding: {
-                  top: 50,
-                  right: 50,
-                  left: 50,
-                  bottom: 50,
-                },
-              });
+              mapRef.current.animateToRegion(myRegion, 1000);
+              // mapRef.current.fitToCoordinates(result.coordinates, {
+              //   edgePadding: {
+              //     top: 50,
+              //     right: 50,
+              //     left: 50,
+              //     bottom: 50,
+              //   },
+              // });
             }}
             onError={(errorMessage) => {
               console.log("GOT AN ERROR");
