@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   setDestination,
   selectDestination,
   selectOrigin,
   selectStaions,
-} from "../slices/navSlice";
-import { useDispatch } from "react-redux";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+} from '../slices/navSlice';
+import { useDispatch } from 'react-redux';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   StyleSheet,
   View,
@@ -15,8 +15,8 @@ import {
   Text,
   Image,
   component,
-} from "react-native";
-import { getDistanceBetweenPoints } from "./MapHomeScreen";
+} from 'react-native';
+import { getDistanceBetweenPoints } from './MapHomeScreen';
 
 function NearbyStations({ navigation }) {
   const [nearByStations, setNearByStaions] = useState([]);
@@ -34,40 +34,39 @@ function NearbyStations({ navigation }) {
 
       const location = origin;
       const statii = stations;
-      
+
       for (const station of statii) {
         let dist;
-         //console.log(station?._fieldsProto?.coordinates?.geoPointValue);
-         if (station?._fieldsProto?.coordinates?.geoPointValue == undefined)
-           dist = 99999999;
-         else {
-           if (
-             station?._fieldsProto?.coordinates?.geoPointValue !== undefined
-           ) {
-             
-             dist = await getDistanceBetweenPoints(
-               station._fieldsProto.coordinates.geoPointValue,
-               location.location
-             );
-           }
-         }
+        console.log(station?._fieldsProto?.coordinates?.geoPointValue);
+        console.log(location.location);
 
-         if (counter < 3) {
-           stationsAux[counter] = station;
+        if (station?._fieldsProto?.coordinates?.geoPointValue == undefined)
+          dist = 99999999;
+        else {
+          if (station?._fieldsProto?.coordinates?.geoPointValue !== undefined) {
+            dist = await getDistanceBetweenPoints(
+              station._fieldsProto.coordinates.geoPointValue,
+              location.location
+            );
+          }
+        }
 
-           distancesAux[counter] = dist;
-         } else if (dist < distancesAux[0]) {
-           distancesAux[0] = dist;
-           stationsAux[0] = station;
-         } else if (dist < distancesAux[1]) {
-         distancesAux[1] = dist;
-           stationsAux[1] = station;
-         } else if (dist < distancesAux[2]) {
-         distancesAux[2] = dist;
-           stationsAux[2] = station;
-         }
-         counter = counter + 1;
-       }
+        if (counter < 3) {
+          stationsAux[counter] = station;
+
+          distancesAux[counter] = dist;
+        } else if (dist < distancesAux[0]) {
+          distancesAux[0] = dist;
+          stationsAux[0] = station;
+        } else if (dist < distancesAux[1]) {
+          distancesAux[1] = dist;
+          stationsAux[1] = station;
+        } else if (dist < distancesAux[2]) {
+          distancesAux[2] = dist;
+          stationsAux[2] = station;
+        }
+        counter = counter + 1;
+      }
 
       for (i = 0; i < 3; i++) {
         stationsAux[i] = stationsAux[i]._fieldsProto;
@@ -75,21 +74,21 @@ function NearbyStations({ navigation }) {
         for (const prop in stationsAux[i]) {
           aux1[prop] = stationsAux[i][prop];
         }
-        aux1["distance"] = {
+        aux1['distance'] = {
           doubleValue: distancesAux[i],
-          valueType: "doubleValue",
+          valueType: 'doubleValue',
         };
 
         stationsAux[i] = aux1;
       }
-      
+
       setNearByStaions(stationsAux);
     };
     func();
     //getDistanceBetweenPoints(origin, origin);
   }, [origin]);
 
-  const goToStation = (nr) => {
+  const goToStation = nr => {
     dispatch(
       setDestination({
         location: {
@@ -98,7 +97,7 @@ function NearbyStations({ navigation }) {
         },
       })
     );
-    navigation.navigate("Map");
+    navigation.navigate('Map');
   };
 
   return (
@@ -120,7 +119,7 @@ function NearbyStations({ navigation }) {
           </Text>
           <Image
             style={styles.image}
-            source={require("../assets/location.png")}
+            source={require('../assets/location.png')}
           />
         </View>
 
@@ -129,18 +128,18 @@ function NearbyStations({ navigation }) {
           <Text style={styles.txtRight}>
             {nearByStations[0]?.price?.doubleValue} /kWh
           </Text>
-          <Image style={styles.image} source={require("../assets/power.png")} />
+          <Image style={styles.image} source={require('../assets/power.png')} />
           <Text style={styles.txtRight}>
             {nearByStations[0]?.type?.integerValue}
           </Text>
         </View>
 
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <Text style={styles.txtLeft}>Status:</Text>
           <Text style={styles.txtRight}>Text</Text>
-        </View>
+        </View> */}
 
-        <View style={styles.row}>
+        <View style={styles.rowServices}>
           {nearByStations[0]?.services?.arrayValue?.values.length > 0 && (
             <Text style={styles.txtLeft}>Services:</Text>
           )}
@@ -174,7 +173,7 @@ function NearbyStations({ navigation }) {
           </Text>
           <Image
             style={styles.image}
-            source={require("../assets/location.png")}
+            source={require('../assets/location.png')}
           />
         </View>
 
@@ -183,18 +182,18 @@ function NearbyStations({ navigation }) {
           <Text style={styles.txtRight}>
             {nearByStations[1]?.price?.doubleValue} /kWh
           </Text>
-          <Image style={styles.image} source={require("../assets/power.png")} />
+          <Image style={styles.image} source={require('../assets/power.png')} />
           <Text style={styles.txtRight}>
             {nearByStations[1]?.type?.integerValue}
           </Text>
         </View>
 
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <Text style={styles.txtLeft}>Status:</Text>
           <Text style={styles.txtRight}>Text</Text>
-        </View>
+        </View> */}
 
-        <View style={styles.row}>
+        <View style={styles.rowServices}>
           {nearByStations[1]?.services?.arrayValue?.values.length > 0 && (
             <Text style={styles.txtLeft}>Services:</Text>
           )}
@@ -228,7 +227,7 @@ function NearbyStations({ navigation }) {
           </Text>
           <Image
             style={styles.image}
-            source={require("../assets/location.png")}
+            source={require('../assets/location.png')}
           />
         </View>
 
@@ -237,18 +236,19 @@ function NearbyStations({ navigation }) {
           <Text style={styles.txtRight}>
             {nearByStations[2]?.price?.doubleValue} /kWh
           </Text>
-          <Image style={styles.image} source={require("../assets/power.png")} />
+          <Image style={styles.image} source={require('../assets/power.png')} />
           <Text style={styles.txtRight}>
             {nearByStations[2]?.type?.integerValue}
           </Text>
         </View>
 
+        {/* 
         <View style={styles.row}>
           <Text style={styles.txtLeft}>Status:</Text>
           <Text style={styles.txtRight}>Text</Text>
-        </View>
+        </View> */}
 
-        <View style={styles.row}>
+        <View style={styles.rowServices}>
           {nearByStations[2]?.services?.arrayValue?.values.length > 0 && (
             <Text style={styles.txtLeft}>Services:</Text>
           )}
@@ -269,17 +269,17 @@ function NearbyStations({ navigation }) {
 }
 const styles = StyleSheet.create({
   direction: {
-    alignSelf: "flex-end",
-    justifyContent: "center",
-    alignItems: "center",
+    alignSelf: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     flex: 1,
     padding: 5,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#040506",
-    flexDirection: "column",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#040506',
+    flexDirection: 'column',
   },
   image: {
     width: 20,
@@ -287,33 +287,51 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   row: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
     // padding: '2%',
-    marginLeft: "7%",
+    marginLeft: '7%',
     flex: 1,
+  },
+  rowServices: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    // padding: '2%',
+    marginLeft: '7%',
+    flex: 2,
+    flexWrap: 'wrap',
+    marginBottom: 20,
   },
   rectangle: {
     marginTop: 22,
-    width: "80%",
-    height: "22%",
-    backgroundColor: "#182724",
+    width: '80%',
+    height: '22%',
+    backgroundColor: '#182724',
     borderRadius: 20,
-    justifyContent: "flex-start",
-    alignItems: "center",
+    justifyContent: 'flex-start',
+    // alignItems: 'center',
   },
 
   txtLeft: {
-    color: "white",
+    color: 'white',
     marginRight: 20,
     fontSize: 16,
   },
   txtRight: {
-    fontWeight: "bold",
-    color: "#01F2CF",
+    fontWeight: 'bold',
+    color: '#01F2CF',
     marginRight: 10,
     fontSize: 18,
+  },
+  txtRightServices: {
+    fontWeight: 'bold',
+    color: '#01F2CF',
+    marginRight: 10,
+    fontSize: 18,
+    textAlign: 'left',
+    width: 50,
   },
 });
 
