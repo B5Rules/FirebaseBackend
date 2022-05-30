@@ -49,7 +49,7 @@ const ProfileSetup = ({navigation}) => {
   
   const { validate, isFieldInError, getErrorMessages} =
     useValidation({
-      state: { firstName, lastName, username, phone,selectedCountry,secKey,privKey }
+      state: { firstName, lastName, username, phone,selectedCountry,secKey,pubKey }
     });
 
 
@@ -60,8 +60,8 @@ const ProfileSetup = ({navigation}) => {
           username: { minlenth: 3, maxlength: 20,required: true },
           phone: { minlength: 10, maxlength: 10, numbers: true, required: true },
           country: { required: true },
-          secKey: {required: true},
-          privKey: {required: true}
+          //secKey: {required: true},
+          //pubKey: {required: true}
         }) ){
           //insert profile
           insertProfile({
@@ -71,7 +71,7 @@ const ProfileSetup = ({navigation}) => {
             phone: phone,
             country: selectedCountry,
             secKey: secKey,
-            privKey: privKey
+            pubKey: pubKey
           }).then(response=>{
             if(response.data['status']==0){
               //success
@@ -618,15 +618,15 @@ const ProfileSetup = ({navigation}) => {
               color: '#fff',
               width: '92%',
             }}
-            defaultValue={privKey}
+            defaultValue={pubKey}
             keyboardType={'default'}
-            onChangeText={setPrivKey}
+            onChangeText={setpubKey}
             placeholder={''}
             placeholderTextColor={'#aaaaaa'}
             />
             <EditButton/>
           </View>
-          {isFieldInError('privKey') && <Text style={styles.error}>*Required</Text>}
+          {isFieldInError('pubKey') && <Text style={styles.error}>*Required</Text>}
 
 
           <TouchableHighlight
