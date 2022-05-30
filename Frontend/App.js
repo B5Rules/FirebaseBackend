@@ -32,7 +32,7 @@ import CarAdd from './screens/CarAdd';
 import CarListPayment from './screens/CarListPayment';
 import Enter_password from './screens/Enter_password';
 import MapHomeScreen from './screens/MapHomeScreen';
-
+import ChargingPage from './screens/ChargingPage';
 
 
 const ComponentStripeProvider = () => {
@@ -81,7 +81,7 @@ export default function App() {
           <Stack.Screen options={{headerShown:false}} name="Edit Station" component={EditStation}/>
           <Stack.Screen options={{headerShown:false}} name="StationLocationOnMap" component={StationLocationOnMap}/>
           <Stack.Screen options={{headerShown:false}} name="Station Info" component={StationInfo}/>
-          <Stack.Screen options={{headerShown:false}} name="Add kWh" component={AddKwh}/>
+          <Stack.Screen options={{headerShown:false}} name="Charging Page" component={ChargingPage}/>
           <Stack.Screen options={{headerShown:false}} name="Car List" component={CarList}/>
           <Stack.Screen options={{headerShown:false}} name="Car List Payment" component={CarListPayment}/>
           <Stack.Screen options={{headerShown:false}} name="Car Detail" component={CarDetail}/>

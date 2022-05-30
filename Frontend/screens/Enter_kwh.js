@@ -67,18 +67,18 @@ const getStationData = httpsCallable(fireFunc, "getStationData");
   
             <TouchableOpacity
               style={styles.buttonCharge}
-              onPress={() => {
+              onPress={() => { navigation.navigate("Charging Page")
                 
-                if ((!isNaN(value)) && (value >= 10) && (value <= parseFloat(getGlobalState('carData').chargingCap))) {
-                  //todo this screen comes right after the car selection screen and instead of 100,
-                  //the app will use the car's battery cap as the max value
-                  //console.log(value);
-                  //console.log(stationID);
-                  setGlobalState("kwhToCharge", value);
-                  navigation.navigate("LoadingScreen");
-                } else {
-                  alert("You have to enter a numeric value between 10 and "+getGlobalState('carData').chargingCap);
-                }
+                // if ((!isNaN(value)) && (value >= 10) && (value <= parseFloat(getGlobalState('carData').chargingCap))) {
+                //   //todo this screen comes right after the car selection screen and instead of 100,
+                //   //the app will use the car's battery cap as the max value
+                //   //console.log(value);
+                //   //console.log(stationID);
+                //   setGlobalState("kwhToCharge", value);
+                //   navigation.navigate("LoadingScreen");
+                // } else {
+                //   alert("You have to enter a numeric value between 10 and "+getGlobalState('carData').chargingCap);
+                // }
               }}
             >
               <Text style={styles.buttonText}> Charge Now </Text>
