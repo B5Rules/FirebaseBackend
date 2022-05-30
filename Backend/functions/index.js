@@ -348,3 +348,10 @@ exports.updateCar = functions.region("europe-west1").https.onCall(async (data, c
            uid:data.uid
        });
    });
+
+exports.getPubKey = functions.region("europe-west1").https.onCall(async (data, context)=>{
+  const ownerUid = data.ownerUid;
+  const docRef = await db.collection('userdata').doc(ownerUid).get();
+  const pubKey = await docRef.data().pubKey;
+  return {result:pubKey};
+});

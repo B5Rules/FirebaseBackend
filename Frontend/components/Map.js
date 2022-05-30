@@ -265,9 +265,11 @@ const onMapPress = (e) => {
                 title="Destination"
                
               >
-                <MapView.Callout tooltip style={styles.customView} onPress={() => navigation.navigate("Station Info", {
-                  station
-                })}>
+                <MapView.Callout tooltip style={styles.customView} onPress={() => {
+                  console.log(station?._fieldsProto?.id?.stringValue);
+                  navigation.navigate("Station Info", {station})
+
+                }}>
                   <View style={styles.marker}>
                     <Text style={styles.markerText}>Price: {station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
                       {`Charging speed: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`} ...See more details</Text>

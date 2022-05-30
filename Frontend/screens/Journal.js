@@ -105,8 +105,9 @@ export default function Journal({ navigation }) {
       console.log('success');
     }
 
-    if (biometricAuth.success) navigation.navigate("Pay");
-
+    if (biometricAuth.success) {
+      navigation.navigate("Pay");
+    }
     console.log({ isBiometricAvailable });
     console.log({ supportedBiometrics });
     console.log({ savedBiometrics });

@@ -31,6 +31,8 @@ const ProfileSetup = ({navigation}) => {
   const [firstName,setFirstName] = useState('');
   const [lastName,setLastName] = useState('');
   const [phone,setPhone] = useState('');
+  const [secKey,setSecKey] = useState('');
+  const [pubKey,setPubKey] = useState('');
   useBackButton(handleBackButton)
 
   useEffect(() => {
@@ -39,13 +41,15 @@ const ProfileSetup = ({navigation}) => {
       setFirstName(getGlobalState('userData').firstName);
       setLastName(getGlobalState('userData').lastName);
       setPhone(getGlobalState('userData').phone);
+      setSecKey(getGlobalState('userData').secKey);
+      setPubKey(getGlobalState('userData').pubKey);
     }
     Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#182724')
   }, [isFocused]);
   
   const { validate, isFieldInError, getErrorMessages} =
     useValidation({
-      state: { firstName, lastName, username, phone,selectedCountry }
+      state: { firstName, lastName, username, phone,selectedCountry,secKey,privKey }
     });
 
 
@@ -55,7 +59,9 @@ const ProfileSetup = ({navigation}) => {
           lastName: { minlenth: 3, maxlength: 15, required: true },
           username: { minlenth: 3, maxlength: 20,required: true },
           phone: { minlength: 10, maxlength: 10, numbers: true, required: true },
-          country: { required: true }
+          country: { required: true },
+          secKey: {required: true},
+          privKey: {required: true}
         }) ){
           //insert profile
           insertProfile({
@@ -63,7 +69,9 @@ const ProfileSetup = ({navigation}) => {
             firstName: firstName,
             lastName: lastName,
             phone: phone,
-            country: selectedCountry
+            country: selectedCountry,
+            secKey: secKey,
+            privKey: privKey
           }).then(response=>{
             if(response.data['status']==0){
               //success
@@ -73,7 +81,9 @@ const ProfileSetup = ({navigation}) => {
                 lastName: lastName,
                 phone: phone,
                 country: selectedCountry,
-                uid: response.data['uid']
+                uid: response.data['uid'],
+                secKey: secKey,
+                pubKey: pubKey
               });
               setGlobalState('needUpdate',false);
               navigation.navigate('MapNavigator');
@@ -555,6 +565,69 @@ const ProfileSetup = ({navigation}) => {
               </Picker>
             </View>
             {isFieldInError("country") && <Text style={styles.error}>Required</Text>}
+
+          <View
+          style={[styles.input,{
+            flexWrap: 'wrap', 
+            alignItems: 'flex-start',
+            flexDirection:'row',
+            paddingRight:10
+          }]}
+          >
+            <Text
+            style={{
+              width: '100%',
+              color:'#ababab',
+              fontSize:15,
+            }}
+            >Stripe Security Key</Text>
+            <TextInput
+            style={{
+              fontSize: 20, 
+              color: '#fff',
+              width: '92%',
+            }}
+            defaultValue={secKey}
+            keyboardType={'default'}
+            onChangeText={setSecKey}
+            placeholder={''}
+            placeholderTextColor={'#aaaaaa'}
+            />
+            <EditButton/>
+          </View>
+          {isFieldInError('secKey') && <Text style={styles.error}>*Required</Text>}
+
+          <View
+          style={[styles.input,{
+            flexWrap: 'wrap', 
+            alignItems: 'flex-start',
+            flexDirection:'row',
+            paddingRight:10
+          }]}
+          >
+            <Text
+            style={{
+              width: '100%',
+              color:'#ababab',
+              fontSize:15,
+            }}
+            >Stripe Private Key</Text>
+            <TextInput
+            style={{
+              fontSize: 20, 
+              color: '#fff',
+              width: '92%',
+            }}
+            defaultValue={privKey}
+            keyboardType={'default'}
+            onChangeText={setPrivKey}
+            placeholder={''}
+            placeholderTextColor={'#aaaaaa'}
+            />
+            <EditButton/>
+          </View>
+          {isFieldInError('privKey') && <Text style={styles.error}>*Required</Text>}
+
 
           <TouchableHighlight
           onPress={()=>{handleSubmit();}}

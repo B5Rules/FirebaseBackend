@@ -12,6 +12,7 @@ import Logo from '../components/Logo';
 import * as NavigationBar from 'expo-navigation-bar';
 import { useIsFocused } from '@react-navigation/native';
 import {Platform} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const getProfileData = httpsCallable(fireFunc,'getProfileData');
 let daemonIsRunning = false;
@@ -29,6 +30,13 @@ const AuthHandler = ({navigation}) => {
     }
 
     useEffect(() => {
+
+        onAuthStateChanged(fireAuth,(user) => {
+            if(user){
+                postAuth();
+            }
+        });
+
         Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#05CAAD')
         const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         return () => {
@@ -52,6 +60,8 @@ const AuthHandler = ({navigation}) => {
                         phone: response.data['result']['phone'],
                         country: response.data['result']['country'],
                         uid: response.data['result']['uid'],
+                        secKey: response.data['result']['secKey'],
+                        pubKey: response.data['result']['pubKey']
                     });
                     setGlobalState('needUpdate',false);
                     navigation.navigate('MapNavigator');
@@ -92,6 +102,8 @@ const AuthHandler = ({navigation}) => {
     const handleSignUp = () => {
         if(validateInputSignIn()){
             createUserWithEmailAndPassword(fireAuth,email,password).then((creds)=>{
+                AsyncStorage.setItem('email',email);
+                AsyncStorage.setItem('password',password);
                 postAuth();
                 console.log('success');
             }).catch(error=>{
@@ -104,6 +116,8 @@ const AuthHandler = ({navigation}) => {
     const handleSignIn = () => {
         if(validateInputSignIn()){
             signInWithEmailAndPassword(fireAuth,email,password).then(()=>{
+                AsyncStorage.setItem('email',email);
+                AsyncStorage.setItem('password',password);
                 postAuth();
                 console.log('success');
             }).catch(error=>{
