@@ -4,19 +4,26 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getGlobalState } from '../globals/global';
 import AnimatedLoader from 'react-native-animated-loader';
 import LottieView from 'lottie-react-native';
+import { useIsFocused } from "@react-navigation/native";
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
 
 const ChargingPage = ({ navigation, route, props }) => {
-    setTimeout(() => {
-        navigation.navigate("MapNavigator");
-      }, 10000);
-
       const [visible, setVisible] = useState(false);
+      const isFocused = useIsFocused();
       useEffect(() => {
+        if(!isFocused) {
+          setVisible(false);
+          return;
+        }
         setInterval(() => {
           setVisible(!visible);
         }, );
+
+        setTimeout(() => {
+          navigation.navigate("Pay");
+          setVisible(false);
+        }, 10000);
       }, []);
     
 

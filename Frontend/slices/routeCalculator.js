@@ -3,21 +3,142 @@ import { fireFunc } from "../globals/firebase";
 import { httpsCallable } from "firebase/functions";
 
 const getAllStationsData = httpsCallable(fireFunc, "getAllStationsData");
-const carRange = 300, maxCarRange = 500;
+const carRange = 300000, maxCarRange = 150000; //astea sunt in metri
+let stationsOnPath=0;
 
 export const routeCalculator = async (startingPoint, destinationPoint) => {
     const response = await getAllStationsData();
     const stations = response.data.result;
+    let graph = new Array(1000);
+    for (let i = 0; i < 1000; i++)
+        graph[i] = new Array(1000);
+    let id = new Map();
+    let stationsId = [];
+    let nr = 0;
 
-    for(const station of stations) {
-        console.log(station.coordinates._latitude, station.coordinates._longitude);
+    if(await getDistanceBetweenPoints(startingPoint,destinationPoint)<=carRange){
+        console.log("Ajung direct!");
+        return;
     }
-    console.log(startingPoint, destinationPoint);
-
-
+    for (const station of stations) {
+        //console.log(station.coordinates._latitude, station.coordinates._longitude);
+        nr++;
+        id[station.coordinates._latitude, station.coordinates._longitude] = nr;
+        stationsId[nr] = [station.coordinates._latitude, station.coordinates._longitude];
+    }
+    //nu uit sa dau clear la ce am bagat in graph
+    for(let i=1;i<=999;i++)
+    graph[nr+1][i]=99999999,graph[i][nr+1]=99999999,graph[nr+2][i]=99999999,graph[i][nr+2]=99999999;
+    
+    console.log("Aici");
+    for (const station1 of stations)
+        for (const station2 of stations){ 
+        const id1=id[station1.coordinates._latitude, station1.coordinates._longitude];
+        const id2=id[station2.coordinates._latitude, station2.coordinates._longitude];
+        const dist=await getDistanceBetweenPoints(
+          {
+            latitude: station1.coordinates._latitude,
+            longitude: station1.coordinates._longitude,
+          },
+          {
+            latitude: station2.coordinates._latitude,
+            longitude: station2.coordinates._longitude,
+          });
+        if(dist<=maxCarRange)
+        {
+            graph[id1][id2]=dist;
+            graph[id2][id1]=dist;
+        }
+        else
+        {
+            graph[id1][id2]=99999999;
+            graph[id2][id1]=99999999;
+        }
+    }
+    
+    //console.log(await getDistanceBetweenPoints(startingPoint,[stationsId[6][0],stationsId[6][1]]));
+    for (const station of stations) {
+        const id1=id[station.coordinates._latitude, station.coordinates._longitude];
+        const dist1=await getDistanceBetweenPoints(startingPoint, {
+            latitude: station.coordinates._latitude,
+            longitude: station.coordinates._longitude,
+          });
+        const dist2=await getDistanceBetweenPoints(destinationPoint, {
+            latitude: station.coordinates._latitude,
+            longitude: station.coordinates._longitude,
+          });
+        if (dist1 <= carRange)
+            graph[nr + 1][id1] = dist1,graph[id1][nr+1] = dist1;
+        else
+            graph[nr + 1][id1] = 99999999,graph[id1][nr+1] = 99999999;
+        if (dist2 <= maxCarRange)
+            graph[id1][nr+2] = dist2,graph[nr+2][id1]=dist2;
+        else
+            graph[id1][nr+2] = 99999999,graph[nr+2][id1]=99999999;
+    }
+    
+    console.log("Aici2");
+    let shortestDistances = new Array (nr+4);
+    let added=new Array(nr+4);
+    for(let index=1;index<=nr+2;index++)
+    {
+        shortestDistances[index]=99999999;
+        added[index]=false;
+    }
+    shortestDistances[nr+1]=0;
+    let parents=new Array(nr+4);
+    parents[nr+1]=-1;
+    for(let i=1;i<=nr+2;i++)
+    if(i!=nr+1){
+        let nearestVertex=-1;
+        let shortestDistance=99999999;
+        for(let index=1;index<=nr+2;index++)
+        if(!added[index]&& shortestDistances[index]<shortestDistance){
+            nearestVertex=index;
+            shortestDistance=shortestDistances[index];
+        }
+        added[nearestVertex]=true;
+        for(let index=1;index<=nr+2;index++){
+            let edgeDistance=graph[nearestVertex][index];
+            if(edgeDistance>0 && ((shortestDistance+edgeDistance)<shortestDistances[index])){
+                parents[index]=nearestVertex;
+                shortestDistances[index]=shortestDistance+edgeDistance;
+            }
+        }
+    }
+    console.log("Aici3");
+    let distance=shortestDistances[nr+2];
+    if(distance==99999999)
+    {
+        console.log("Nu se poate face drumul!");
+        return;
+    }
+    let path=new Array(1000);
+    printPath(nr+2,parents,path,1);
+    console.log("Aici4");
+    console.log(stationsOnPath);
+    let listOfCoordonates=[];
+    for(let i=stationsOnPath;i>=1;i--)
+    if(path[i]==nr+2)
+    listOfCoordonates.push(destinationPoint);
+    else
+    if(path[i]==nr+1)
+    listOfCoordonates.push(startingPoint);
+    else
+    listOfCoordonates.push({latitude: stationsId[path[i]][0], longitude: stationsId[path[i]][1]});
+    
     return {
         listOfCoordonates: [],
         duration: 0,
         distance: 0,
     }
+}
+
+function printPath(index,parents,path,now){
+    if(index==-1)
+    return;
+    stationsOnPath++;
+    printPath(parents[index],parents,path,now+1);
+    path[now]=index;
+    //console.log(index+" ");
 }

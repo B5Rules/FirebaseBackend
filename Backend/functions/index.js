@@ -2,6 +2,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const Joi = require("joi");
 const firestore = require('firebase-admin/firestore');
+const fetch = (url) => import('node-fetch').then(({default: fetch}) => fetch(url));
 
 const app = admin.initializeApp();
 const db = admin.firestore(app);
@@ -354,4 +355,111 @@ exports.getPubKey = functions.region("europe-west1").https.onCall(async (data, c
   const docRef = await db.collection('userdata').doc(ownerUid).get();
   const pubKey = await docRef.data().pubKey;
   return {result:pubKey};
+});
+
+exports.getDistanceBetweenTwoStations = functions.region("europe-west1").https.onCall(async (data, context)=>{
+  const {station1, station2 } = data;
+  let station = await db.collection('stationsGraph').where("stationId","==", station1).get()
+  if(!station.size){
+    return {result:null, error:true, message:"Station 1 not found"}
+  }
+  const distance = station?.docs[0]?.data()?.distances?.station2 || 99999999;
+  return {
+    result: distance,
+    error: false,
+    message: 'Successfully retrieved distance between two stations'
+  }
+});
+
+// exports.
+
+/**
+ * We must set the timeout to 9mins on cloud
+ */
+exports.generateGraph = functions.runWith({
+  timeoutSeconds: 540
+}).region("europe-west1").https.onCall(async (data, context) => {
+  return {
+    result: null,
+    error: true,
+    message: 'This function is disabled'
+  };
+  const maxDistanceBetweeenTwoStations = 150000;
+  const minDistanceBetweeenTwoStations = 10000;
+  const stationsRawData = await db.collection('chargingstations').get();
+  const stations = [];
+
+  stationsRawData.forEach(data => {
+    stations.push({
+      id: data.id,
+      ...data.data()
+    })
+  })
+
+  const stationNonExistant = await db.collection('chargingstations').where("stationId","==", "zabogdan").get()
+  console.log(stationNonExistant.size)
+  const getDistanceBetweenPoints = async (pointA, pointB) => {
+    var urlToFetchDistance =
+      "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
+      pointA.latitude +
+      "," +
+      pointA.longitude +
+      "&destinations=" +
+      pointB.latitude +
+      "%2C" +
+      pointB.longitude +
+      "&key=AIzaSyB9v7V_D0tF4_jHRkJKF6iGg1s4KMXjWLk";
+  
+    const res = await fetch(urlToFetchDistance);
+    const data = await res.json();
+    return data.rows[0].elements[0].distance.value;
+  };
+
+  const getStationData = async (id) => {
+    let station = await db.collection('stationsGraph').where("stationId","==", id).get()
+    if(!station.size)
+      return {
+        stationId: id,
+        distances: {
+
+        }
+      }
+    return station.docs[0].data();
+  }
+
+  const updateOrCreateStation = async (data) => {
+    const collection = db.collection('stationsGraph');
+    const docRef = await collection.where('stationId', '==', data.stationId).get();
+    if(!docRef.size) {
+      await collection.add(data)
+    } else {
+      await collection.doc(docRef.docs[0].id).update(data);
+    }
+  }
+  
+  for (const station1 of stations){
+      const station1Data = await getStationData(station1.id);
+
+      for (const station2 of stations){
+        const station2Data = await getStationData(station2.id);
+        if(station1Data.stationId === station2Data.stationId) continue;
+        const dist=await getDistanceBetweenPoints(
+          {
+            latitude: station1.coordinates._latitude,
+            longitude: station1.coordinates._longitude,
+          },
+          {
+            latitude: station2.coordinates._latitude,
+            longitude: station2.coordinates._longitude,
+          });
+        if(dist <= maxDistanceBetweeenTwoStations && dist >= minDistanceBetweeenTwoStations)
+        {
+          station1Data.distances[station2Data.stationId] = dist;
+          station2Data.distances[station1Data.stationId] = dist;
+        }
+        updateOrCreateStation(station2Data);
+      }
+      updateOrCreateStation(station1Data);
+  }
+  return true;
 });

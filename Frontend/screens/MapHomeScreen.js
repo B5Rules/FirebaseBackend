@@ -53,10 +53,14 @@ export const getDistanceBetweenPoints = async (pointA, pointB) => {
     pointB.longitude +
     "&key=" +
     GOOGLE_MAPS_APIKEY;
-
-  const res = await fetch(urlToFetchDistance);
-  const data = await res.json();
-  return data.rows[0].elements[0].distance.value;
+  try {
+    const res = await fetch(urlToFetchDistance);
+    const data = await res.json();
+    return data.rows[0].elements[0].distance.value;
+  } catch(e) {
+    console.error(e);
+    return null;
+  }
 };
 
 const MapHomeScreen = ({ navigation }) => {

@@ -146,14 +146,19 @@ const Map = (props, ref) => {
     setRouteDestination(null);
   };
 
-  const createRoute = () => {
+  const createRoute = async () => {
+    console.log("Creating the route!")
+    const response = await routeCalculator(
+      {
+        latitude: origin?.location.latitude,
+        longitude: origin?.location.longitude,
+      },
+      destination
+    )
+    console.log("Response is: ",response)
     // TODO: Draw the route using this!
     // routeCalculator(
-    //   {
-    //     latitude: origin?.location.latitude,
-    //     longitude: origin?.location.longitude,
-    //   },
-    //   destination
+
     // );
     setRouteDestination(destination);
   };

@@ -46,7 +46,7 @@ fetchData=async()=>{this.setState({isLoading:true},async () =>{
       this.state.cars.forEach(element => {
         console.log(element);
         carsList.push(
-          <View style={styles.containerScrollView}>
+          <View key={element.uid} style={styles.containerScrollView}>
 
                       <View style={styles.paddingMasina}>
                         <Image source={iconMasina} style={styles.iconMasinaa} /> 
