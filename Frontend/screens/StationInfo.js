@@ -17,13 +17,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Chip } from "react-native-paper";
 import { httpsCallable } from "firebase/functions";
-import { fireFunc } from "../globals/firebase";
-import { getGlobalState } from '../globals/global';
+import { fireAuth, fireFunc } from "../globals/firebase";
+import { getGlobalState, setGlobalState } from '../globals/global';
 import { useBackButton } from '../hocs/backButtonHandler';
 
 // import { NavigationContainer } from "@react-navigation/native";
 // import { createStackNavigator } from "@react-navigation/stack";
 // import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+
+const getPubKey = httpsCallable(fireFunc,"getPubKey");
 
 
 const { width } = Dimensions.get("screen");
@@ -57,6 +59,7 @@ const StationInfo = ({ navigation, route }) => {
     if(shouldUpdate === false) return;
 
     setShouldUpdate(false);
+    console.log(route?.params?.station?._fieldsProto?.id?.stringValue)
     getStationById(route?.params?.station?._fieldsProto?.id?.stringValue).then(res => {
       setStation(res.data.result);
     }).catch(err => {
@@ -215,7 +218,17 @@ const StationInfo = ({ navigation, route }) => {
                   accessible={true}
                   activeOpacity={0.5}
                   style={styles.button2}
-                  onPress={() => navigation.navigate("Enter_kwh")}
+                  onPress={() => {
+                    setGlobalState('currentStationData',{
+                      //rest of the data is irrelevant for now
+                      price:route?.params?.station?._fieldsProto?.price.doubleValue
+                    })
+                    getPubKey({ownerUid:route?.params?.station?._fieldsProto?.userID?.stringValue}).then(response =>{
+                      console.log(response.data['result'])
+                      setGlobalState("currentpubkey",response.data['result'])
+                      navigation.navigate("Car List Payment")
+                    })
+                  }}
                 >
                   <Text style={styles.textButton2}>Charge Now</Text>
                 </TouchableHighlight>

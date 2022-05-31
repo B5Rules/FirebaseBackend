@@ -22,7 +22,14 @@ import {
   selectOrigin,
   selectNearByStations,
   selectStaions,
+  setDestination,
+  setOrigin,
+  selectIsStation,
+  setIsStation,
 } from "../slices/navSlice";
+//import { setNearByStaions } from '../navSlice';
+//import { GOOGLE_MAPS_APIKEY } from "@env";
+
 //import { setNearByStaions } from '../navSlice';
 //import { GOOGLE_MAPS_APIKEY } from "@env";
 import { decode } from "@mapbox/polyline";
@@ -35,8 +42,9 @@ import {
   locationPermission,
   getCurrentLocation,
 } from "../slices/helperFunction";
+import { getPreciseDistance } from "geolib";
 import { routeCalculator } from "../slices/routeCalculator";
-import { getGlobalState,setGlobalState } from "../globals/global";
+import { getGlobalState, setGlobalState } from "../globals/global";
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -44,7 +52,12 @@ const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
 //LogBox.ignoreLogs(['Setting a timer']);
 
-const getDistanceBetweenPoints = async (pointA, pointB) => {
+const calculateDistance = (origin, destination) => {
+  var dis = getPreciseDistance(origin.location, destination.location);
+  return dis;
+};
+
+export const getDistanceBetweenPoints = async (pointA, pointB) => {
   var urlToFetchDistance =
     "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
     pointA.latitude +
@@ -64,55 +77,49 @@ const getDistanceBetweenPoints = async (pointA, pointB) => {
 
 const Map = (props, ref) => {
   const { width, height } = Dimensions.get("window");
+  const dispatch = useDispatch();
   const [coords, setCoords] = useState([]);
+
   const stations = useSelector(selectStaions);
   const mapRef = useRef(1);
   const origin = useSelector(selectOrigin);
-  const providedDestination = useSelector(selectDestination);
-  const [destination, setDestination] = useState(null);
+  const destination = useSelector(selectDestination);
   const [routeDestination, setRouteDestination] = useState(null);
-  const [routeOrigin, setRouteOrigin] = useState(null);
+  const nearbyStation = useSelector(selectIsStation);
   //const [nearByStations, setNearByStations]  = useState([]);
   const region = useRef({});
   useImperativeHandle(ref, () => ({
     goToDestination: () => {
       goToDestination();
     },
-    createRoute: () => {
-      createRoute();
-    },
   }));
 
   useEffect(() => {
-    //console.log(21321321312);
-    //console.log(providedDestination);
-    console.log(Object.keys(providedDestination).length)
-    if(Object.keys(providedDestination).length > 0)
+    if (Object.keys(destination).length > 0) {
       goToDestination();
-  }, [providedDestination]);
-
-  useEffect(() => {
-    setRouteOrigin(origin);
-  }, []);
-
-  useEffect(() => {
-    // console.log("provided destination:");
-    // if (Object.keys(providedDestination).length > 0) {
-    //   createRoute();
-    // }
-  });
+      console.log(nearbyStation);
+      if (nearbyStation.isStation == true) {
+        createRoute();
+        dispatch(
+          setIsStation({
+            isStation: false,
+          })
+        );
+      }
+    }
+  }, [destination]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       getLiveLocation();
-    }, 3000);
+    }, 4500);
     return () => clearInterval(interval);
   });
 
   const getLiveLocation = async () => {
     const res = await getCurrentLocation();
 
-    const originF = {
+    const newOrigin = {
       location: {
         latitude: res.coords.latitude,
         longitude: res.coords.longitude,
@@ -120,51 +127,63 @@ const Map = (props, ref) => {
         longitudeDelta: 0.08,
       },
     };
-    setRouteOrigin(originF);
-  };
-
-  const changeDestination = () => {
-    const destinationF = {
-      latitude: providedDestination.location.latitude,
-      longitude: providedDestination.location.longitude,
-    };
-    setDestination(destinationF);
+    if (calculateDistance(origin, newOrigin) > 20) {
+      console.log(calculateDistance(origin, newOrigin));
+      dispatch(setOrigin(newOrigin));
+    }
   };
 
   const goToDestination = () => {
     const myRegion = {
-      latitude: providedDestination.location.latitude,
-      longitude: providedDestination.location.longitude,
+      latitude: destination?.location.latitude,
+      longitude: destination?.location.longitude,
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
     };
 
     //Animate the user to new region. Complete this animation in 3 seconds
     mapRef.current.animateToRegion(myRegion, 1000);
-    changeDestination();
     setRouteDestination(null);
   };
 
   const createRoute = () => {
     // TODO: Draw the route using this!
-    routeCalculator({
-      latitude: origin?.location.latitude,
-      longitude: origin?.location.longitude,
-    }, destination);
-    changeDestination();
+    // routeCalculator(
+    //   {
+    //     latitude: origin?.location.latitude,
+    //     longitude: origin?.location.longitude,
+    //   },
+    //   destination
+    // );
     setRouteDestination(destination);
   };
 
   //refocuseaza harta pe locul unde a fost apasata
-const stopRouting = () => {
-  setDestination(null);
-  setRouteDestination(null);
-};  
-const onMapPress = (e) => {
+  const stopRouting = () => {
+    setDestination(null);
+    setRouteDestination(null);
+    const myRegion = {
+      latitude: origin.location.latitude,
+      longitude: origin.location.longitude,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    };
+
+    mapRef.current.animateToRegion(myRegion, 1000);
+  };
+
+  const onMapPress = (e) => {
     setRouteDestination(null);
 
     const reg = e?.nativeEvent?.coordinate || origin?.location;
-    setDestination(reg);
+    dispatch(
+      setDestination({
+        location: {
+          latitude: reg?.latitude,
+          longitude: reg?.longitude,
+        },
+      })
+    );
     const myRegion = {
       latitude: reg?.latitude,
       longitude: reg?.longitude,
@@ -192,10 +211,10 @@ const onMapPress = (e) => {
         onPress={onMapPress}
         //onRegionChangeComplete={(region) => setRegion(region)}
       >
-        {routeDestination && (
+        {routeDestination?.location && (
           <MapViewDirections
-            origin={routeOrigin?.location}
-            destination={routeDestination}
+            origin={origin?.location}
+            destination={routeDestination?.location}
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={4}
             strokeColor="green"
@@ -209,15 +228,22 @@ const onMapPress = (e) => {
             onReady={(result) => {
               console.log(`Distance: ${result.distance} km`);
               console.log(`Duration: ${result.duration} min.`);
+              const myRegion = {
+                latitude: origin.location.latitude,
+                longitude: origin.location.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              };
 
-              mapRef.current.fitToCoordinates(result.coordinates, {
-                edgePadding: {
-                  top: 50,
-                  right: 50,
-                  left: 50,
-                  bottom: 50,
-                },
-              });
+              mapRef.current.animateToRegion(myRegion, 1000);
+              // mapRef.current.fitToCoordinates(result.coordinates, {
+              //   edgePadding: {
+              //     top: 50,
+              //     right: 50,
+              //     left: 50,
+              //     bottom: 50,
+              //   },
+              // });
             }}
             onError={(errorMessage) => {
               console.log("GOT AN ERROR");
@@ -236,13 +262,13 @@ const onMapPress = (e) => {
             />   
         } */}
 
-        {destination?.latitude !== undefined &&
-          destination?.longitude !== undefined && (
+        {destination?.location?.latitude !== undefined &&
+          destination?.location?.longitude !== undefined && (
             // console.log(stations),
             <Marker
               coordinate={{
-                latitude: destination.latitude,
-                longitude: destination.longitude,
+                latitude: destination.location.latitude,
+                longitude: destination.location.longitude,
               }}
               title="Destination"
               identifier="destination"
@@ -252,50 +278,117 @@ const onMapPress = (e) => {
         {stations?.length > 0 &&
           stations.map((station, index) => {
             const str = `Station ${index}`;
-            if(station?._fieldsProto?.coordinates?.geoPointValue.latitude !== undefined && station?._fieldsProto?.coordinates?.geoPointValue.longitude !== undefined)
-            return (
-              <Marker key= {index}
-                coordinate={{
-                  latitude:
-                    station?._fieldsProto?.coordinates?.geoPointValue.latitude,
-                  longitude:
-                    station?._fieldsProto?.coordinates?.geoPointValue.longitude,
-                }}
-                onPress={onMapPress}
-                title="Destination"
-               
-              >
-                <MapView.Callout tooltip style={styles.customView} onPress={() => navigation.navigate("Station Info", {
-                  station
-                })}>
-                  <View style={styles.marker}>
-                    <Text style={styles.markerText}>Price: {station?._fieldsProto?.price?.doubleValue} RON/kWh{"\n"}{"\n"}
-                      {`Charging speed: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`} ...See more details</Text>
-                  </View>
-                    
-                </MapView.Callout>
-              </Marker>
-          );
+
+            if (
+              station?._fieldsProto?.coordinates?.geoPointValue.latitude !==
+                undefined &&
+              station?._fieldsProto?.coordinates?.geoPointValue.longitude !==
+                undefined
+            )
+              return (
+                <Marker
+                  key={index}
+                  coordinate={{
+                    latitude:
+                      station?._fieldsProto?.coordinates?.geoPointValue
+                        .latitude,
+                    longitude:
+                      station?._fieldsProto?.coordinates?.geoPointValue
+                        .longitude,
+                  }}
+                  onPress={onMapPress}
+                  title="Destination"
+                >
+                  <MapView.Callout
+                    tooltip
+                    style={styles.customView}
+                    onPress={() =>
+                      navigation.navigate("Station Info", {
+                        station,
+                      })
+                    }
+                  >
+                    <View style={styles.marker}>
+                      <Text style={styles.markerText}>
+                        Price: {station?._fieldsProto?.price?.doubleValue}{" "}
+                        RON/kWh{"\n"}
+                        {"\n"}
+                        {`Charging speed: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`}{" "}
+                        ...See more details
+                      </Text>
+                    </View>
+                  </MapView.Callout>
+                </Marker>
+              );
+
+            if (
+              station?._fieldsProto?.coordinates?.geoPointValue.latitude !==
+                undefined &&
+              station?._fieldsProto?.coordinates?.geoPointValue.longitude !==
+                undefined
+            )
+              return (
+                <Marker
+                  key={index}
+                  coordinate={{
+                    latitude:
+                      station?._fieldsProto?.coordinates?.geoPointValue
+                        .latitude,
+                    longitude:
+                      station?._fieldsProto?.coordinates?.geoPointValue
+                        .longitude,
+                  }}
+                  onPress={onMapPress}
+                  title="Destination"
+                >
+                  <MapView.Callout
+                    tooltip
+                    style={styles.customView}
+                    onPress={() =>
+                      navigation.navigate("Station Info", {
+                        station,
+                      })
+                    }
+                  >
+                    <View style={styles.marker}>
+                      <Text style={styles.markerText}>
+                        Price: {station?._fieldsProto?.price?.doubleValue}{" "}
+                        RON/kWh{"\n"}
+                        {"\n"}
+                        {`Charging speed: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`}{" "}
+                        ...See more details
+                      </Text>
+                    </View>
+                  </MapView.Callout>
+                </Marker>
+              );
+
           })}
       </MapView>
 
-      <TouchableOpacity
-        style={styles.recenterBtn}
-        onPress={() => {
-          createRoute();
-        }}
-      >
-        <MaterialCommunityIcons name="directions" color="#4285F4" size={40} />
-      </TouchableOpacity>
+      <View style={styles.btnsView}>
+        <TouchableOpacity
+          style={styles.btnStyle}
+          onPress={() => {
+            createRoute();
+          }}
+        >
+          <MaterialCommunityIcons name="directions" color="#27423A" size={40} />
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.recenterBtn}
-        onPress={() => {
-          stopRouting();
-        }}
-      >
-        <MaterialCommunityIcons name="stop-circle" color="red" size={40} />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.btnStyle}
+          onPress={() => {
+            stopRouting();
+          }}
+        >
+          <MaterialCommunityIcons
+            name="stop-circle"
+            color="#27423A"
+            size={40}
+          />
+        </TouchableOpacity>
+      </View>
 
       {/*Display user's current region:*/}
       {/*<Text style={styles.text}>Current latitude: {region.latitude}</Text>
@@ -327,10 +420,16 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  recenterBtn: {
+
+  btnsView: {
     alignSelf: "flex-end",
+    marginTop: 50,
     flex: 2,
-    margin: 10,
-    marginTop: 55,
+  },
+
+  btnStyle: {
+    alignSelf: "flex-end",
+    marginRight: 8,
+    marginTop: 8,
   },
 });

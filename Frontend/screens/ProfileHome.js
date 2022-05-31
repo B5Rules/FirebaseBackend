@@ -11,6 +11,7 @@ import {getGlobalState,setGlobalState} from '../globals/global';
 
 import * as NavigationBar from 'expo-navigation-bar';
 import EditButton from '../images/editButton'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const deleteAccount = httpsCallable(fireFunc, 'deleteAccount');
@@ -26,6 +27,7 @@ const ProfilePage = ({navigation}) => {
     ]);
     return true;
   }*/
+  console.log(getGlobalState('userData').pubKey+' '+getGlobalState('userData').secKey)
 
   useEffect(()=>{
     Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#182724')
@@ -38,29 +40,31 @@ const ProfilePage = ({navigation}) => {
   const [password, setPassword] = useState('');
 
   const handleSignOut = () => {
-    signOut(fireAuth).then(()=>{
-      navigation.navigate('AuthHandler');
-      setGlobalState('userData',{
-        username: '',
-        firstName: '',
-        lastName: '',
-        phone: ''
-      });
-      setGlobalState('needUpdate',true);
-    })
+    AsyncStorage.setItem('email','').then(()=>{
+      signOut(fireAuth).then(()=>{
+        navigation.navigate('AuthHandler');
+        setGlobalState('userData',{
+          username: '',
+          firstName: '',
+          lastName: '',
+          phone: ''
+        });
+        setGlobalState('needUpdate',true);
+      })
+    });
   }
 
   const handleChangePassword = ()=>{
     updatePassword(fireAuth.currentUser,password).then(()=>{
-      Alert.alert('Password Updated','Please login with your new password');
-      signOut(fireAuth).then(()=>{
-        navigation.navigate('AuthHandler');
+      AsyncStorage.setItem('email','').then(()=>{
+        Alert.alert('Password Updated','Please login with your new password');
+        signOut(fireAuth).then(()=>{
+          navigation.navigate('AuthHandler');
+        });
       });
     });
   }
   
-
-
   return (
     <View style={{height:'100%'}}>
       <View style={[styles.container,{
@@ -123,16 +127,7 @@ const ProfilePage = ({navigation}) => {
             >Submit</Text>
         </TouchableHighlight>
 
-        <TouchableHighlight
-        onPress={()=> {navigation.navigate('Enter_kwh')} }
-        style={styles.button}
-        underlayColor={'#22e6ab'}
-        >
-            <Text
-            style={styles.buttonText}
-            >Simulate Payment</Text>
-        </TouchableHighlight>
-
+        
         <TouchableHighlight
         onPress={()=> {navigation.navigate('Car List')} }
         style={styles.button}
@@ -208,7 +203,7 @@ const ProfilePage = ({navigation}) => {
         >
             <Text
             style={styles.buttonText}
-            >Switch to provider</Text>
+            >Provider menu</Text>
         </TouchableHighlight>
 
       </View>

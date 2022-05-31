@@ -17,54 +17,67 @@ import {
 } from "react-native";
 import { CardField, useConfirmPayment, CardForm } from "@stripe/stripe-react-native";
 import { CreditCardInput } from "react-native-credit-card-input";
+import { fireAuth } from "../globals/firebase";
+import { getGlobalState } from "../globals/global";
 
 //ADD localhost address of your server
 //const API_URL = "http://10.0.2.2:3000"; // emulator
-const API_URL = "http://192.168.0.100:3000"; // - telefon
+const API_URL = "http://192.168.52.1:3000"; // - telefon
 
 const StripeApp = ({ navigation }) => {
-  const [email, setEmail] = useState();
+  const [email, setEmail] = useState(fireAuth.currentUser.email);
   const [cardDetails, setCardDetails] = useState();
   const { confirmPayment, loading } = useConfirmPayment();
 
   const fetchPaymentIntentClientSecret = async () => {
+    
+    console.log(getGlobalState('currentpubkey'));
     const response = await fetch(`${API_URL}/create-payment-intent`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        
       },
+      body:JSON.stringify({
+        amount: parseFloat(getGlobalState('kwhToCharge')).toFixed(2)*parseFloat(getGlobalState('currentStationData').price).toFixed(2),
+      })
     });
     const { clientSecret, error } = await response.json();
     return { clientSecret, error };
+    
   };
 
   const handlePayPress = async () => {
     if (!cardDetails?.complete || !email) {
-      Alert.alert("Please enter Complete card details and Email");
+      if(!email){
+        Alert.alert("Email required");
+      }else{
+        Alert.alert("Please enter Complete card details");
+      }
       return;
     }
     const billingDetails = {
       email: email,
     };
-    try {
-      const { clientSecret, error } = await fetchPaymentIntentClientSecret();
-      if (error) {
-        console.log("Unable to process payment");
-      } else {
-        const { paymentIntent, error } = await confirmPayment(clientSecret, {
-          type: "Card",
+    fetchPaymentIntentClientSecret().then(({clientSecret,error})=>{
+      if(error){
+        Alert.alert("Error",error.message);
+      }else{
+        console.log("here")
+        confirmPayment(clientSecret, {
+          type:"Card",
           billingDetails: billingDetails,
+        }).then(({paymentIntent,error})=>{
+          if(error){
+            Alert.alert("Error",error.message);
+          }else{
+            navigation.navigate("MapNavigator",paymentIntent);
+          }
+        }).catch(err=>{
+          console.log(err);
         });
-        if (error) {
-          alert(`Payment Confirmation Error ${error.message}`);
-        } else if (paymentIntent) {
-          alert("Payment Successful");
-          console.log("Payment successful ", paymentIntent);
-        }
       }
-    } catch (e) {
-      console.log(e);
-    }
+    });
   };
 
   return (
@@ -81,11 +94,12 @@ const StripeApp = ({ navigation }) => {
           <Image source={require("../images/Logo.png")} style={styles.logo}></Image>
 
           <TextInput
+            editable={false}
             autoCapitalize="none"
+            value={fireAuth.currentUser.email}
             placeholder="E-mail"
             placeholderTextColor={"#f1f1f1"}
             keyboardType="email-address"
-            onChange={(value) => setEmail(value.nativeEvent.text)}
             style={styles.input}
           />
 
@@ -114,6 +128,7 @@ const StripeApp = ({ navigation }) => {
     </ScrollView>
   );
 };
+
 export default StripeApp;
 
 const styles = StyleSheet.create({

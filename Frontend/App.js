@@ -4,6 +4,7 @@ import {useEffect} from 'react';
 import { NavigationContainer,DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as NavigationBar from 'expo-navigation-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { Provider } from "react-redux";  // 
@@ -32,6 +33,9 @@ import CarAdd from './screens/CarAdd';
 import CarListPayment from './screens/CarListPayment';
 import Enter_password from './screens/Enter_password';
 import MapHomeScreen from './screens/MapHomeScreen';
+import StripeProv from './screens/StripeProv';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { fireAuth } from './globals/firebase';
 
 
 
@@ -55,6 +59,19 @@ const Stack = createNativeStackNavigator();
 
 
 export default function App() {
+  AsyncStorage.getItem('email').then(email=>{
+    console.log(email);
+    if(email){
+      AsyncStorage.getItem('password').then(password=>{
+        if(password){
+          signInWithEmailAndPassword(fireAuth,email,password).then(()=>{
+            console.log('signed in');
+          });
+        } 
+      });
+    }
+  });
+  
   useEffect(()=>{
     Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#182724')
   },[]);
@@ -70,7 +87,7 @@ export default function App() {
           <Stack.Screen options={{headerShown:false}} name="Enter_kwh" component={Enter_kwh} />
           <Stack.Screen options={{headerShown:false}} name="LoadingScreen" component={LoadingScreen} />
           <Stack.Screen options={{headerShown:false}} name="Journal" component={Journal} />
-          <Stack.Screen options={{headerShown:false}} name="Pay" component={ComponentStripeProvider} />
+          <Stack.Screen options={{headerShown:false}} name="Pay" component={StripeProv} />
           <Stack.Screen options={{headerShown:false}} name="MapNavigator" component={MapNavigator} />
           <Stack.Screen options={{headerShown:false}} name="NearbyStations" component={NearbyStations} />
           <Stack.Screen options={{headerShown:false}} name="MapHomeScreen" component={MapHomeScreen} />

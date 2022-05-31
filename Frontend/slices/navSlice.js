@@ -4,6 +4,7 @@ const initialState = {
   currentPos: {},
   origin: {},
   destination: {},
+  isStation:{},
   travelTimeInformation: {},
   stations: [],
   nearByStations: [],
@@ -34,6 +35,9 @@ export const navSlice = createSlice({
       return { ...state, nearByStations: [...action.payload] };
       state.nearByStations = action.payload;
     },
+    setIsStation: (state,action) =>{
+      state.isStation = action.payload;
+    },
   },
 });
 
@@ -44,6 +48,7 @@ export const {
   setCurrentPos,
   setNearByStaions,
   setStations,
+  setIsStation,
 } = navSlice.actions;
 
 // Selectors
@@ -51,8 +56,8 @@ export const selectOrigin = (state) => state.nav.origin;
 export const selectDestination = (state) => state.nav.destination;
 export const selectTravelTimeInformation = (state) =>
   state.nav.travelTimeInformation;
+export const selectIsStation = (state) => state.nav.isStation;
 export const selectCurrentPosition = (state) => state.nav.currentPos;
 export const selectStaions = (state) => state.nav.stations;
 export const selectNearByStations = (state) => state.nav.nearByStations;
-
 export default navSlice.reducer;

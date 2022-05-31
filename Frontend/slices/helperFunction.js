@@ -8,5 +8,6 @@ export const getCurrentLocation = async () =>
       reject("Permission to access location was denied");
     }
     let location = await Location.getCurrentPositionAsync({});
+    
     resolve(location);
   });
