@@ -2,12 +2,13 @@ import { Alert, TouchableOpacity, TextInput, ImageBackground, Image, Text, View,
 import React, { Component } from 'react'
 import iconProfil from '../assets/iconProfil.png'; 
 import imgBack from '../assets/backgroundImg.png';
-import iconMasina from '../assets/bmw.png';
+import iconMasina from '../assets/bmwv2.png';
 import setari from '../assets/Setari.png';
 import leftArrow from '../assets/leftArrow.png';
 import iconMasina1 from '../assets/bmw1.png';
 import iconMasina2 from '../assets/bmw2.png';
 import iconMasina3 from '../assets/bmw3.png';
+import { getGlobalState } from '../globals/global';
 import deletee from '../assets/delete.png';
 import { onAuthStateChanged } from 'firebase/auth';
 import {fireAuth, fireFunc} from '../globals/firebase';
@@ -33,16 +34,16 @@ export default class CarDetail extends React.Component {
           <ImageBackground source={imgBack} resizeMode="cover" style={styles.bgImage}>
               <View style={styles.container}>
                   <View style={styles.container2}>
-                      <Image source={iconProfil} style={styles.imagine1} /> 
+                      {/* <Image source={iconProfil} style={styles.imagine1} />  */}
                       <View style={styles.container3}>
-                          <Text style={styles.text1}>Beneficiary Uster</Text>
-                          <Text style={styles.text2}>Pavel Silviu</Text>
+                          <Text style={styles.text1}>User cars</Text>
+                          <Text style={styles.text2}>Take a look at these details, {getGlobalState('userData').firstName.concat(" ",getGlobalState('userData').lastName,"!")}</Text>
                       </View>
                   </View>
                   <View style={styles.containerJos}>
-                    <View style={styles.containerJos0}>
+                    {/* <View style={styles.containerJos0}>
                       <Text style={styles.text3}>Detalii masina</Text>
-                    </View>
+                    </View> */}
                     <View style={styles.containerJos1}>
 
                       <View style={styles.paddingMasina}>
@@ -51,33 +52,24 @@ export default class CarDetail extends React.Component {
 
                       <View style={styles.containerJos1Texte}>
                         <View style={styles.containerJos1Linie}>
-                          <Text style={styles.text5}>Model:</Text><Text style={styles.text4}>{this.state.name}</Text>
+                          <Text style={styles.text5}>Model: </Text><Text style={styles.text4}>{this.state.name}</Text>
                         </View>
                         <View style={styles.containerJos1Linie}>
-                          <Text style={styles.text5}>Distanta maxima(100% charged):</Text><Text style={styles.text4}>{this.state.distantaMax}</Text>
+                          <Text style={styles.text5}>Autonomy: </Text><Text style={styles.text4}>{this.state.distantaMax}</Text>
                         </View>
                         <View style={styles.containerJos1Linie}>
-                          <Text style={styles.text5}>Culoare:</Text><Text style={styles.text4}>{this.state.color}</Text>
+                          <Text style={styles.text5}>Color: </Text><Text style={styles.text4}>{this.state.color}</Text>
                         </View>
                         <View style={styles.containerJos1Linie}>
-                          <Text style={styles.text5}>Numar km:</Text><Text style={styles.text4}>{this.state.numarKm}</Text>
+                          <Text style={styles.text5}>Kilometers: </Text><Text style={styles.text4}>{this.state.numarKm}</Text>
                         </View>
                         <View style={styles.containerJos1Linie}>
-                          <Text style={styles.text5}>Capacitate baterie:</Text><Text style={styles.text4}>{this.state.capacBaterie}</Text>
+                          <Text style={styles.text5}>Battery capacity: </Text><Text style={styles.text4}>{this.state.capacBaterie}</Text>
                         </View>
                         <View style={styles.containerJos1Linie}>
-                          <Text style={styles.text5}>Cai putere:</Text><Text style={styles.text4}>{this.state.caiPutere}</Text>
+                          <Text style={styles.text5}>Horse power: </Text><Text style={styles.text4}>{this.state.caiPutere}</Text>
                         </View>
                         
-                      </View>
-                      
-                      <View style={styles.galerieMasini}>
-                        <Image source={iconMasina1} style={styles.imgMasinaGalerie} /> 
-                        <Image source={iconMasina2} style={styles.imgMasinaGalerie} /> 
-                        <Image source={iconMasina3} style={styles.imgMasinaGalerie} /> 
-                        {/* <View style={styles.imgMasinaGalerie2}>
-                          <Image source={Add} style={styles.Add} /> 
-                        </View> */}
                       </View>
                       
                     </View>
@@ -139,16 +131,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems:'center',
   },
-  containerJos0:{
-    flex:0.05,
-    paddingBottom:10,
-    flexDirection:"row",
-    justifyContent: 'flex-start',
-    width:'95%',
-    alignItems:'center',
-  },
+  // containerJos0:{
+  //   flex:0.05,
+  //   paddingBottom:10,
+  //   flexDirection:"row",
+  //   justifyContent: 'flex-start',
+  //   width:'95%',
+  //   alignItems:'center',
+  // },
   containerJos1:{
-    flex:0.85,
+    flex:0.90,
     flexDirection:"column",
     backgroundColor:'rgba(24, 39, 36, 1)',
     borderRadius:20,
@@ -160,9 +152,15 @@ const styles = StyleSheet.create({
     flexDirection:"row",
   },
   containerJos1Texte:{
-    // backgroundColor:"red",
+    //backgroundColor:"red",
     flex:0.37,
     width:"85%",
+    justifyContent:'center',
+    alignItems:'center',
+    paddingTop:10,
+    paddingBottom:20,
+    borderRadius:20,
+    backgroundColor:'black',
   },
   containerJos2:{
     flex:0.2,
@@ -174,6 +172,7 @@ const styles = StyleSheet.create({
     marginTop:10,
   },
   container2:{
+    backgroundColor:'black',
     flexDirection:"row",
     flex:0.15,
     justifyContent: 'center',
@@ -182,7 +181,7 @@ const styles = StyleSheet.create({
   },
   container3:{
     flexDirection:"column",
-    flex:0.5,
+    flex:1,
     justifyContent: 'center',
     alignItems:'center',
   },
@@ -192,11 +191,11 @@ const styles = StyleSheet.create({
   },
   text1:{
     color:'white',
-    fontSize:16,
+    fontSize:19,
   },
   text2:{
     color:'white',
-    fontSize:24,
+    fontSize:12,
     fontWeight:"700",
   },
   text3:{
@@ -206,13 +205,13 @@ const styles = StyleSheet.create({
   },
   text4:{
     color:'rgba(1, 242, 207, 1)',
-    fontSize:12,
+    fontSize:14,
     fontWeight:"600",
     marginBottom:2,
   },
   text5:{
     color:'white',
-    fontSize:12,
+    fontSize:15,
     fontWeight:"600",
     marginBottom:2,
   },
@@ -223,17 +222,18 @@ const styles = StyleSheet.create({
   },
   iconMasinaa:{
     resizeMode: 'contain',
-    height:60,
+    height:100,
   },
   paddingMasina:{
-    flex:0.25,
+    flex:0.35,
     display:'flex',
     height:80,
     flexDirection:'row',
     justifyContent:'center',
     alignItems:'center',
     paddingTop:0,
-    // backgroundColor:'red',
+    width:'85%',
+    //backgroundColor:'red',
   },
   galerieMasini:{
     flex:0.37,
