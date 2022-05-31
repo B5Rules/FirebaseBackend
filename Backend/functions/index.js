@@ -99,7 +99,30 @@ exports.helloWorld = functions
   });
 
 exports.getAllStations = functions.region("europe-west1").https.onCall(async(data, context)=>{
-    let querySnapshot = await db.collection('chargingstations').where("status", "==", 0).get();
+    // let querySnapshot = await db.collection('chargingstations').where("status", "==", 0).get();
+    const {
+      latitude,
+      longitude, 
+      distance
+    } = data;
+    // let latitude = 47.1573794
+    // let longitude = 27.6267558
+    // let distance = 1;
+    
+    let lat = 0.0144927536231884;
+    let lon = 0.0181818181818182;
+  
+    let lowerLat = latitude - (lat * distance)
+    let lowerLon = longitude - (lon * distance)
+  
+    let greaterLat = latitude + (lat * distance)
+    let greaterLon = longitude + (lon * distance)
+  
+    let lesserGeopoint = new firestore.GeoPoint(lowerLat, lowerLon)
+    let greaterGeopoint = new firestore.GeoPoint(greaterLat, greaterLon)
+  
+    let docRef = db.collection("chargingstations")
+    let querySnapshot = await docRef.where("coordinates", ">=", lesserGeopoint).where("coordinates", "<=", greaterGeopoint).get()
 
     return ({result:querySnapshot.docs});
 
@@ -116,8 +139,45 @@ exports.getAllStationsData = functions.region("europe-west1").https.onCall(async
 
 });
 
+exports.getNearbyStations = functions.region("europe-west1").https.onCall(async (data, context) => {
+  const {
+    latitude,
+    longitude, 
+    distance
+  } = data;
+  // let latitude = 47.1573794
+  // let longitude = 27.6267558
+  // let distance = 1;
+  
+  let lat = 0.0144927536231884
+  let lon = 0.0181818181818182
+
+  let lowerLat = latitude - (lat * distance)
+  let lowerLon = longitude - (lon * distance)
+
+  let greaterLat = latitude + (lat * distance)
+  let greaterLon = longitude + (lon * distance)
+
+  let lesserGeopoint = new firestore.GeoPoint(lowerLat, lowerLon)
+  let greaterGeopoint = new firestore.GeoPoint(greaterLat, greaterLon)
+
+  let docRef = db.collection("chargingstations")
+  let query = await docRef.where("coordinates", ">=", lesserGeopoint).where("coordinates", "<=", greaterGeopoint).get()
+
+  const stations = [];
+  query.forEach(doc => {
+    stations.push({
+      id: doc.id,
+      ...doc.data()
+    })
+  });
+
+  return ({
+    result: stations
+  })
+})
+
 exports.getStationById = functions.region("europe-west1").https.onCall(async(data, context)=>{
-  console.log(data)
   let querySnapshot = await db.collection('chargingstations').doc(data).get()
   return ({result:{id: querySnapshot.id, ...querySnapshot.data()}});
 });
