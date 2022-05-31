@@ -620,7 +620,7 @@ const ProfileSetup = ({navigation}) => {
             }}
             defaultValue={pubKey}
             keyboardType={'default'}
-            onChangeText={setpubKey}
+            onChangeText={setPubKey}
             placeholder={''}
             placeholderTextColor={'#aaaaaa'}
             />
