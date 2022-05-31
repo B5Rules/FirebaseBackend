@@ -2,6 +2,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const Joi = require("joi");
 const firestore = require('firebase-admin/firestore');
+const { CloudTasksClient } = require('@google-cloud/tasks')
 const fetch = (url) => import('node-fetch').then(({default: fetch}) => fetch(url));
 
 const app = admin.initializeApp();
@@ -270,14 +271,15 @@ exports.changeStationStatus = functions
       data.reservedBy = '';
     }
     await db.collection("chargingstations").doc(data.id).update(data);
-    // functions.pubsub.schedule('in 10 seconds').onRun((context) => {
-    //   console.log('This will run now!');
-    //   db.collection("chargingstations").add({
-    //     status: 10
-    //   })
+    if(data.reservedBy === '') {
 
-    //   return null;
-    // })
+    } else {
+      await db.collection("station_reservations").add({
+        stationId: data.id,
+        expireIn: 20,
+      })
+    }
+
     return {
       result: null,
       message: 'Successfully changed status',
@@ -431,6 +433,23 @@ exports.getDistanceBetweenTwoStations = functions.region("europe-west1").https.o
   }
 });
 
+exports.firestoreTtlCallback = functions.region("europe-west1").https.onRequest(async(req, res)=>{
+  const payload = req.body
+    try {
+      console.log('ok')
+      db.collection('chargingstations').doc(payload.stationId).update({
+        reservedBy: "",
+        status: 0
+      });
+        // await admin.firestore().doc(payload.docPath).delete()
+        res.sendStatus(200)
+    }
+    catch (error) {
+        console.error(error)
+        res.status(500).send(error)
+    }
+});
+
 // exports.
 
 /**
@@ -523,3 +542,32 @@ exports.generateGraph = functions.runWith({
   }
   return true;
 });
+
+exports.onCreateReservation = functions.region("europe-west1").firestore.document('/station_reservations/{id}').onCreate(async snapshot => {
+  // Code discussed below!
+  const data = snapshot.data();
+
+  const project = 'b5uberelectric-bacbb'
+  const location = 'europe-west1'
+  const queue = 'firestore-ttl'
+  const tasksClient = new CloudTasksClient()
+  const queuePath = tasksClient.queuePath(project, location, queue)
+  const url = `https://${location}-${project}.cloudfunctions.net/firestoreTtlCallback`
+  const docPath = snapshot.ref.path
+  const payload = { docPath }
+
+  const task = {
+      httpRequest: {
+        httpMethod: 'POST',
+        url,
+        body: Buffer.from(JSON.stringify({id: snapshot.id, ...data})).toString('base64'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      scheduleTime: {
+        seconds: data.expireIn || 600
+      }
+  }
+  await tasksClient.createTask({ parent: queuePath, task })
+})

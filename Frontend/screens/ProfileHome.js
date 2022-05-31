@@ -138,6 +138,16 @@ const ProfilePage = ({navigation}) => {
             >Cars</Text>
         </TouchableHighlight>
 
+
+        <TouchableHighlight
+        onPress={() => {navigation.navigate("Manage Stations")}}
+        style={styles.button}
+        underlayColor={'#22e6ab'}
+        >
+            <Text
+            style={styles.buttonText}
+            >Provider menu</Text>
+        </TouchableHighlight>
         <TouchableHighlight
         onPress={()=>{navigation.navigate('ProfileSetup')}}
         style={styles.button}
@@ -147,8 +157,7 @@ const ProfilePage = ({navigation}) => {
             style={styles.buttonText}
             >Edit Profile</Text>
         </TouchableHighlight>
-
-
+   
         <TouchableHighlight
         onPress={handleSignOut}
         style={styles.button}
@@ -158,7 +167,6 @@ const ProfilePage = ({navigation}) => {
             style={styles.buttonText}
             >Sign out</Text>
         </TouchableHighlight>
-
         <TouchableHighlight
         onPress={()=>{
           Alert.alert(
@@ -194,16 +202,6 @@ const ProfilePage = ({navigation}) => {
               color:'red',
             }]}
             >Delete account</Text>
-        </TouchableHighlight>
-
-        <TouchableHighlight
-        onPress={() => {navigation.navigate("Manage Stations")}}
-        style={styles.button}
-        underlayColor={'#22e6ab'}
-        >
-            <Text
-            style={styles.buttonText}
-            >Provider menu</Text>
         </TouchableHighlight>
 
       </View>

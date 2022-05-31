@@ -97,7 +97,7 @@ const Map = (props, ref) => {
   useEffect(() => {
     if (Object.keys(destination).length > 0) {
       goToDestination();
-      console.log(nearbyStation);
+      // console.log(nearbyStation);
       if (nearbyStation.isStation == true) {
         createRoute();
         dispatch(

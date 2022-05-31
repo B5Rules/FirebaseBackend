@@ -565,8 +565,11 @@ const ProfileSetup = ({navigation}) => {
               </Picker>
             </View>
             {isFieldInError("country") && <Text style={styles.error}>Required</Text>}
-
-          <View
+          
+          {
+            typeof(__DEV_STRIPE__) !== 'undefined' && (
+              <>
+              <View
           style={[styles.input,{
             flexWrap: 'wrap', 
             alignItems: 'flex-start',
@@ -625,8 +628,12 @@ const ProfileSetup = ({navigation}) => {
             placeholderTextColor={'#aaaaaa'}
             />
             <EditButton/>
+            {isFieldInError('pubKey') && <Text style={styles.error}>*Required</Text>}
           </View>
-          {isFieldInError('pubKey') && <Text style={styles.error}>*Required</Text>}
+          </>
+            )
+          }
+          
 
 
           <TouchableHighlight
@@ -646,8 +653,8 @@ const ProfileSetup = ({navigation}) => {
 
 export default ProfileSetup
 const IOSMargins = Platform.OS === 'ios' ? {
-  marginTop: 50,
-  marginBottom: 50,
+  marginTop: 70,
+  marginBottom: 80,
 } : {}
 const registerStyles = StyleSheet.create({
   wrapper: {
