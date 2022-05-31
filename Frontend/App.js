@@ -37,6 +37,7 @@ import StripeProv from './screens/StripeProv';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { fireAuth } from './globals/firebase';
 
+import ChargingPage from './screens/ChargingPage';
 
 
 const ComponentStripeProvider = () => {
@@ -98,7 +99,7 @@ export default function App() {
           <Stack.Screen options={{headerShown:false}} name="Edit Station" component={EditStation}/>
           <Stack.Screen options={{headerShown:false}} name="StationLocationOnMap" component={StationLocationOnMap}/>
           <Stack.Screen options={{headerShown:false}} name="Station Info" component={StationInfo}/>
-          <Stack.Screen options={{headerShown:false}} name="Add kWh" component={AddKwh}/>
+          <Stack.Screen options={{headerShown:false}} name="Charging Page" component={ChargingPage}/>
           <Stack.Screen options={{headerShown:false}} name="Car List" component={CarList}/>
           <Stack.Screen options={{headerShown:false}} name="Car List Payment" component={CarListPayment}/>
           <Stack.Screen options={{headerShown:false}} name="Car Detail" component={CarDetail}/>
