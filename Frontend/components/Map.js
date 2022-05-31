@@ -278,6 +278,7 @@ const Map = (props, ref) => {
         {stations?.length > 0 &&
           stations.map((station, index) => {
             const str = `Station ${index}`;
+
             if (
               station?._fieldsProto?.coordinates?.geoPointValue.latitude !==
                 undefined &&
@@ -319,6 +320,49 @@ const Map = (props, ref) => {
                   </MapView.Callout>
                 </Marker>
               );
+
+            if (
+              station?._fieldsProto?.coordinates?.geoPointValue.latitude !==
+                undefined &&
+              station?._fieldsProto?.coordinates?.geoPointValue.longitude !==
+                undefined
+            )
+              return (
+                <Marker
+                  key={index}
+                  coordinate={{
+                    latitude:
+                      station?._fieldsProto?.coordinates?.geoPointValue
+                        .latitude,
+                    longitude:
+                      station?._fieldsProto?.coordinates?.geoPointValue
+                        .longitude,
+                  }}
+                  onPress={onMapPress}
+                  title="Destination"
+                >
+                  <MapView.Callout
+                    tooltip
+                    style={styles.customView}
+                    onPress={() =>
+                      navigation.navigate("Station Info", {
+                        station,
+                      })
+                    }
+                  >
+                    <View style={styles.marker}>
+                      <Text style={styles.markerText}>
+                        Price: {station?._fieldsProto?.price?.doubleValue}{" "}
+                        RON/kWh{"\n"}
+                        {"\n"}
+                        {`Charging speed: ${station?._fieldsProto?.type?.integerValue} kWh\n\n`}{" "}
+                        ...See more details
+                      </Text>
+                    </View>
+                  </MapView.Callout>
+                </Marker>
+              );
+
           })}
       </MapView>
 

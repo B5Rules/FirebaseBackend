@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     // paddingTop: Constants.statusBarHeight,
     // padding: 8,
   },
-  containerJos:{
+    containerJos:{
     padding:'5%',
     flexDirection:"column",
     flex:0.65,

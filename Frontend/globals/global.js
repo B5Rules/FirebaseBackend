@@ -8,6 +8,8 @@ const {setGlobalState, getGlobalState} = createGlobalState({
         phone: '',
         country: '',
         uid: '',
+        secKey: '',
+        pubKey: ''
     },
     needUpdate: true,
     kwhToCharge: -1,
@@ -38,6 +40,7 @@ const {setGlobalState, getGlobalState} = createGlobalState({
         chargingCap: 0,
     },
     cars:[],
+    currentpubkey: ''
 });
 
 export {setGlobalState, getGlobalState};
