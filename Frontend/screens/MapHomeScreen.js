@@ -38,6 +38,7 @@ import deletee from "../assets/delete.png";
 import { PressabilityDebugView } from "react-native/Libraries/Pressability/PressabilityDebug";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import { TouchableOpacity } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -73,6 +74,7 @@ const MapHomeScreen = ({ navigation }) => {
   const [showTheThing, setShow] = useState(false);
   const [autonomy, setAutonomy] = useState("");
   const [dest, setDest] = useState({});
+  const isFocused = useIsFocused();
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -97,8 +99,8 @@ const MapHomeScreen = ({ navigation }) => {
     getAllStations({
       latitude: origin?.location?.latitude,
       longitude: origin?.location?.longitude,
-      distance: 1.2
-    },)
+      distance: 10
+    })
       .then((res) => {
         dispatch(setStations(res.data.result));
         console.log("all station2")
@@ -107,11 +109,11 @@ const MapHomeScreen = ({ navigation }) => {
         //console.log("getAllStations: Map.js");
         console.log("err");
       });
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     getLocation();
-  }, []);
+  }, [isFocused]);
 
   return (
     <SafeAreaView style={styles.container}>
