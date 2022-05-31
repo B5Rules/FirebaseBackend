@@ -363,7 +363,7 @@ exports.getDistanceBetweenTwoStations = functions.region("europe-west1").https.o
   if(!station.size){
     return {result:null, error:true, message:"Station 1 not found"}
   }
-  const distance = station?.docs[0]?.data()?.distances?.station2 || 99999999;
+  const distance = station?.docs[0]?.data()?.distances?.[station2.id] || 99999999;
   return {
     result: distance,
     error: false,

@@ -3,7 +3,8 @@ import { fireFunc } from "../globals/firebase";
 import { httpsCallable } from "firebase/functions";
 
 const getAllStationsData = httpsCallable(fireFunc, "getAllStationsData");
-const carRange = 300000, maxCarRange = 150000; //astea sunt in metri
+const getDistanceBetweenTwoStations = httpsCallable(fireFunc, "getDistanceBetweenTwoStations");
+const carRange = 100000, maxCarRange = 150000; //astea sunt in metri
 let stationsOnPath=0;
 
 export const routeCalculator = async (startingPoint, destinationPoint) => {
@@ -22,43 +23,16 @@ export const routeCalculator = async (startingPoint, destinationPoint) => {
     }
     for (const station of stations) {
         //console.log(station.coordinates._latitude, station.coordinates._longitude);
-        nr++;
-        id[station.coordinates._latitude, station.coordinates._longitude] = nr;
-        stationsId[nr] = [station.coordinates._latitude, station.coordinates._longitude];
+        nr++; id[station.coordinates._latitude, station.coordinates._longitude, station.id] = nr;
+        stationsId[nr] = [station.coordinates._latitude, station.coordinates._longitude, station.id];
     }
     //nu uit sa dau clear la ce am bagat in graph
     for(let i=1;i<=999;i++)
     graph[nr+1][i]=99999999,graph[i][nr+1]=99999999,graph[nr+2][i]=99999999,graph[i][nr+2]=99999999;
     
-    console.log("Aici");
-    for (const station1 of stations)
-        for (const station2 of stations){ 
-        const id1=id[station1.coordinates._latitude, station1.coordinates._longitude];
-        const id2=id[station2.coordinates._latitude, station2.coordinates._longitude];
-        const dist=await getDistanceBetweenPoints(
-          {
-            latitude: station1.coordinates._latitude,
-            longitude: station1.coordinates._longitude,
-          },
-          {
-            latitude: station2.coordinates._latitude,
-            longitude: station2.coordinates._longitude,
-          });
-        if(dist<=maxCarRange)
-        {
-            graph[id1][id2]=dist;
-            graph[id2][id1]=dist;
-        }
-        else
-        {
-            graph[id1][id2]=99999999;
-            graph[id2][id1]=99999999;
-        }
-    }
-    
     //console.log(await getDistanceBetweenPoints(startingPoint,[stationsId[6][0],stationsId[6][1]]));
     for (const station of stations) {
-        const id1=id[station.coordinates._latitude, station.coordinates._longitude];
+        const id1=id[station.coordinates._latitude, station.coordinates._longitude, station.id];
         const dist1=await getDistanceBetweenPoints(startingPoint, {
             latitude: station.coordinates._latitude,
             longitude: station.coordinates._longitude,
@@ -99,7 +73,15 @@ export const routeCalculator = async (startingPoint, destinationPoint) => {
         }
         added[nearestVertex]=true;
         for(let index=1;index<=nr+2;index++){
-            let edgeDistance=graph[nearestVertex][index];
+            let edgeDistance=0;
+            if(index==nr+1 || index==nr+2 || nearestVertex==nr+1 || nearestVertex==nr+2)
+                edgeDistance=graph[nearestVertex][index];
+            else
+                edgeDistance= await getDistanceBetweenTwoStations({ 
+                    station1: stationsId[nearestVertex][2], 
+                    station2: stationsId[index][2]
+                });
+
             if(edgeDistance>0 && ((shortestDistance+edgeDistance)<shortestDistances[index])){
                 parents[index]=nearestVertex;
                 shortestDistances[index]=shortestDistance+edgeDistance;
