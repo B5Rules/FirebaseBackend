@@ -1,9 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import {
-  selectNearByStations,
   setDestination,
   selectDestination,
+  selectOrigin,
+  selectStaions,
+  selectIsStation,
+  setIsStation,
 } from "../slices/navSlice";
 import { useDispatch } from "react-redux";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -15,14 +18,96 @@ import {
   Image,
   component,
 } from "react-native";
-import Map from "../components/Map";
-function NearbyStations({navigation}) {
-  const nearByStations = useSelector(selectNearByStations);
+import { getDistanceBetweenPoints } from "./MapHomeScreen";
+
+function NearbyStations({ navigation }) {
+  const [nearByStations, setNearByStaions] = useState([]);
   const childRef = useRef();
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //   console.log(nearByStations);
-  // });
+  const origin = useSelector(selectOrigin);
+  const stations = useSelector(selectStaions);
+  const nearbyStation = useSelector(selectIsStation);
+
+  useEffect(() => {
+    const func = async () => {
+      let stationsAux = [];
+      let distancesAux = [];
+
+      let counter = 0;
+
+      const location = origin;
+      const statii = stations;
+
+      for (const station of statii) {
+        let dist;
+        console.log(station?._fieldsProto?.coordinates?.geoPointValue);
+        console.log(location.location);
+
+        if (station?._fieldsProto?.coordinates?.geoPointValue == undefined)
+          dist = 99999999;
+        else {
+          if (station?._fieldsProto?.coordinates?.geoPointValue !== undefined) {
+            dist = await getDistanceBetweenPoints(
+              station._fieldsProto.coordinates.geoPointValue,
+              location.location
+            );
+          }
+        }
+
+        if (counter < 3) {
+          stationsAux[counter] = station;
+
+          distancesAux[counter] = dist;
+        } else if (dist < distancesAux[0]) {
+          distancesAux[0] = dist;
+          stationsAux[0] = station;
+        } else if (dist < distancesAux[1]) {
+          distancesAux[1] = dist;
+          stationsAux[1] = station;
+        } else if (dist < distancesAux[2]) {
+          distancesAux[2] = dist;
+          stationsAux[2] = station;
+        }
+        counter = counter + 1;
+      }
+
+      for (i = 0; i < 3; i++) {
+        stationsAux[i] = stationsAux[i]._fieldsProto;
+        let aux1 = {};
+        for (const prop in stationsAux[i]) {
+          aux1[prop] = stationsAux[i][prop];
+        }
+        aux1["distance"] = {
+          doubleValue: distancesAux[i],
+          valueType: "doubleValue",
+        };
+
+        stationsAux[i] = aux1;
+      }
+
+      setNearByStaions(stationsAux);
+    };
+    func();
+    //getDistanceBetweenPoints(origin, origin);
+  }, [origin]);
+
+  const goToStation = (nr) => {
+    dispatch(
+      setDestination({
+        location: {
+          latitude: nearByStations[nr]?.coordinates?.geoPointValue.latitude,
+          longitude: nearByStations[nr]?.coordinates?.geoPointValue.longitude,
+        },
+      })
+    );
+    dispatch(
+      setIsStation({
+        isStation: true,
+      })
+    );
+    console.log(nearbyStation);
+    navigation.navigate("Map");
+  };
 
   return (
     <View style={styles.container}>
@@ -30,18 +115,7 @@ function NearbyStations({navigation}) {
         <TouchableOpacity
           style={styles.direction}
           onPress={() => {
-            console.log(nearByStations[0]?.coordinates?.geoPointValue);
-
-            dispatch(
-              setDestination({
-                location: {
-                  latitude:
-                    nearByStations[0]?.coordinates?.geoPointValue.latitude,
-                  longitude:
-                    nearByStations[0]?.coordinates?.geoPointValue.longitude,
-                },
-              })
-            );
+            goToStation(0);
           }}
         >
           <MaterialCommunityIcons name="directions" color="#01F2CF" size={36} />
@@ -69,12 +143,12 @@ function NearbyStations({navigation}) {
           </Text>
         </View>
 
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <Text style={styles.txtLeft}>Status:</Text>
           <Text style={styles.txtRight}>Text</Text>
-        </View>
+        </View> */}
 
-        <View style={styles.row}>
+        <View style={styles.rowServices}>
           {nearByStations[0]?.services?.arrayValue?.values.length > 0 && (
             <Text style={styles.txtLeft}>Services:</Text>
           )}
@@ -95,17 +169,7 @@ function NearbyStations({navigation}) {
         <TouchableOpacity
           style={styles.direction}
           onPress={() => {
-            dispatch(
-              setDestination({
-                location: {
-                  latitude:
-                    nearByStations[1]?.coordinates?.geoPointValue.latitude,
-                  longitude:
-                    nearByStations[1]?.coordinates?.geoPointValue.longitude,
-                },
-              })
-            );
-            navigation.navigate("Map");
+            goToStation(1);
           }}
         >
           <MaterialCommunityIcons name="directions" color="#01F2CF" size={36} />
@@ -133,12 +197,12 @@ function NearbyStations({navigation}) {
           </Text>
         </View>
 
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <Text style={styles.txtLeft}>Status:</Text>
           <Text style={styles.txtRight}>Text</Text>
-        </View>
+        </View> */}
 
-        <View style={styles.row}>
+        <View style={styles.rowServices}>
           {nearByStations[1]?.services?.arrayValue?.values.length > 0 && (
             <Text style={styles.txtLeft}>Services:</Text>
           )}
@@ -159,16 +223,7 @@ function NearbyStations({navigation}) {
         <TouchableOpacity
           style={styles.direction}
           onPress={() => {
-            dispatch(
-              setDestination({
-                location: {
-                  latitude:
-                    nearByStations[2]?.coordinates?.geoPointValue.latitude,
-                  longitude:
-                    nearByStations[2]?.coordinates?.geoPointValue.longitude,
-                },
-              })
-            );
+            goToStation(2);
           }}
         >
           <MaterialCommunityIcons name="directions" color="#01F2CF" size={36} />
@@ -196,12 +251,13 @@ function NearbyStations({navigation}) {
           </Text>
         </View>
 
+        {/* 
         <View style={styles.row}>
           <Text style={styles.txtLeft}>Status:</Text>
           <Text style={styles.txtRight}>Text</Text>
-        </View>
+        </View> */}
 
-        <View style={styles.row}>
+        <View style={styles.rowServices}>
           {nearByStations[2]?.services?.arrayValue?.values.length > 0 && (
             <Text style={styles.txtLeft}>Services:</Text>
           )}
@@ -247,6 +303,16 @@ const styles = StyleSheet.create({
     marginLeft: "7%",
     flex: 1,
   },
+  rowServices: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    // padding: '2%',
+    marginLeft: "7%",
+    flex: 2,
+    flexWrap: "wrap",
+    marginBottom: 20,
+  },
   rectangle: {
     marginTop: 22,
     width: "80%",
@@ -254,7 +320,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#182724",
     borderRadius: 20,
     justifyContent: "flex-start",
-    alignItems: "center",
+    // alignItems: 'center',
   },
 
   txtLeft: {
@@ -267,6 +333,14 @@ const styles = StyleSheet.create({
     color: "#01F2CF",
     marginRight: 10,
     fontSize: 18,
+  },
+  txtRightServices: {
+    fontWeight: "bold",
+    color: "#01F2CF",
+    marginRight: 10,
+    fontSize: 18,
+    textAlign: "left",
+    width: 50,
   },
 });
 
