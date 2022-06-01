@@ -14,6 +14,14 @@ import { useBackButton } from '../hocs/backButtonHandler';
 
 const insertProfile = httpsCallable(fireFunc, 'insertProfile');
 
+function check_publisher_key(inputtxt) {
+  return (inputtxt == '') || (inputtxt.startsWith('pk_live_') && (inputtxt.length == 107));
+}
+
+function check_secret_key(inputtxt) {
+  return (inputtxt == '')||(inputtxt.startsWith('sk_live_') && (inputtxt.length == 107));
+}
+
 const ProfileSetup = ({navigation}) => {
   
   const handleBackButton = () => {
@@ -54,7 +62,9 @@ const ProfileSetup = ({navigation}) => {
 
 
   const handleSubmit = () => {
-    if( validate({
+    
+    if( check_publisher_key(pubKey) && check_secret_key(secKey)){
+      if(validate({
           firstName: { minlenth: 3, maxlength: 15, required: true },
           lastName: { minlenth: 3, maxlength: 15, required: true },
           username: { minlenth: 3, maxlength: 20,required: true },
@@ -62,40 +72,44 @@ const ProfileSetup = ({navigation}) => {
           country: { required: true },
           //secKey: {required: true},
           //pubKey: {required: true}
-        }) ){
-          //insert profile
-          insertProfile({
-            username: username,
-            firstName: firstName,
-            lastName: lastName,
-            phone: phone,
-            country: selectedCountry,
-            secKey: secKey,
-            pubKey: pubKey
-          }).then(response=>{
-            if(response.data['status']==0){
-              //success
-              setGlobalState('userData',{
-                username: username,
-                firstName: firstName,
-                lastName: lastName,
-                phone: phone,
-                country: selectedCountry,
-                uid: response.data['uid'],
-                secKey: secKey,
-                pubKey: pubKey
-              });
-              setGlobalState('needUpdate',false);
-              navigation.navigate('MapNavigator');
-            }else{
-              //failed, alert with error message
-              Alert.alert('Profile update failed',response.data['message']);
-            }
-          }).catch(error=>{
-            console.log("signup error");
-            console.log(error);
-          });
-        }
+      })){
+        //insert profile
+        insertProfile({
+          username: username,
+          firstName: firstName,
+          lastName: lastName,
+          phone: phone,
+          country: selectedCountry,
+          secKey: secKey,
+          pubKey: pubKey
+        }).then(response=>{
+          if(response.data['status']==0){
+            //success
+            setGlobalState('userData',{
+              username: username,
+              firstName: firstName,
+              lastName: lastName,
+              phone: phone,
+              country: selectedCountry,
+              uid: response.data['uid'],
+              secKey: secKey,
+              pubKey: pubKey
+            });
+            setGlobalState('needUpdate',false);
+            navigation.navigate('MapNavigator');
+          }else{
+            //failed, alert with error message
+            Alert.alert('Profile update failed',response.data['message']);
+          }
+        }).catch(error=>{
+          console.log("signup error");
+          console.log(error);
+        });
+      }
+    }
+    else{
+      Alert.alert("Key format error","The keys are in a wrong format");
+    }
   };
 
   return (

@@ -21,15 +21,16 @@ import { useState, useEffect } from 'react';
 import { getGlobalState } from "../globals/global";
 import * as LocalAuthentication from 'expo-local-authentication';
 
-import {fireAuth} from "../globals/firebase";
+import {fireAuth, fireFunc} from "../globals/firebase";
 import { reauthenticateWithCredential } from "firebase/auth";
+import { httpsCallable } from "firebase/functions";
 
 
 function getStationId() {
   return "404";
 }
 
-
+const getOwnerUsername = httpsCallable(fireFunc,"getOwnerUsername");
 
 
 export default function Journal({ navigation }) {
@@ -125,21 +126,12 @@ export default function Journal({ navigation }) {
 
         <ImageBackground source={require("../images/streets.png")} style={styles.image}>
           <Text style={styles.title}> Payment report </Text>
-          <View style={styles.card}>
-            <Text style={styles.attachLabel}> Station's ID: </Text>
-            <TextInput
-              editable={false}
-              defaultValue={'deprecated'}
-              style={styles.dataLabel}
-            />
-          </View>
-          <View style={styles.line} />
 
           <View style={styles.card}>
             <Text style={styles.attachLabel}> Station's Owner </Text>
             <TextInput
               editable={false}
-              defaultValue="todo"
+              defaultValue={getGlobalState('currentStationData').owneruser}
               style={styles.dataLabel}
             />
           </View>

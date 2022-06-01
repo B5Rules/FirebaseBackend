@@ -39,6 +39,11 @@ const changeStationStatus = httpsCallable(
   "changeStationStatus"
 )
 
+const getOwnerUsername = httpsCallable(
+  fireFunc,
+  "getOwnerUsername"
+)
+
 const getTextFromType = (type) => {
   console.log('Station type:', type)
   if(type === undefined) return "";
@@ -221,13 +226,18 @@ const StationInfo = ({ navigation, route }) => {
                   onPress={() => {
                     setGlobalState('currentStationData',{
                       //rest of the data is irrelevant for now
-                      price:route?.params?.station?._fieldsProto?.price.doubleValue
+                      price:route?.params?.station?._fieldsProto?.price.doubleValue,
+                      owneruid:route?.params?.station?._fieldsProto?.userID?.stringValue,
                     })
-                    getPubKey({ownerUid:route?.params?.station?._fieldsProto?.userID?.stringValue}).then(response =>{
-                      console.log(response.data['result'])
-                      setGlobalState("currentpubkey",response.data['result'])
-                      navigation.navigate("Car List Payment")
-                    })
+                    getOwnerUsername({ownerUid:route?.params?.station?._fieldsProto?.userID?.stringValue}).then((res1=>{
+                      const tmp1 = getGlobalState('currentStationData').price;
+                      const tmp2 = getGlobalState('currentStationData').owneruid;
+                      setGlobalState('currentStationData',{price:tmp1,owneruid:tmp2,owneruser:res1.data.result})
+                      getPubKey({ownerUid:route?.params?.station?._fieldsProto?.userID?.stringValue}).then(response=>{
+                        setGlobalState("currentpubkey",response.data['result'])
+                        navigation.navigate("Car List Payment")
+                      })
+                    }))                    
                   }}
                 >
                   <Text style={styles.textButton2}>Charge Now</Text>

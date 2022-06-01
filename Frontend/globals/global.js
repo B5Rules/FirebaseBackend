@@ -9,7 +9,7 @@ const {setGlobalState, getGlobalState} = createGlobalState({
         country: '',
         uid: '',
         secKey: '',
-        pubKey: ''
+        pubKey: '',
     },
     needUpdate: true,
     kwhToCharge: -1,
@@ -21,6 +21,7 @@ const {setGlobalState, getGlobalState} = createGlobalState({
         price: 0,
         service_flags: [],
         type: "",
+        owneruser:'',
     },
     stationChangeMode: {
         id: '',
