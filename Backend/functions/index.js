@@ -276,7 +276,7 @@ exports.changeStationStatus = functions
     } else {
       await db.collection("station_reservations").add({
         stationId: data.id,
-        expireIn: 20,
+        expireIn: 20, // TODO: Change this to 10 minutes
       })
     }
 
@@ -437,16 +437,21 @@ exports.firestoreTtlCallback = functions.region("europe-west1").https.onRequest(
   const payload = req.body
     try {
       console.log('ok')
-      db.collection('chargingstations').doc(payload.stationId).update({
+      const response = await db.collection('chargingstations').doc(payload.stationId).update({
         reservedBy: "",
         status: 0
       });
-        // await admin.firestore().doc(payload.docPath).delete()
-        res.sendStatus(200)
+      res.status(200).send({
+        success: true,
+        response: `Canceled reservation on station with id ${response.id}`
+      })
     }
     catch (error) {
         console.error(error)
-        res.status(500).send(error)
+        res.status(500).send({
+          success:  false,
+          response: error
+        })
     }
 });
 
@@ -553,9 +558,7 @@ exports.onCreateReservation = functions.region("europe-west1").firestore.documen
   const tasksClient = new CloudTasksClient()
   const queuePath = tasksClient.queuePath(project, location, queue)
   const url = `https://${location}-${project}.cloudfunctions.net/firestoreTtlCallback`
-  const docPath = snapshot.ref.path
-  const payload = { docPath }
-
+  const expireIn = data?.expireIn || 60;
   const task = {
       httpRequest: {
         httpMethod: 'POST',
@@ -566,8 +569,26 @@ exports.onCreateReservation = functions.region("europe-west1").firestore.documen
         },
       },
       scheduleTime: {
-        seconds: data.expireIn || 600
+        seconds: expireIn + Date.now() / 1000,
       }
   }
-  await tasksClient.createTask({ parent: queuePath, task })
+  await tasksClient.createTask({ parent: queuePath, task: task })
+  console.log('Successfully scheduled a task with following data: ', JSON.stringify(task))
+})
+
+exports.onReservationUpdateCancelCron = functions.region("europe-west1").firestore.document('/station_reservations/{id}').onUpdate(async change => {
+  const before = change.before.data()
+  const after = change.after.data()
+
+  // Did the document lose its expiration?
+  // const expirationTask = after.expirationTask
+  // const removedExpiresAt = before.expiresAt && !after.expiresAt
+  // const removedExpiresIn = before.expiresIn && !after.expiresIn
+  // if (expirationTask && (removedExpiresAt || removedExpiresIn)) {
+  //     const tasksClient = new CloudTasksClient()
+  //     await tasksClient.deleteTask({ name: expirationTask })
+  //     await change.after.ref.update({
+  //         expirationTask: admin.firestore.FieldValue.delete()
+  //     })
+  // }
 })
