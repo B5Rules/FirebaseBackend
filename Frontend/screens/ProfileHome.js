@@ -27,8 +27,7 @@ const ProfilePage = ({navigation}) => {
     ]);
     return true;
   }*/
-  console.log(getGlobalState('userData').pubKey+' '+getGlobalState('userData').secKey)
-
+  
   useEffect(()=>{
     Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#182724')
     /*const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);

@@ -92,6 +92,7 @@ export default function Enter_kwh({ navigation, route }) {
               navigation.navigate("Charging Page", {
                 kWh: parseInt(value, 10),
               });
+              setGlobalState('kwhToCharge',parseInt(value,10))
               chargeUsingStation(parseInt(value, 10));
 
               // if ((!isNaN(value)) && (value >= 10) && (value <= parseFloat(getGlobalState('carData').chargingCap))) {
