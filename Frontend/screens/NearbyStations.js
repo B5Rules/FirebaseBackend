@@ -26,8 +26,8 @@ const getNearbyStations = httpsCallable(fireFunc, "getNearbyStations");
 const renderNearbyStations = (nearbyStations, goToStation) => {
   return (
     <>
-      {nearbyStations?.map((station) => (
-        <View key={station.id} style={styles.rectangle}>
+      {nearbyStations?.map((station, index) => (
+        <View key={`${index}--${station.id}`} style={styles.rectangle}>
           <TouchableOpacity
             style={styles.direction}
             onPress={() => {
