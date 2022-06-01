@@ -179,6 +179,8 @@ exports.getNearbyStations = functions.region("europe-west1").https.onCall(async 
 })
 
 exports.getStationById = functions.region("europe-west1").https.onCall(async(data, context)=>{
+  if(data === undefined)
+  return ({result: null})
   let querySnapshot = await db.collection('chargingstations').doc(data).get()
   return ({result:{id: querySnapshot.id, ...querySnapshot.data()}});
 });

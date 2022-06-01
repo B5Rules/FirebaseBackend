@@ -61,7 +61,10 @@ const StationInfo = ({ navigation, route }) => {
       if (reservationTime.secs <= 0) {
         if (reservationTime.mins <= 0) {
           setReservationTime({ ...reservationTime, mins: reservationTime.mins - 1, secs: reservationTime.secs });
-          setShouldUpdate(true)
+          setTimeout(() => {
+            setShouldUpdate(true)
+          }, 2000)
+          console.log('Should update now')
         } else {
           setReservationTime({ ...reservationTime, mins: reservationTime.mins - 1, secs: 59 });
         }
@@ -95,6 +98,7 @@ const StationInfo = ({ navigation, route }) => {
       status: 0,
     });
     console.log(response);
+    setReservationTime({ mins: 0, secs: 0 });
     setShouldUpdate(true);
   };
 
