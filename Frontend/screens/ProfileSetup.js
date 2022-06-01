@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,KeyboardAvoidingView, TextInput,TouchableHighlight,Alert,BackHandler,Image } from 'react-native'
+import { StyleSheet, Text, View,KeyboardAvoidingView, TextInput,TouchableHighlight,Alert,BackHandler,Image, ScrollView } from 'react-native'
 import React,{ useEffect, useState } from 'react'
 import { Picker } from '@react-native-picker/picker';
 import { useValidation } from 'react-native-form-validator';
@@ -11,10 +11,23 @@ import EditButton from '../images/editButton';
 import { useIsFocused } from '@react-navigation/native';
 import {Platform} from 'react-native';
 import { useBackButton } from '../hocs/backButtonHandler';
+import { Button } from 'react-native-paper';
 
 const insertProfile = httpsCallable(fireFunc, 'insertProfile');
 
+
+
 const ProfileSetup = ({navigation}) => {
+
+  function check_publishable_key(inputtxt) {
+    console.log(inputtxt.length);
+    return (inputtxt == '') || (inputtxt.startsWith('pk_test_') && (inputtxt.length == 107));
+  }
+  
+  function check_secret_key(inputtxt) {
+    console.log(inputtxt.length);
+    return (inputtxt == '')||(inputtxt.startsWith('sk_test_') && (inputtxt.length == 107));
+  }
   
   const handleBackButton = () => {
     if(getGlobalState('needUpdate')){
@@ -35,6 +48,8 @@ const ProfileSetup = ({navigation}) => {
   const [pubKey,setPubKey] = useState('');
   useBackButton(handleBackButton)
 
+  
+
   useEffect(() => {
     if(!getGlobalState('needUpdate')){
       setUsername(getGlobalState('userData').username);
@@ -49,57 +64,70 @@ const ProfileSetup = ({navigation}) => {
   
   const { validate, isFieldInError, getErrorMessages} =
     useValidation({
-      state: { firstName, lastName, username, phone,selectedCountry,secKey,pubKey }
+      state: { firstName, lastName, username, phone,selectedCountry }
     });
 
 
   const handleSubmit = () => {
-    if( validate({
-          firstName: { minlenth: 3, maxlength: 15, required: true },
-          lastName: { minlenth: 3, maxlength: 15, required: true },
-          username: { minlenth: 3, maxlength: 20,required: true },
-          phone: { minlength: 10, maxlength: 10, numbers: true, required: true },
-          country: { required: true },
-          //secKey: {required: true},
-          //pubKey: {required: true}
-        }) ){
-          //insert profile
-          insertProfile({
-            username: username,
-            firstName: firstName,
-            lastName: lastName,
-            phone: phone,
-            country: selectedCountry,
-            secKey: secKey,
-            pubKey: pubKey
-          }).then(response=>{
-            if(response.data['status']==0){
-              //success
-              setGlobalState('userData',{
-                username: username,
-                firstName: firstName,
-                lastName: lastName,
-                phone: phone,
-                country: selectedCountry,
-                uid: response.data['uid'],
-                secKey: secKey,
-                pubKey: pubKey
-              });
-              setGlobalState('needUpdate',false);
-              navigation.navigate('MapNavigator');
-            }else{
-              //failed, alert with error message
-              Alert.alert('Profile update failed',response.data['message']);
-            }
-          }).catch(error=>{
-            console.log("signup error");
-            console.log(error);
-          });
+    if(check_secret_key(secKey) && check_publishable_key(pubKey)){
+        
+      if( validate({
+            firstName: { minlenth: 3, maxlength: 15, required: true },
+            lastName: { minlenth: 3, maxlength: 15, required: true },
+            username: { minlenth: 3, maxlength: 20,required: true },
+            phone: { minlength: 10, maxlength: 10, numbers: true, required: true },
+            country: { required: true },
+            //secKey: {required: true},
+            //pubKey: {required: true}
+          }) ){
+            //insert profile
+            insertProfile({
+              username: username,
+              firstName: firstName,
+              lastName: lastName,
+              phone: phone,
+              country: selectedCountry,
+              secKey: secKey,
+              pubKey: pubKey
+            }).then(response=>{
+              if(response.data['status']==0){
+                //success
+                setGlobalState('userData',{
+                  username: username,
+                  firstName: firstName,
+                  lastName: lastName,
+                  phone: phone,
+                  country: selectedCountry,
+                  uid: response.data['uid'],
+                  secKey: secKey,
+                  pubKey: pubKey
+                });
+                setGlobalState('needUpdate',false);
+                navigation.navigate('MapNavigator');
+              }else{
+                //failed, alert with error message
+                Alert.alert('Profile update failed',response.data['message']);
+              }
+            }).catch(error=>{
+              console.log("signup error");
+              console.log(error);
+            });
+          }
+        }else{
+          Alert.alert('Invalid keys','Please check your keys');
         }
   };
 
+  // var showKeys = false;
+
+  const [showKeys, setShowKeys] = useState(false);
+
+  console.log(pubKey);
+  console.log(secKey);
+
   return (
-    <View style={{height:'100%'}}>
+    <ScrollView>
+      <View style={{height:'100%'}}>
       <KeyboardAvoidingView
       style={styles.container}
       >
@@ -116,10 +144,10 @@ const ProfileSetup = ({navigation}) => {
             <Text
             style={{
               width: '100%',
-              color:'#ababab',
-              fontSize:15,
+              color: '#ababab',
+              fontSize: 15,
             }}
-            >Username</Text>
+            > Username </Text>
             <TextInput
             style={{
               fontSize: 20, 
@@ -566,74 +594,143 @@ const ProfileSetup = ({navigation}) => {
             </View>
             {isFieldInError("country") && <Text style={styles.error}>Required</Text>}
           
-          {
-            typeof(__DEV_STRIPE__) !== 'undefined' && (
-              <>
-              <View
-          style={[styles.input,{
-            flexWrap: 'wrap', 
-            alignItems: 'flex-start',
-            flexDirection:'row',
-            paddingRight:10
-          }]}
-          >
-            <Text
-            style={{
-              width: '100%',
-              color:'#ababab',
-              fontSize:15,
-            }}
-            >Stripe Security Key</Text>
-            <TextInput
-            style={{
-              fontSize: 20, 
-              color: '#fff',
-              width: '92%',
-            }}
-            defaultValue={secKey}
-            keyboardType={'default'}
-            onChangeText={setSecKey}
-            placeholder={''}
-            placeholderTextColor={'#aaaaaa'}
-            />
-            <EditButton/>
-          </View>
-          {isFieldInError('secKey') && <Text style={styles.error}>*Required</Text>}
+          {/* Keys Text - If you want to add stations you must provide the publisher and security key of your Stripe account */}
+            
+            {!showKeys &&
+              <Text 
+                style={{
+                  fontSize: 12,
+                  color: "#22e6ab",
+                  marginTop: 25,
+                }}
+              >
+                *If you want to add stations you must provide the publisher and security key of your Stripe account
+              </Text>
+            } 
 
-          <View
-          style={[styles.input,{
-            flexWrap: 'wrap', 
-            alignItems: 'flex-start',
-            flexDirection:'row',
-            paddingRight:10
-          }]}
+          {/* Add Keys Button */}
+
+          {!showKeys &&
+            <TouchableHighlight
+            onPress={()=>{setShowKeys(true)}}
+            style={{
+              backgroundColor: '#1C483F',
+              width: "70%",
+              alignSelf: 'center',
+              height: 50,
+              borderRadius: 10,
+              marginTop: 25,
+              padding: 10,
+              marginBottom: 25,
+            }}
+            underlayColor={'#22e6ab'}
           >
             <Text
-            style={{
-              width: '100%',
-              color:'#ababab',
-              fontSize:15,
-            }}
-            >Stripe Private Key</Text>
-            <TextInput
-            style={{
-              fontSize: 20, 
-              color: '#fff',
-              width: '92%',
-            }}
-            defaultValue={pubKey}
-            keyboardType={'default'}
-            onChangeText={setPubKey}
-            placeholder={''}
-            placeholderTextColor={'#aaaaaa'}
-            />
-            <EditButton/>
-            {isFieldInError('pubKey') && <Text style={styles.error}>*Required</Text>}
-          </View>
-          </>
-            )
+              style={{
+                alignSelf: 'center',
+                color: '#e6e6e6',
+                fontWeight: '700',
+                fontSize: 20,
+              }}
+            >
+              Provide Keys
+            </Text>
+          </TouchableHighlight>
+          }
+
+          {/* Security Key */}
+          { showKeys && 
+            <View style={[styles.input,{
+              flexWrap: 'wrap', 
+              alignItems: 'flex-start',
+              flexDirection:'row',
+              paddingRight:10
+            }]}
+            >
+              <Text
+              style={{
+                width: '100%',
+                color:'#ababab',
+                fontSize:15,
+              }}
+              >Stripe Security Key</Text>
+              <TextInput
+              style={{
+                fontSize: 20, 
+                color: '#fff',
+                width: '92%',
+              }}
+              defaultValue={secKey}
+              keyboardType={'default'}
+              onChangeText={setSecKey}
+              placeholder={''}
+              placeholderTextColor={'#aaaaaa'}
+              />
+              <EditButton/>
+            </View> 
+          }
+
+          {/* Publisher Key */}  
+          { showKeys && 
+            <View
+            style={[styles.input,{
+              flexWrap: 'wrap', 
+              alignItems: 'flex-start',
+              flexDirection:'row',
+              paddingRight:10
+            }]}
+            >
+              <Text
+              style={{
+                width: '100%',
+                color:'#ababab',
+                fontSize:15,
+              }}
+              >Stripe Publishable Key</Text>
+              <TextInput
+              style={{
+                fontSize: 20, 
+                color: '#fff',
+                width: '92%',
+              }}
+              defaultValue={pubKey}
+              keyboardType={'default'}
+              onChangeText={setPubKey}
+              placeholder={''}
+              placeholderTextColor={'#aaaaaa'}
+              />
+              <EditButton/>
+            </View> 
           }
           
+          {/* Done button */}
+          {showKeys &&
+            <TouchableHighlight
+            onPress={()=>{setShowKeys(false)}}
+            style={{
+              backgroundColor: '#1C483F',
+              width: "70%",
+              alignSelf: 'center',
+              height: 50,
+              borderRadius: 10,
+              marginTop: 25,
+              padding: 10,
+              marginBottom: 25,
+            }}
+            underlayColor={'#22e6ab'}
+          >
+            <Text
+              style={{
+                alignSelf: 'center',
+                color: '#e6e6e6',
+                fontWeight: '700',
+                fontSize: 20,
+              }}
+            >
+              Done
+            </Text>
+          </TouchableHighlight>
+          }
 
 
           <TouchableHighlight
@@ -648,6 +745,7 @@ const ProfileSetup = ({navigation}) => {
         </View>
       </KeyboardAvoidingView>
    </View>
+    </ScrollView>
   )
 }
 

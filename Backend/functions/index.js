@@ -594,4 +594,9 @@ exports.onReservationUpdateCancelCron = functions.region("europe-west1").firesto
   //         expirationTask: admin.firestore.FieldValue.delete()
   //     })
   // }
+exports.getOwnerUsername = functions.region("europe-west1").https.onCall(async (data,context)=>{
+  const ownerUid = data.ownerUid;
+  const docRef = await db.collection('userdata').doc(ownerUid).get();
+  const username = await docRef.data().username;
+  return {result:username};
 })

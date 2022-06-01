@@ -2,8 +2,9 @@ import { Alert, ScrollView, TouchableOpacity, TextInput, ImageBackground, Image,
 import React, {useState, Component } from 'react'
 import iconProfil from '../assets/iconProfil.png'; 
 import imgBack from '../assets/backgroundImg.png';
-import iconMasina from '../assets/bmw.png';
-import vezidetalii from '../assets/Buton-1.png';
+import iconMasina from '../assets/bmwv2.png';
+import leftArrow from '../assets/leftArrow.png';
+import vezidetalii from '../assets/Buton-1v2.png';
 import { httpsCallable } from 'firebase/functions';
  import {fireAuth, fireFunc} from '../globals/firebase';
 import { async } from '@firebase/util';
@@ -51,18 +52,18 @@ fetchData=async()=>{this.setState({isLoading:true},async () =>{
                       </View>
                       <View style={styles.containerJos1Texte}>
                         <View style={styles.containerJos1Linie}>
-                          <Text style={styles.text5}>Model:</Text><Text style={styles.text4}>{element.name}</Text>
+                          <Text style={styles.text5}>Model: </Text><Text style={styles.text4}>{element.name}</Text>
                         </View>
                         <View style={styles.containerJos1Linie}>
-                          <Text style={styles.text5}>Distanta maxima(100% charged):</Text><Text style={styles.text4}>{element.distantaMax}</Text>
+                          <Text style={styles.text5}>Autonomy: </Text><Text style={styles.text4}>{element.distantaMax}</Text>
                         </View>
                         <View style={styles.containerJos1Linie}>
-                          <Text style={styles.text5}>Culoare:</Text><Text style={styles.text4}>{element.color}</Text>
+                          <Text style={styles.text5}>Color: </Text><Text style={styles.text4}>{element.color}</Text>
                         </View>
                       </View>
                       
                       <Pressable  style={styles.button} onPress={() =>this.props.navigation.navigate("Car Detail",element)}>
-                        <Text style={styles.text3}>Vezi mai multe detalii</Text>
+                        <Text style={styles.text3}>View more details</Text>
                       </Pressable>
 
           </View>)
@@ -73,18 +74,18 @@ fetchData=async()=>{this.setState({isLoading:true},async () =>{
           <ImageBackground source={imgBack} resizeMode="cover" style={styles.bgImage}>
               <View style={styles.container}>
                   <View style={styles.container2}>
-                      <Image source={iconProfil} style={styles.imagine1} /> 
+                      {/* <Image source={iconProfil} style={styles.imagine1} />  */}
                       {/*TODO replace source with a generic image or a link to an image host*/}
                       <View style={styles.container3}>
-                          <Text style={styles.text1}>Beneficiary User</Text>
-                          <Text style={styles.text2}>{getGlobalState('userData').username}</Text>
+                          <Text style={styles.text1}>User cars</Text>
+                          <Text style={styles.text2}>Here are your cars, {getGlobalState('userData').firstName.concat(" ",getGlobalState('userData').lastName,"!")}</Text>
                       </View>
                   </View>
                 
                   <View style={styles.containerJos}>
-                    <View style={styles.containerJos0}>
+                    {/* <View style={styles.containerJos0}>
                       <Text style={styles.text3}>Lista masinilor adaugate:</Text>
-                    </View>
+                    </View> */}
 
                     <View style={styles.containerJos1}>
                       <ScrollView style ={styles.scrollview}>
@@ -97,6 +98,11 @@ fetchData=async()=>{this.setState({isLoading:true},async () =>{
                         {/* <Text style={styles.text3}>Vezi mai multe detalii</Text> */}
                         <Image source={vezidetalii} style={styles.vezidetaliile} /> 
                      </Pressable>
+                    </View>
+                    <View style={styles.containerJos3}>
+                      <Pressable onPress={()=>this.props.navigation.goBack()}>
+                        <Image source={leftArrow} />
+                        </Pressable> 
                     </View>
                    
                   </View>
@@ -141,9 +147,10 @@ const styles = StyleSheet.create({
     // padding: 8,
   },
   containerScrollView: {
+    //backgroundColor:'red',
     flex:1,
     flexDirection:"column",
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems:'center',
     marginBottom:20,
     // paddingTop: Constants.statusBarHeight,
@@ -152,12 +159,12 @@ const styles = StyleSheet.create({
   containerJos:{
     padding:'5%',
     flexDirection:"column",
-    flex:0.65,
+    flex:0.85,
     justifyContent: 'flex-start',
     alignItems:'center',
   },
   containerJos0:{//cu "Lista masinilor adaugate"
-    flex:0.1,
+    flex:0,
     paddingBottom:10,
     flexDirection:"row",
     justifyContent: 'flex-start',
@@ -165,7 +172,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
   },
   containerJos1:{//cu chenarul cu round borders
-    flex:0.5,
+    flex:0.6,
     flexDirection:"column",
     backgroundColor:'rgba(24, 39, 36, 1)',
     borderRadius:20,
@@ -179,10 +186,13 @@ const styles = StyleSheet.create({
   containerJos1Texte:{
     //backgroundColor:"green",
     // flex:0.37,
-    flex:0.40,
+    flex:1,
     width:"85%",
+    justifyContent:'center',
+    alignItems:'center',
   },
   container2:{
+    backgroundColor:'black',
     flexDirection:"row",
     flex:0.15,
     justifyContent: 'center',
@@ -190,7 +200,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   containerJos2:{//cu chenarul cu round borders
-    flex:0.4,
+    flex:0.2,
+    flexDirection:"column",
+    width:'95%',
+    justifyContent:'center',
+    alignItems:'center',
+    //backgroundColor:"red",
+  },
+  containerJos3:{//cu chenarul cu round borders
+    flex:0.2,
     flexDirection:"column",
     width:'95%',
     justifyContent:'center',
@@ -199,7 +217,7 @@ const styles = StyleSheet.create({
   },
   container3:{
     flexDirection:"column",
-    flex:0.5,
+    flex:1,
     justifyContent: 'center',
     alignItems:'center',
   },
@@ -209,15 +227,15 @@ const styles = StyleSheet.create({
   },
   text1:{
     color:'white',
-    fontSize:16,
+    fontSize:19,
   },
   text2:{
     color:'white',
-    fontSize:24,
+    fontSize:12,
     fontWeight:"700",
   },
   text3:{
-    color:'white',
+    color:'rgba(27, 149, 131, 1)',
     fontSize:14,
     fontWeight:"600",
   },
@@ -241,8 +259,10 @@ const styles = StyleSheet.create({
   iconMasinaa:{
     resizeMode: 'contain',
     height:60,
+    flex:1,
   },
   paddingMasina:{
+    
     flex:0.55,
     display:'flex',
     height:80,
@@ -250,7 +270,7 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     alignItems:'center',
     paddingTop:0,
-     //backgroundColor:'red',
+    //backgroundColor:'yellow',
   },
   galerieMasini:{
     flex:0.37,

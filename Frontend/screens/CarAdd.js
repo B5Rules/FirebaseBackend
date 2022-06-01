@@ -1,17 +1,19 @@
 import React, { Component } from 'react'
 import {useState} from 'react';
-import {ScrollView, TouchableOpacity, TextInput, ImageBackground, Image, Text, View, StyleSheet } from 'react-native';
+import {ScrollView, Pressable, TouchableOpacity, TextInput, ImageBackground, Image, Text, View, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import iconProfil from '../assets/iconProfil.png'; 
 import imgBack from '../assets/backgroundImg.png';
 import {fireAuth, fireFunc} from '../globals/firebase';
 import {httpsCallable} from 'firebase/functions';
+import leftArrow from '../assets/leftArrow.png';
 
 import { onAuthStateChanged } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
 const addCar=httpsCallable(fireFunc,'addCar');
 import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 import TouchHistoryMath from 'react-native/Libraries/Interaction/TouchHistoryMath';
+import { getGlobalState } from '../globals/global';
 
 export default class CarAdd extends React.Component {
   state = {
@@ -128,17 +130,16 @@ eroare = {
       <ImageBackground source={imgBack} resizeMode="cover" style={styles.bgImage}>
         <View style={styles.container}>
             <View style={styles.container2}>
-                <Image source={iconProfil} style={styles.imagine1} /> 
                 <View style={styles.container3}>
-                    <Text style={styles.text1}>Beneficiary Uster</Text>
-                    <Text style={styles.text2}>Pavel Silviu</Text>
+                      <Text style={styles.text1}>User cars</Text>
+                      <Text style={styles.text2}>Please add a car, {getGlobalState('userData').firstName.concat(" ",getGlobalState('userData').lastName,"!")}</Text>
                 </View>
             </View>
             <View style = {styles.containerForm}>
               <ScrollView style ={{width:"95%"}} contentContainerStyle={styles.scrollview}> 
                 <TextInput style = {styles.input}
                     underlineColorAndroid = "transparent"
-                    placeholder = "Nume masina"
+                    placeholder = "Car name"
                     placeholderTextColor = "white"
                     autoCapitalize = "none"
                     onChangeText={this.handleNume} />
@@ -148,7 +149,7 @@ eroare = {
 
                 <TextInput style = {styles.input}
                     underlineColorAndroid = "transparent"
-                    placeholder = "Distanta maxima (km)"
+                    placeholder = "Autonomy"
                     placeholderTextColor = "white"
                     autoCapitalize = "none"
                     onChangeText = {this.handledistantaMax}/>
@@ -158,7 +159,7 @@ eroare = {
 
                 <TextInput style = {styles.input}
                     underlineColorAndroid = "transparent"
-                    placeholder = "Capacitate baterie"
+                    placeholder = "Battery capacity"
                     placeholderTextColor = "white"
                     autoCapitalize = "none"
                     onChangeText = {this.handlecapacBaterie}/>
@@ -168,7 +169,7 @@ eroare = {
 
                 <TextInput style = {styles.input}
                     underlineColorAndroid = "transparent"
-                    placeholder = "Culoare"
+                    placeholder = "Color"
                     placeholderTextColor = "white"
                     autoCapitalize = "none"
                     onChangeText = {this.handleculoare}/>
@@ -178,7 +179,7 @@ eroare = {
 
                 <TextInput style = {styles.input}
                     underlineColorAndroid = "transparent"
-                    placeholder = "Numar km"
+                    placeholder = "Kilometers"
                     placeholderTextColor = "white"
                     autoCapitalize = "none"
                     onChangeText = {this.handlenumarKm}/>
@@ -188,7 +189,7 @@ eroare = {
 
                 <TextInput style = {styles.input}
                     underlineColorAndroid = "transparent"
-                    placeholder = "Cai putere"
+                    placeholder = "Horse power"
                     placeholderTextColor = "white"
                     autoCapitalize = "none"
                     onChangeText = {this.handlecaiPutere}/>
@@ -204,8 +205,11 @@ eroare = {
                           
                       }
                       }>
-                    <Text style = {styles.submitButtonText}> TRIMITE </Text>
+                    <Text style = {styles.submitButtonText}> SUBMIT </Text>
                 </TouchableOpacity>
+                <Pressable onPress={()=>this.props.navigation.goBack()}>
+                      <Image source={leftArrow} />
+                      </Pressable> 
               </ScrollView>
         </View>
             {/* <TouchableOpacity onPress={()=> this.props.pageChange(2)}>
@@ -242,6 +246,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems:'center',
     marginTop: 10,
+    backgroundColor:'black'
   },
   container3:{
     flexDirection:"column",
@@ -257,11 +262,11 @@ const styles = StyleSheet.create({
   },
   text1:{
     color:'white',
-    fontSize:16,
+    fontSize:19,
   },
   text2:{
     color:'white',
-    fontSize:24,
+    fontSize:12,
     fontWeight:"700",
   },
   textInainte:{

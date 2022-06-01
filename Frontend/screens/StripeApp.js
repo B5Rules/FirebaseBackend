@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     alignSelf:"center",
   },
   card: {
-    backgroundColor: "#05efcd",
+    backgroundColor: "#04B197",
     textColor : "#f1f1f1",
   },
   cardContainer: {
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
     width: "90%",
     alignSelf: "center",
-    backgroundColor: "#05efcd",
+    backgroundColor: "#04B197",
     height: 275,
     borderRadius: 10,
   },
