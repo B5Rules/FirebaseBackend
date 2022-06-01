@@ -2,6 +2,8 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const Joi = require("joi");
 const firestore = require('firebase-admin/firestore');
+const { CloudTasksClient } = require('@google-cloud/tasks')
+const fetch = (url) => import('node-fetch').then(({default: fetch}) => fetch(url));
 
 const app = admin.initializeApp();
 const db = admin.firestore(app);
@@ -99,6 +101,29 @@ exports.helloWorld = functions
 
 exports.getAllStations = functions.region("europe-west1").https.onCall(async(data, context)=>{
     let querySnapshot = await db.collection('chargingstations').where("status", "==", 0).get();
+    // const {
+    //   latitude,
+    //   longitude, 
+    //   distance
+    // } = data;
+    // // let latitude = 47.1573794
+    // // let longitude = 27.6267558
+    // // let distance = 1;
+    
+    // let lat = 0.0144927536231884;
+    // let lon = 0.0181818181818182;
+  
+    // let lowerLat = latitude - (lat * distance)
+    // let lowerLon = longitude - (lon * distance)
+  
+    // let greaterLat = latitude + (lat * distance)
+    // let greaterLon = longitude + (lon * distance)
+  
+    // let lesserGeopoint = new firestore.GeoPoint(lowerLat, lowerLon)
+    // let greaterGeopoint = new firestore.GeoPoint(greaterLat, greaterLon)
+  
+    // let docRef = db.collection("chargingstations")
+    // let querySnapshot = await docRef.where("coordinates", ">=", lesserGeopoint).where("coordinates", "<=", greaterGeopoint).get()
 
     return ({result:querySnapshot.docs});
 
@@ -115,8 +140,45 @@ exports.getAllStationsData = functions.region("europe-west1").https.onCall(async
 
 });
 
+exports.getNearbyStations = functions.region("europe-west1").https.onCall(async (data, context) => {
+  const {
+    latitude,
+    longitude, 
+    distance
+  } = data;
+  // let latitude = 47.1573794
+  // let longitude = 27.6267558
+  // let distance = 1;
+  
+  let lat = 0.0144927536231884
+  let lon = 0.0181818181818182
+
+  let lowerLat = latitude - (lat * distance)
+  let lowerLon = longitude - (lon * distance)
+
+  let greaterLat = latitude + (lat * distance)
+  let greaterLon = longitude + (lon * distance)
+
+  let lesserGeopoint = new firestore.GeoPoint(lowerLat, lowerLon)
+  let greaterGeopoint = new firestore.GeoPoint(greaterLat, greaterLon)
+
+  let docRef = db.collection("chargingstations")
+  let query = await docRef.where("coordinates", ">=", lesserGeopoint).where("coordinates", "<=", greaterGeopoint).get()
+
+  const stations = [];
+  query.forEach(doc => {
+    stations.push({
+      id: doc.id,
+      ...doc.data()
+    })
+  });
+
+  return ({
+    result: stations
+  })
+})
+
 exports.getStationById = functions.region("europe-west1").https.onCall(async(data, context)=>{
-  console.log(data)
   let querySnapshot = await db.collection('chargingstations').doc(data).get()
   return ({result:{id: querySnapshot.id, ...querySnapshot.data()}});
 });
@@ -203,22 +265,26 @@ exports.changeStationStatus = functions
       id: Joi.string().required(),
       status: Joi.number().valid(0, 1, 2),
     }), data);
+    const expirationTime = 20;
     if(data.status !== 0) {
       data.reservedBy = context.auth.uid;
     } else {
       data.reservedBy = '';
     }
     await db.collection("chargingstations").doc(data.id).update(data);
-    // functions.pubsub.schedule('in 10 seconds').onRun((context) => {
-    //   console.log('This will run now!');
-    //   db.collection("chargingstations").add({
-    //     status: 10
-    //   })
+    if(data.reservedBy === '') {
 
-    //   return null;
-    // })
+    } else {
+      await db.collection("station_reservations").add({
+        stationId: data.id,
+        expireIn: expirationTime, // TODO: Change this to 10 minutes
+      })
+    }
+
     return {
-      result: null,
+      result: {
+        expirationTime
+      },
       message: 'Successfully changed status',
     }
   } catch(e){
@@ -356,9 +422,183 @@ exports.getPubKey = functions.region("europe-west1").https.onCall(async (data, c
   return {result:pubKey};
 });
 
+exports.getDistanceBetweenTwoStations = functions.region("europe-west1").https.onCall(async (data, context)=>{
+  const {station1, station2 } = data;
+  let station = await db.collection('stationsGraph').where("stationId","==", station1).get()
+  if(!station.size){
+    return {result:null, error:true, message:"Station 1 not found"}
+  }
+  const distance = station?.docs[0]?.data()?.distances?.[station2.id] || 99999999;
+  return {
+    result: distance,
+    error: false,
+    message: 'Successfully retrieved distance between two stations'
+  }
+});
+
+exports.firestoreTtlCallback = functions.region("europe-west1").https.onRequest(async(req, res)=>{
+  const payload = req.body
+    try {
+      console.log('ok')
+      const response = await db.collection('chargingstations').doc(payload.stationId).update({
+        reservedBy: "",
+        status: 0
+      });
+      res.status(200).send({
+        success: true,
+        response: `Canceled reservation on station with id ${response.id}`
+      })
+    }
+    catch (error) {
+        console.error(error)
+        res.status(500).send({
+          success:  false,
+          response: error
+        })
+    }
+});
+
+// exports.
+
+/**
+ * We must set the timeout to 9mins on cloud
+ */
+exports.generateGraph = functions.runWith({
+  timeoutSeconds: 540
+}).region("europe-west1").https.onCall(async (data, context) => {
+  return {
+    result: null,
+    error: true,
+    message: 'This function is disabled'
+  };
+  const maxDistanceBetweeenTwoStations = 150000;
+  const minDistanceBetweeenTwoStations = 10000;
+  const stationsRawData = await db.collection('chargingstations').get();
+  const stations = [];
+
+  stationsRawData.forEach(data => {
+    stations.push({
+      id: data.id,
+      ...data.data()
+    })
+  })
+
+  const stationNonExistant = await db.collection('chargingstations').where("stationId","==", "zabogdan").get()
+  console.log(stationNonExistant.size)
+  const getDistanceBetweenPoints = async (pointA, pointB) => {
+    var urlToFetchDistance =
+      "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" +
+      pointA.latitude +
+      "," +
+      pointA.longitude +
+      "&destinations=" +
+      pointB.latitude +
+      "%2C" +
+      pointB.longitude +
+      "&key=AIzaSyB9v7V_D0tF4_jHRkJKF6iGg1s4KMXjWLk";
+  
+    const res = await fetch(urlToFetchDistance);
+    const data = await res.json();
+    return data.rows[0].elements[0].distance.value;
+  };
+
+  const getStationData = async (id) => {
+    let station = await db.collection('stationsGraph').where("stationId","==", id).get()
+    if(!station.size)
+      return {
+        stationId: id,
+        distances: {
+
+        }
+      }
+    return station.docs[0].data();
+  }
+
+  const updateOrCreateStation = async (data) => {
+    const collection = db.collection('stationsGraph');
+    const docRef = await collection.where('stationId', '==', data.stationId).get();
+    if(!docRef.size) {
+      await collection.add(data)
+    } else {
+      await collection.doc(docRef.docs[0].id).update(data);
+    }
+  }
+  
+  for (const station1 of stations){
+      const station1Data = await getStationData(station1.id);
+
+      for (const station2 of stations){
+        const station2Data = await getStationData(station2.id);
+        if(station1Data.stationId === station2Data.stationId) continue;
+        const dist=await getDistanceBetweenPoints(
+          {
+            latitude: station1.coordinates._latitude,
+            longitude: station1.coordinates._longitude,
+          },
+          {
+            latitude: station2.coordinates._latitude,
+            longitude: station2.coordinates._longitude,
+          });
+        if(dist <= maxDistanceBetweeenTwoStations && dist >= minDistanceBetweeenTwoStations)
+        {
+          station1Data.distances[station2Data.stationId] = dist;
+          station2Data.distances[station1Data.stationId] = dist;
+        }
+        updateOrCreateStation(station2Data);
+      }
+      updateOrCreateStation(station1Data);
+  }
+  return true;
+});
+
+exports.onCreateReservation = functions.region("europe-west1").firestore.document('/station_reservations/{id}').onCreate(async snapshot => {
+  // Code discussed below!
+  const data = snapshot.data();
+
+  const project = 'b5uberelectric-bacbb'
+  const location = 'europe-west1'
+  const queue = 'firestore-ttl'
+  const tasksClient = new CloudTasksClient()
+  const queuePath = tasksClient.queuePath(project, location, queue)
+  const url = `https://${location}-${project}.cloudfunctions.net/firestoreTtlCallback`
+  const expireIn = data?.expireIn || 60;
+  const task = {
+      httpRequest: {
+        httpMethod: 'POST',
+        url,
+        body: Buffer.from(JSON.stringify({id: snapshot.id, ...data})).toString('base64'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      scheduleTime: {
+        seconds: expireIn + Date.now() / 1000,
+      }
+  }
+  await tasksClient.createTask({ parent: queuePath, task: task })
+  console.log('Successfully scheduled a task with following data: ', JSON.stringify(task))
+})
+
+exports.onReservationUpdateCancelCron = functions.region("europe-west1").firestore.document('/station_reservations/{id}').onUpdate(async change => {
+  const before = change.before.data()
+  const after = change.after.data()
+
+  // Did the document lose its expiration?
+  // const expirationTask = after.expirationTask
+  // const removedExpiresAt = before.expiresAt && !after.expiresAt
+  // const removedExpiresIn = before.expiresIn && !after.expiresIn
+  // if (expirationTask && (removedExpiresAt || removedExpiresIn)) {
+  //     const tasksClient = new CloudTasksClient()
+  //     await tasksClient.deleteTask({ name: expirationTask })
+  //     await change.after.ref.update({
+  //         expirationTask: admin.firestore.FieldValue.delete()
+  //     })
+  // }
+});
+
 exports.getOwnerUsername = functions.region("europe-west1").https.onCall(async (data,context)=>{
   const ownerUid = data.ownerUid;
   const docRef = await db.collection('userdata').doc(ownerUid).get();
   const username = await docRef.data().username;
   return {result:username};
-})
+});

@@ -97,7 +97,7 @@ const Map = (props, ref) => {
   useEffect(() => {
     if (Object.keys(destination).length > 0) {
       goToDestination();
-      console.log(nearbyStation);
+      // console.log(nearbyStation);
       if (nearbyStation.isStation == true) {
         createRoute();
         dispatch(
@@ -146,14 +146,23 @@ const Map = (props, ref) => {
     setRouteDestination(null);
   };
 
-  const createRoute = () => {
-    // TODO: Draw the route using this!
-    // routeCalculator(
+  const createRoute = async () => {
+    console.log("Creating route,", {
+      latitude: origin?.location.latitude,
+      longitude: origin?.location.longitude,
+    },
+    destination.location, 'done')
+    // const response = await routeCalculator(
     //   {
     //     latitude: origin?.location.latitude,
     //     longitude: origin?.location.longitude,
     //   },
-    //   destination
+    //   destination.location
+    // )
+    // console.log("Response is: ",response)
+    // TODO: Draw the route using this!
+    // routeCalculator(
+
     // );
     setRouteDestination(destination);
   };

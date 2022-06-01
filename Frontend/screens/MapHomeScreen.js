@@ -38,6 +38,7 @@ import deletee from "../assets/delete.png";
 import { PressabilityDebugView } from "react-native/Libraries/Pressability/PressabilityDebug";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import { TouchableOpacity } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -53,10 +54,14 @@ export const getDistanceBetweenPoints = async (pointA, pointB) => {
     pointB.longitude +
     "&key=" +
     GOOGLE_MAPS_APIKEY;
-
-  const res = await fetch(urlToFetchDistance);
-  const data = await res.json();
-  return data.rows[0].elements[0].distance.value;
+  try {
+    const res = await fetch(urlToFetchDistance);
+    const data = await res.json();
+    return data.rows[0].elements[0].distance.value;
+  } catch(e) {
+    console.error(e);
+    return null;
+  }
 };
 
 const MapHomeScreen = ({ navigation }) => {
@@ -69,6 +74,7 @@ const MapHomeScreen = ({ navigation }) => {
   const [showTheThing, setShow] = useState(false);
   const [autonomy, setAutonomy] = useState("");
   const [dest, setDest] = useState({});
+  const isFocused = useIsFocused();
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -93,17 +99,17 @@ const MapHomeScreen = ({ navigation }) => {
     getAllStations()
       .then((res) => {
         dispatch(setStations(res.data.result));
-        
+        console.log("all station2")
       })
       .catch((err) => {
         //console.log("getAllStations: Map.js");
         console.log("err");
       });
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     getLocation();
-  }, []);
+  }, [isFocused]);
 
   return (
     <SafeAreaView style={styles.container}>

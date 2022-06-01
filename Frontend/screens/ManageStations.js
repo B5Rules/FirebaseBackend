@@ -28,6 +28,11 @@ const deleteStationByIDForSpecificUser = httpsCallable(
   fireFunc,
   "deleteStationByIDForSpecificUser"
 );
+
+const generateGraph = httpsCallable(
+  fireFunc,
+  "generateGraph"
+);
 const { width } = Dimensions.get("screen");
 
 const ManageStations = ({ navigation }) => {

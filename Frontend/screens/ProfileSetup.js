@@ -751,8 +751,8 @@ const ProfileSetup = ({navigation}) => {
 
 export default ProfileSetup
 const IOSMargins = Platform.OS === 'ios' ? {
-  marginTop: 50,
-  marginBottom: 50,
+  marginTop: 70,
+  marginBottom: 80,
 } : {}
 const registerStyles = StyleSheet.create({
   wrapper: {
