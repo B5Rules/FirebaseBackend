@@ -26,6 +26,8 @@ import {
   setOrigin,
   selectIsStation,
   setIsStation,
+  selectWaypoints,
+  setWaypoints
 } from "../slices/navSlice";
 //import { setNearByStaions } from '../navSlice';
 //import { GOOGLE_MAPS_APIKEY } from "@env";
@@ -86,6 +88,7 @@ const Map = (props, ref) => {
   const destination = useSelector(selectDestination);
   const [routeDestination, setRouteDestination] = useState(null);
   const nearbyStation = useSelector(selectIsStation);
+  const waypoints = useSelector(selectWaypoints)
   //const [nearByStations, setNearByStations]  = useState([]);
   const region = useRef({});
   useImperativeHandle(ref, () => ({
@@ -152,18 +155,15 @@ const Map = (props, ref) => {
       longitude: origin?.location.longitude,
     },
     destination.location, 'done')
-    // const response = await routeCalculator(
-    //   {
-    //     latitude: origin?.location.latitude,
-    //     longitude: origin?.location.longitude,
-    //   },
-    //   destination.location
-    // )
-    // console.log("Response is: ",response)
-    // TODO: Draw the route using this!
-    // routeCalculator(
-
-    // );
+    const response = await routeCalculator(
+      {
+        latitude: origin?.location.latitude,
+        longitude: origin?.location.longitude,
+      },
+      destination.location
+    )
+    console.log("Response is: ",response)
+    dispatch(setWaypoints(response))
     setRouteDestination(destination);
   };
 
@@ -203,12 +203,8 @@ const Map = (props, ref) => {
   };
 
   const navigation = useNavigation();
-  const [stationWaypoints, setStationWaypoints] =useState([
-    {
-      latitude: 47.155611854999194,
-      longitude: 27.589531503617764
-    }
-  ]);
+  // const [stationWaypoints, setStationWaypoints] =useState([
+  // ]);
 
   return (
     <View style={styles.container}>
@@ -235,7 +231,7 @@ const Map = (props, ref) => {
             strokeColor="green"
             // precision="high"
             resetOnChange={true}
-            waypoints={stationWaypoints}
+            waypoints={waypoints}
             onStart={(params) => {
               console.log(
                 `Started routing between "${params.origin}" and "${params.destination}"`

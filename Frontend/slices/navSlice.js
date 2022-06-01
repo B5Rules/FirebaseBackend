@@ -38,6 +38,9 @@ export const navSlice = createSlice({
     setIsStation: (state,action) =>{
       state.isStation = action.payload;
     },
+    setWaypoints: (state, action) => {
+      state.waypoints = action.payload;
+    }
   },
 });
 
@@ -49,6 +52,7 @@ export const {
   setNearByStaions,
   setStations,
   setIsStation,
+  setWaypoints
 } = navSlice.actions;
 
 // Selectors
@@ -60,4 +64,5 @@ export const selectIsStation = (state) => state.nav.isStation;
 export const selectCurrentPosition = (state) => state.nav.currentPos;
 export const selectStaions = (state) => state.nav.stations;
 export const selectNearByStations = (state) => state.nav.nearByStations;
+export const selectWaypoints = (state) => state.nav.waypoints;
 export default navSlice.reducer;
