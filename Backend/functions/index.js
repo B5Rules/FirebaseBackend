@@ -242,6 +242,8 @@ exports.createStation = functions
       console.log('Create station',data);
       let querySnapshot = await db.collection("chargingstations").add(data);
 
+      await db.collection("chargingstations").doc(querySnapshot._path.segments[1]).update({id: querySnapshot._path.segments[1]})
+
       return {
         result: querySnapshot.id,
         message: "Station created successfully",

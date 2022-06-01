@@ -290,7 +290,7 @@ const Map = (props, ref) => {
         {stations?.length > 0 &&
           stations.map((station, index) => {
             const str = `Station ${index}`;
-
+            console.log(station?._fieldsProto?.id?.stringValue, station?._fieldsProto?.coordinates?.geoPointValue)
             if (
               station?._fieldsProto?.coordinates?.geoPointValue.latitude !==
                 undefined &&
