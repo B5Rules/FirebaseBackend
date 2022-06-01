@@ -41,7 +41,8 @@ const {setGlobalState, getGlobalState} = createGlobalState({
         chargingCap: 0,
     },
     cars:[],
-    currentpubkey: ''
+    currentpubkey: '',
+    stationId: '',
 });
 
 export {setGlobalState, getGlobalState};
