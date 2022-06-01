@@ -179,6 +179,8 @@ exports.getNearbyStations = functions.region("europe-west1").https.onCall(async 
 })
 
 exports.getStationById = functions.region("europe-west1").https.onCall(async(data, context)=>{
+  if(data === undefined)
+  return ({result: null})
   let querySnapshot = await db.collection('chargingstations').doc(data).get()
   return ({result:{id: querySnapshot.id, ...querySnapshot.data()}});
 });
@@ -240,6 +242,8 @@ exports.createStation = functions
       console.log('Create station',data);
       let querySnapshot = await db.collection("chargingstations").add(data);
 
+      await db.collection("chargingstations").doc(querySnapshot._path.segments[1]).update({id: querySnapshot._path.segments[1]})
+
       return {
         result: querySnapshot.id,
         message: "Station created successfully",
@@ -266,8 +270,7 @@ exports.changeStationStatus = functions
       status: Joi.number().valid(0, 1, 2),
       chargekWh: Joi.number().default(-1),
     }), data);
-    const expirationTime = data.chargekWh !== -1 ? data.chargekWh : 20;
-    delete data.chargekWh;
+    const expirationTime = 20;
     if(data.status === 2 || data.status === 1) {
       data.reservedBy = context.auth.uid;
     } else {
