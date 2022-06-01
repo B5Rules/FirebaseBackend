@@ -53,7 +53,7 @@ eroare = {
     validForm = () => {
         //Eroare nume 
         if (this.state.nume.length > 11) {
-            this.eroare.camp1 = "Maxim 10 caractere"
+            this.eroare.camp1 = "Maximum 10 characters"
         }
         else {
             this.eroare.camp1 = ''
@@ -61,27 +61,33 @@ eroare = {
         //Eroare distanta
         var n = Number(this.state.distantaMax);
         if (isNaN(n)) {
-            this.eroare.camp2 = "Distanta gresita"
+            this.eroare.camp2 = "Wrong autonomy"
         }
         else {
             this.eroare.camp2 = ''
         }
         if (this.state.distantaMax[0] == '0') {
-            this.eroare.camp2 = "Distanta gresita"
+            this.eroare.camp2 = "Wrong distance"
         }
         //Eroare baterie
         n = Number(this.state.capacBaterie)
         if (this.state.capacBaterie.length > 6 || (isNaN(n) || this.state.capacBaterie[0] == '0')) {
-            this.eroare.camp3 = "Valoare gresita"
+            this.eroare.camp3 = "Wrong capacity"
         }
         else {
             this.eroare.camp3 = ''
         }
         //Eroare culoare
+        if (this.state.culoare.length > 11) {
+          this.eroare.camp4 = "Maximum 10 characters"
+      }
+      else {
+          this.eroare.camp4 = ''
+      }
         //Eroare nrkm
         n = Number(this.state.numarKm)
         if (isNaN(n) || (this.state.numarKm[0] == '0' && this.state.numarKm.length > 1)) {
-            this.eroare.camp5 = "Kilometraj gresit"
+            this.eroare.camp5 = "Wrong kilometers"
         }
         else {
             this.eroare.camp5 = ''
@@ -89,11 +95,11 @@ eroare = {
         //Eroare CaiPutere
         n = Number(this.state.caiPutere)
         if (isNaN(n) == true) {
-            this.eroare.camp6 = "Valoare gresita"
+            this.eroare.camp6 = "Wrong value"
         }
         else {
             if (n < 50 && (this.state.caiPutere != '')) {
-                this.eroare.camp6 = "Valoare prea mica"
+                this.eroare.camp6 = "The value is too low"
             }
             else {
                 this.eroare.camp6 = ''
@@ -111,13 +117,13 @@ eroare = {
             fara_erori = 1;
         }
         if ((fara_erori == 1) && (campuri_necompletate == 0)) {
-            alert("Succer");
+            alert("Succes");
         }
         if (campuri_necompletate == 1) {
-            alert("Campuri necompletate");
+            alert("No completed fields");
         }
         if (fara_erori == 0) {
-            alert("Erori");
+            alert("Errors");
         }
         console.log(this.state)
     }
@@ -173,7 +179,7 @@ eroare = {
                     placeholderTextColor = "white"
                     autoCapitalize = "none"
                     onChangeText = {this.handleculoare}/>
-                  {this.validForm() ? <Text style={{ color: 'red' }}>{this.eroare.camp5}</Text> : null}
+                  {this.validForm() ? <Text style={{ color: 'red' }}>{this.eroare.camp4}</Text> : null}
 
                 <View style={styles.separator}></View>
 
@@ -183,7 +189,7 @@ eroare = {
                     placeholderTextColor = "white"
                     autoCapitalize = "none"
                     onChangeText = {this.handlenumarKm}/>
-                    {this.validForm() ? <Text style={{ color: 'red' }}>{this.eroare.camp6}</Text> : null}
+                    {this.validForm() ? <Text style={{ color: 'red' }}>{this.eroare.camp5}</Text> : null}
 
                 <View style={styles.separator}></View>
 
@@ -192,8 +198,8 @@ eroare = {
                     placeholder = "Horse power"
                     placeholderTextColor = "white"
                     autoCapitalize = "none"
-                    onChangeText = {this.handlecaiPutere}/>
-
+                    onChangeText = {this.handlecaiPutere}/> 
+          {this.validForm() ? <Text style={{ color: 'red' }}>{this.eroare.camp6}</Text> : null} 
                 <View style={styles.separator}></View>
 
                 <TouchableOpacity

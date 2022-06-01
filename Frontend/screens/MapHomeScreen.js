@@ -38,7 +38,6 @@ import deletee from "../assets/delete.png";
 import { PressabilityDebugView } from "react-native/Libraries/Pressability/PressabilityDebug";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import { TouchableOpacity } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
 
 const GOOGLE_MAPS_APIKEY = Constants.manifest.web.config.gmaps_api_key;
 
@@ -54,14 +53,10 @@ export const getDistanceBetweenPoints = async (pointA, pointB) => {
     pointB.longitude +
     "&key=" +
     GOOGLE_MAPS_APIKEY;
-  try {
-    const res = await fetch(urlToFetchDistance);
-    const data = await res.json();
-    return data.rows[0].elements[0].distance.value;
-  } catch(e) {
-    console.error(e);
-    return null;
-  }
+
+  const res = await fetch(urlToFetchDistance);
+  const data = await res.json();
+  return data.rows[0].elements[0].distance.value;
 };
 
 const MapHomeScreen = ({ navigation }) => {
@@ -74,7 +69,6 @@ const MapHomeScreen = ({ navigation }) => {
   const [showTheThing, setShow] = useState(false);
   const [autonomy, setAutonomy] = useState("");
   const [dest, setDest] = useState({});
-  const isFocused = useIsFocused();
 
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -99,17 +93,74 @@ const MapHomeScreen = ({ navigation }) => {
     getAllStations()
       .then((res) => {
         dispatch(setStations(res.data.result));
-        console.log("all station2")
+        const func = async () => {
+          let stationsAux = [];
+          let distancesAux = [];
+
+          let counter = 0;
+
+          const location = await Location.getLastKnownPositionAsync();
+          const statii = res.data.result;
+          for (const station of statii) {
+            let dist;
+            //console.log(station?._fieldsProto?.coordinates?.geoPointValue);
+            if (station?._fieldsProto?.coordinates?.geoPointValue == undefined)
+              dist = 99999999;
+            else {
+              if (
+                station?._fieldsProto?.coordinates?.geoPointValue !== undefined
+              ) {
+                dist = await getDistanceBetweenPoints(
+                  station._fieldsProto.coordinates.geoPointValue,
+                  location.coords
+                );
+              }
+            }
+
+            if (counter < 3) {
+              stationsAux[counter] = station;
+
+              distancesAux[counter] = dist;
+            } else if (dist < distancesAux[0]) {
+              distancesAux[0] = dist;
+              stationsAux[0] = station;
+            } else if (dist < distancesAux[1]) {
+              distancesAux[1] = dist;
+              stationsAux[1] = station;
+            } else if (dist < distancesAux[2]) {
+              distancesAux[2] = dist;
+              stationsAux[2] = station;
+            }
+            counter = counter + 1;
+          }
+
+          for (i = 0; i < 3; i++) {
+            stationsAux[i] = stationsAux[i]._fieldsProto;
+            let aux1 = {};
+            for (const prop in stationsAux[i]) {
+              aux1[prop] = stationsAux[i][prop];
+            }
+            aux1["distance"] = {
+              doubleValue: distancesAux[i],
+              valueType: "doubleValue",
+            };
+
+            stationsAux[i] = aux1;
+          }
+          dispatch(setNearByStaions(stationsAux));
+        };
+
+        func();
       })
       .catch((err) => {
         //console.log("getAllStations: Map.js");
         console.log("err");
       });
-  }, [isFocused]);
+  }, []);
 
   useEffect(() => {
     getLocation();
-  }, [isFocused]);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -176,6 +227,7 @@ const MapHomeScreen = ({ navigation }) => {
               style={styles.input}
               underlineColorAndroid="transparent"
               placeholder="Introduce battery autonomy.."
+              keyboardType = 'numeric'
               placeholderTextColor="white"
               autoCapitalize="none"
               onChangeText={(text) => setAutonomy(text)}

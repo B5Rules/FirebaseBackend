@@ -40,7 +40,7 @@ export default class CarUpdate extends React.Component {
                     <View style = {styles.containerForm}>
            <TextInput style = {styles.input}
               underlineColorAndroid = "transparent"
-              placeholder = "Nume masina"
+              placeholder = "Car name"
               placeholderTextColor = "white"
               autoCapitalize = "none"
               defaultValue={this.state.name}
@@ -50,7 +50,7 @@ export default class CarUpdate extends React.Component {
 
            <TextInput style = {styles.input}
               underlineColorAndroid = "transparent"
-              placeholder = "Distanta maxima (km)"
+              placeholder = "Autonomy"
               placeholderTextColor = "white"
               keyboardType = 'numeric'
               autoCapitalize = "none"
@@ -61,7 +61,7 @@ export default class CarUpdate extends React.Component {
 
            <TextInput style = {styles.input}
               underlineColorAndroid = "transparent"
-              placeholder = "Capacitate baterie"
+              placeholder = "Battery capacity"
               placeholderTextColor = "white"
               keyboardType = 'numeric'
               autoCapitalize = "none"
@@ -72,7 +72,7 @@ export default class CarUpdate extends React.Component {
 
            <TextInput style = {styles.input}
               underlineColorAndroid = "transparent"
-              placeholder = "Culoare"
+              placeholder = "Color"
               placeholderTextColor = "white"
               autoCapitalize = "none"
               defaultValue={this.state.color}
@@ -82,7 +82,7 @@ export default class CarUpdate extends React.Component {
 
            <TextInput style = {styles.input}
               underlineColorAndroid = "transparent"
-              placeholder = "Numar km"
+              placeholder = "Kilometers"
               placeholderTextColor = "white"
               keyboardType = 'numeric'
               autoCapitalize = "none"
@@ -93,7 +93,7 @@ export default class CarUpdate extends React.Component {
 
            <TextInput style = {styles.input}
               underlineColorAndroid = "transparent"
-              placeholder = "Cai putere"
+              placeholder = "Horse power"
               keyboardType = 'numeric'
               placeholderTextColor = "white"
               autoCapitalize = "none"
