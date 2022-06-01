@@ -203,6 +203,12 @@ const Map = (props, ref) => {
   };
 
   const navigation = useNavigation();
+  const [stationWaypoints, setStationWaypoints] =useState([
+    {
+      latitude: 47.155611854999194,
+      longitude: 27.589531503617764
+    }
+  ]);
 
   return (
     <View style={styles.container}>
@@ -227,8 +233,9 @@ const Map = (props, ref) => {
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={4}
             strokeColor="green"
-            precision="high"
+            // precision="high"
             resetOnChange={true}
+            waypoints={stationWaypoints}
             onStart={(params) => {
               console.log(
                 `Started routing between "${params.origin}" and "${params.destination}"`
@@ -255,7 +262,7 @@ const Map = (props, ref) => {
               // });
             }}
             onError={(errorMessage) => {
-              console.log("GOT AN ERROR");
+              console.log("GOT AN ERROR", errorMessage);
             }}
           />
         )}

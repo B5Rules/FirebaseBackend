@@ -19,9 +19,71 @@ import {
   component,
 } from "react-native";
 import { getDistanceBetweenPoints } from "./MapHomeScreen";
+import { httpsCallable } from "firebase/functions";
+import { fireFunc } from "../globals/firebase";
+const getNearbyStations = httpsCallable(fireFunc, "getNearbyStations");
+
+const renderNearbyStations = (nearbyStations) => {
+  return (
+    <>
+      {nearbyStations?.map((station) => (
+        <View key={station.id} style={styles.rectangle}>
+          <TouchableOpacity
+            style={styles.direction}
+            onPress={() => {
+              if (station.coordinates !== undefined) goToStation(station);
+            }}
+          >
+            <MaterialCommunityIcons
+              name="directions"
+              color={station.coordinates === undefined ? "#FF0000" : "#01F2CF"}
+              size={36}
+            />
+          </TouchableOpacity>
+
+          <View style={styles.row}>
+            <Text style={styles.txtLeft}>Distance:</Text>
+            <Text style={styles.txtRight}>
+              {station?.distance === -1 ? 0 : station?.distance / 1000} km
+            </Text>
+            <Image
+              style={styles.image}
+              source={require("../assets/location.png")}
+            />
+          </View>
+
+          <View style={styles.row}>
+            <Text style={styles.txtLeft}>Price:</Text>
+            <Text style={styles.txtRight}>{station?.price} /kWh</Text>
+            <Image
+              style={styles.image}
+              source={require("../assets/power.png")}
+            />
+            <Text style={styles.txtRight}>{station?.type}</Text>
+          </View>
+
+          <View style={styles.rowServices}>
+            {station?.services?.length > 0 && (
+              <Text style={styles.txtLeft}>Services:</Text>
+            )}
+            {station?.services?.length > 0 &&
+              station?.services?.map((service, index) => {
+                return (
+                  <Text key={index} style={styles.txtRight}>
+                    {service}
+                  </Text>
+                );
+              })}
+          </View>
+        </View>
+      ))}
+    </>
+  );
+};
 
 function NearbyStations({ navigation }) {
   const [nearByStations, setNearByStaions] = useState([]);
+  const [loading, setLoading] = useState(true);
   const childRef = useRef();
   const dispatch = useDispatch();
   const origin = useSelector(selectOrigin);
@@ -36,19 +98,24 @@ function NearbyStations({ navigation }) {
       let counter = 0;
 
       const location = origin;
-      const statii = stations;
+      const statii = (
+        await getNearbyStations({
+          latitude: origin?.location?.latitude,
+          longitude: origin?.location?.longitude,
+          distance: 5,
+        })
+      ).data.result;
 
       for (const station of statii) {
         let dist;
-        console.log(station?._fieldsProto?.coordinates?.geoPointValue);
-        console.log(location.location);
-
-        if (station?._fieldsProto?.coordinates?.geoPointValue == undefined)
-          dist = 99999999;
+        if (station?.coordinates == undefined) dist = 99999999;
         else {
-          if (station?._fieldsProto?.coordinates?.geoPointValue !== undefined) {
+          if (station?.coordinates !== undefined) {
             dist = await getDistanceBetweenPoints(
-              station._fieldsProto.coordinates.geoPointValue,
+              {
+                latitude: station.coordinates._latitude,
+                longitude: station.coordinates._longitude,
+              },
               location.location
             );
           }
@@ -72,31 +139,26 @@ function NearbyStations({ navigation }) {
       }
 
       for (i = 0; i < 3; i++) {
-        stationsAux[i] = stationsAux[i]._fieldsProto;
         let aux1 = {};
         for (const prop in stationsAux[i]) {
           aux1[prop] = stationsAux[i][prop];
         }
-        aux1["distance"] = {
-          doubleValue: distancesAux[i],
-          valueType: "doubleValue",
-        };
-
-        stationsAux[i] = aux1;
+        (aux1.distance = distancesAux[i]), (stationsAux[i] = aux1);
       }
 
       setNearByStaions(stationsAux);
+      setLoading(false);
     };
     func();
-    //getDistanceBetweenPoints(origin, origin);
+    setLoading(true);
   }, [origin]);
 
-  const goToStation = (nr) => {
+  const goToStation = (station) => {
     dispatch(
       setDestination({
         location: {
-          latitude: nearByStations[nr]?.coordinates?.geoPointValue.latitude,
-          longitude: nearByStations[nr]?.coordinates?.geoPointValue.longitude,
+          latitude: station?.coordinates?._latitude,
+          longitude: station?.coordinates?._longitude,
         },
       })
     );
@@ -105,175 +167,21 @@ function NearbyStations({ navigation }) {
         isStation: true,
       })
     );
-    console.log(nearbyStation);
     navigation.navigate("Map");
   };
 
+  useEffect(() => {
+    if (loading === false) return;
+    const mockStations = {
+      distance: -1,
+      price: 0,
+      type: 12,
+      services: ["loading", "loading", "loading"],
+    };
+    setNearByStaions([mockStations, mockStations, mockStations]);
+  }, [loading]);
   return (
-    <View style={styles.container}>
-      <View style={styles.rectangle}>
-        <TouchableOpacity
-          style={styles.direction}
-          onPress={() => {
-            goToStation(0);
-          }}
-        >
-          <MaterialCommunityIcons name="directions" color="#01F2CF" size={36} />
-        </TouchableOpacity>
-
-        <View style={styles.row}>
-          <Text style={styles.txtLeft}>Distance:</Text>
-          <Text style={styles.txtRight}>
-            {nearByStations[0]?.distance?.doubleValue / 1000} km
-          </Text>
-          <Image
-            style={styles.image}
-            source={require("../assets/location.png")}
-          />
-        </View>
-
-        <View style={styles.row}>
-          <Text style={styles.txtLeft}>Price:</Text>
-          <Text style={styles.txtRight}>
-            {nearByStations[0]?.price?.doubleValue} /kWh
-          </Text>
-          <Image style={styles.image} source={require("../assets/power.png")} />
-          <Text style={styles.txtRight}>
-            {nearByStations[0]?.type?.integerValue}
-          </Text>
-        </View>
-
-        {/* <View style={styles.row}>
-          <Text style={styles.txtLeft}>Status:</Text>
-          <Text style={styles.txtRight}>Text</Text>
-        </View> */}
-
-        <View style={styles.rowServices}>
-          {nearByStations[0]?.services?.arrayValue?.values.length > 0 && (
-            <Text style={styles.txtLeft}>Services:</Text>
-          )}
-          {nearByStations[0]?.services?.arrayValue?.values.length > 0 &&
-            nearByStations[0]?.services?.arrayValue?.values.map(
-              (service, index) => {
-                return (
-                  <Text key={index} style={styles.txtRight}>
-                    {service.stringValue}
-                  </Text>
-                );
-              }
-            )}
-        </View>
-      </View>
-
-      <View style={styles.rectangle}>
-        <TouchableOpacity
-          style={styles.direction}
-          onPress={() => {
-            goToStation(1);
-          }}
-        >
-          <MaterialCommunityIcons name="directions" color="#01F2CF" size={36} />
-        </TouchableOpacity>
-
-        <View style={styles.row}>
-          <Text style={styles.txtLeft}>Distance:</Text>
-          <Text style={styles.txtRight}>
-            {nearByStations[1]?.distance?.doubleValue / 1000} km
-          </Text>
-          <Image
-            style={styles.image}
-            source={require("../assets/location.png")}
-          />
-        </View>
-
-        <View style={styles.row}>
-          <Text style={styles.txtLeft}>Price:</Text>
-          <Text style={styles.txtRight}>
-            {nearByStations[1]?.price?.doubleValue} /kWh
-          </Text>
-          <Image style={styles.image} source={require("../assets/power.png")} />
-          <Text style={styles.txtRight}>
-            {nearByStations[1]?.type?.integerValue}
-          </Text>
-        </View>
-
-        {/* <View style={styles.row}>
-          <Text style={styles.txtLeft}>Status:</Text>
-          <Text style={styles.txtRight}>Text</Text>
-        </View> */}
-
-        <View style={styles.rowServices}>
-          {nearByStations[1]?.services?.arrayValue?.values.length > 0 && (
-            <Text style={styles.txtLeft}>Services:</Text>
-          )}
-          {nearByStations[1]?.services?.arrayValue?.values.length > 0 &&
-            nearByStations[1]?.services?.arrayValue?.values.map(
-              (service, index) => {
-                return (
-                  <Text key={index} style={styles.txtRight}>
-                    {service.stringValue}
-                  </Text>
-                );
-              }
-            )}
-        </View>
-      </View>
-
-      <View style={styles.rectangle}>
-        <TouchableOpacity
-          style={styles.direction}
-          onPress={() => {
-            goToStation(2);
-          }}
-        >
-          <MaterialCommunityIcons name="directions" color="#01F2CF" size={36} />
-        </TouchableOpacity>
-
-        <View style={styles.row}>
-          <Text style={styles.txtLeft}>Distance:</Text>
-          <Text style={styles.txtRight}>
-            {nearByStations[2]?.distance?.doubleValue / 1000} km
-          </Text>
-          <Image
-            style={styles.image}
-            source={require("../assets/location.png")}
-          />
-        </View>
-
-        <View style={styles.row}>
-          <Text style={styles.txtLeft}>Price:</Text>
-          <Text style={styles.txtRight}>
-            {nearByStations[2]?.price?.doubleValue} /kWh
-          </Text>
-          <Image style={styles.image} source={require("../assets/power.png")} />
-          <Text style={styles.txtRight}>
-            {nearByStations[2]?.type?.integerValue}
-          </Text>
-        </View>
-
-        {/* 
-        <View style={styles.row}>
-          <Text style={styles.txtLeft}>Status:</Text>
-          <Text style={styles.txtRight}>Text</Text>
-        </View> */}
-
-        <View style={styles.rowServices}>
-          {nearByStations[2]?.services?.arrayValue?.values.length > 0 && (
-            <Text style={styles.txtLeft}>Services:</Text>
-          )}
-          {nearByStations[2]?.services?.arrayValue?.values.length > 0 &&
-            nearByStations[2]?.services?.arrayValue?.values.map(
-              (service, index) => {
-                return (
-                  <Text key={index} style={styles.txtRight}>
-                    {service.stringValue}
-                  </Text>
-                );
-              }
-            )}
-        </View>
-      </View>
-    </View>
+    <View style={styles.container}>{renderNearbyStations(nearByStations)}</View>
   );
 }
 const styles = StyleSheet.create({
