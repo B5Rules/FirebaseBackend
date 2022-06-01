@@ -29,22 +29,23 @@ const AuthHandler = ({navigation}) => {
         return true;
     }
 
+    
+
     useEffect(() => {
-
-        onAuthStateChanged(fireAuth,(user) => {
-            if(user){
-                postAuth();
-            }
-        });
-
         Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#05CAAD')
         const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         return () => {
+            onAuthStateChanged(fireAuth,(user) => {
+                if(user){
+                    postAuth();
+                }
+            });
             back.remove();
         };
     },[isFocused]);
 
     const postAuth = () => {
+        
         if(getGlobalState('needUpdate')==true){
             getProfileData().then(response=>{
                 if(response.data['result']==null){
@@ -119,6 +120,7 @@ const AuthHandler = ({navigation}) => {
                 AsyncStorage.setItem('email',email);
                 AsyncStorage.setItem('password',password);
                 postAuth();
+                navigation.navigate('MapNavigator');
                 console.log('success');
             }).catch(error=>{
                 console.log(error);
