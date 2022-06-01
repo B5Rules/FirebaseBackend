@@ -106,6 +106,7 @@ const AuthHandler = ({navigation}) => {
                 AsyncStorage.setItem('email',email);
                 AsyncStorage.setItem('password',password);
                 postAuth();
+                navigation.navigate('MapNavigator');
                 console.log('success');
             }).catch(error=>{
                 console.log(error);
