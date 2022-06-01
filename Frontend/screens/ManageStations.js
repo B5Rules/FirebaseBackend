@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 670,
+    marginTop: 650,
     borderRadius: 20,
   },
 
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
   },
 
   modalText: {
-    marginBottom: 30,
+    marginBottom: 35,
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
