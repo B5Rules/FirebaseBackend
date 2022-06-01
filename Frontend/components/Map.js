@@ -152,14 +152,14 @@ const Map = (props, ref) => {
       longitude: origin?.location.longitude,
     },
     destination.location, 'done')
-    const response = await routeCalculator(
-      {
-        latitude: origin?.location.latitude,
-        longitude: origin?.location.longitude,
-      },
-      destination.location
-    )
-    console.log("Response is: ",response)
+    // const response = await routeCalculator(
+    //   {
+    //     latitude: origin?.location.latitude,
+    //     longitude: origin?.location.longitude,
+    //   },
+    //   destination.location
+    // )
+    // console.log("Response is: ",response)
     // TODO: Draw the route using this!
     // routeCalculator(
 

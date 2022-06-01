@@ -96,11 +96,7 @@ const MapHomeScreen = ({ navigation }) => {
   
 
   useEffect(() => {
-    getAllStations({
-      latitude: origin?.location?.latitude,
-      longitude: origin?.location?.longitude,
-      distance: 10
-    })
+    getAllStations()
       .then((res) => {
         dispatch(setStations(res.data.result));
         console.log("all station2")
