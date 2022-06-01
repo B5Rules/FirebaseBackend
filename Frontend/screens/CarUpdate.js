@@ -1,15 +1,17 @@
 import React, { Component } from 'react'
-import {Alert, TouchableOpacity, TextInput, ImageBackground, Image, Text, View, StyleSheet} from 'react-native';
+import {Alert,Pressable, TouchableOpacity, TextInput, ImageBackground, Image, Text, View, StyleSheet} from 'react-native';
 import iconProfil from '../assets/iconProfil.png'; 
 import imgBack from '../assets/backgroundImg.png';
-import iconMasina from '../assets/bmw.png';
+import iconMasina from '../assets/bmwv2.png';
 import iconMasina1 from '../assets/bmw1.png';
 import iconMasina2 from '../assets/bmw2.png';
 import iconMasina3 from '../assets/bmw3.png';
+import leftArrow from '../assets/leftArrow.png';
 import Add from '../assets/Add.png';
 import { clearUpdateCacheExperimentalAsync } from 'expo-updates';
 import { httpsCallable } from 'firebase/functions';
 import {fireAuth, fireFunc} from '../globals/firebase';
+import { getGlobalState } from '../globals/global';
 
 const UpdateCar=httpsCallable(fireFunc,'updateCar')
 export default class CarUpdate extends React.Component {
@@ -24,16 +26,12 @@ export default class CarUpdate extends React.Component {
         <ImageBackground source={imgBack} resizeMode="cover" style={styles.bgImage}>
             <View style={styles.container}>
                 <View style={styles.container2}>
-                    <Image source={iconProfil} style={styles.imagine1} /> 
                     <View style={styles.container3}>
-                        <Text style={styles.text1}>Beneficiary Uster</Text>
-                        <Text style={styles.text2}>Pavel Silviu</Text>
+                        <Text style={styles.text1}>User cars</Text>
+                        <Text style={styles.text2}>Here are you can update your car details, {getGlobalState('userData').firstName.concat(" ",getGlobalState('userData').lastName,"!")}</Text>
                     </View>
                 </View>
                 <View style={styles.containerJos}>
-                  <View style={styles.containerJos0}>
-                    <Text style={styles.text3}>Detalii masina</Text>
-                  </View>
                   <View style={styles.containerJos1}>
                     <View style={styles.paddingMasina}>
                       <Image source={iconMasina} style={styles.iconMasinaa} /> 
@@ -102,7 +100,7 @@ export default class CarUpdate extends React.Component {
               defaultValue={this.state.caiPutere}
               onChangeText =  {(text)=>this.state.caiPutere=text}/>
 
-           <View style={styles.galerieMasini}>
+           {/* <View style={styles.galerieMasini}>
              <Image source={iconMasina1} style={styles.imgMasinaGalerie} /> 
              <Image source={iconMasina2} style={styles.imgMasinaGalerie} /> 
              <Image source={iconMasina3} style={styles.imgMasinaGalerie} /> 
@@ -110,7 +108,7 @@ export default class CarUpdate extends React.Component {
                <Image source={Add} style={styles.Add} /> 
              </View>
              
-           </View>
+           </View> */}
            
 
            <TouchableOpacity
@@ -122,12 +120,14 @@ export default class CarUpdate extends React.Component {
                   this.props.navigation.navigate('Car List');
                   }
                 }>
-              <Text style = {styles.submitButtonText}> TRIMITE </Text>
+              <Text style = {styles.submitButtonText}> SEND </Text>
            </TouchableOpacity>
         </View>
                   </View>
                   <View style={styles.containerJos2}>
-
+                    <Pressable onPress={()=>this.props.navigation.goBack()}>
+                          <Image source={leftArrow} />
+                          </Pressable> 
                   </View>
                 </View>
                 {/* <TouchableOpacity onPress={()=> this.props.pageChange(2)}>
@@ -169,27 +169,29 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems:'center',
   },
-  containerJos0:{
-    flex:0.05,
-    paddingBottom:10,
-    flexDirection:"row",
-    justifyContent: 'flex-start',
-    width:'95%',
-    alignItems:'center',
-  },
+  // containerJos0:{
+  //   flex:0.05,
+  //   paddingBottom:10,
+  //   flexDirection:"row",
+  //   justifyContent: 'flex-start',
+  //   width:'95%',
+  //   alignItems:'center',
+  // },
   containerJos1:{
-    flex:0.95,
+    flex:0.8,
     flexDirection:"column",
     backgroundColor:'rgba(24, 39, 36, 1)',
     borderRadius:20,
     width:'95%',
-    justifyContent:'flex-start',
+    justifyContent:'center',
     alignItems:'center',
   },
   containerJos2:{
-    flex:0,
+    paddingTop:20,
+    flex:0.2,
   },
   container2:{
+    backgroundColor:'black',
     flexDirection:"row",
     flex:0.2,
     justifyContent: 'center',
@@ -208,11 +210,11 @@ const styles = StyleSheet.create({
   },
   text1:{
     color:'white',
-    fontSize:16,
+    fontSize:19,
   },
   text2:{
     color:'white',
-    fontSize:24,
+    fontSize:12,
     fontWeight:"700",
   },
   text3:{
@@ -227,27 +229,21 @@ const styles = StyleSheet.create({
   },
   iconMasinaa:{
     resizeMode: 'contain',
-    height:60,
+    height:100,
+    flex:1,
   },
   paddingMasina:{
+    flex:0.25,
     display:'flex',
     height:80,
     flexDirection:'row',
     justifyContent:'center',
     alignItems:'center',
-    paddingTop:0,
-    // backgroundColor:'red',
+    paddingTop:20,
+    paddingBottom:20,
+    //backgroundColor:'yellow',
   },
   //stil form
-    galerieMasini:{
-      flexDirection:'row',
-      flexWrap :'wrap',
-      width:'90%',
-      height:'38%',
-      justifyContent:'space-between',
-      paddingTop:10,
-      paddingBottom:20,
-    },
     imgMasinaGalerie:{
         marginRight:10,
         marginBottom:10,
@@ -275,7 +271,7 @@ const styles = StyleSheet.create({
     },
     input: {
       backgroundColor: 'black',
-      height: 24,
+      height: 34,
       margin: 0,
       borderWidth: 1,
       paddingLeft:7,
@@ -286,20 +282,21 @@ const styles = StyleSheet.create({
     separator: {
       borderBottomColor: 'white',
       width: '90%',
-      borderBottomWidth:0.5,
+      borderBottomWidth:1,
       // borderBottomWidth: StyleSheet.hairlineWidth,
     },
     submitButton:{
-      marginTop:7,
+      marginTop:20,
       paddingBottom:10,
       paddingTop:10,
-      backgroundColor: 'rgba(1, 167, 143, 1)',
+      backgroundColor: 'rgba(0, 255, 218, 1)',
       width:'90%',
       borderRadius:61,
     },
     submitButtonText:{
       textAlign:'center',
-      fontSize:10,
-      color:'white'
+      fontSize:20,
+      color:'rgba(11, 98, 85, 1)',
+      fontWeight:'bold',
     },
 });
