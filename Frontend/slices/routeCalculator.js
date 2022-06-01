@@ -114,6 +114,10 @@ export const routeCalculator = async (startingPoint, destinationPoint) => {
         {
           latitude: 47.155611854999194,
           longitude: 27.589531503617764
+        },
+        {
+            latitude: 46.967926601519856,
+            longitude: 27.429344952106476
         }
     ]
 }
