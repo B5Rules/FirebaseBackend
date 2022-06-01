@@ -79,8 +79,8 @@ export default function App() {
   return (
     <Provider store={store}>
     <ImageBackground source={require('./images/streets.png')} style={styles.backgroundImage}>
-      <NavigationContainer style={{backgroundColor:'transparent'}} theme={navTheme}>
-        <StatusBar translucent={true} backgroundColor={'transparent'} />
+      <NavigationContainer theme={navTheme}>
+        {/*<StatusBar translucent={true} backgroundColor={'transparent'} />*/}
         <Stack.Navigator>
           <Stack.Screen options={{headerShown:false}} name="AuthHandler" component={AuthHandler}/>
           <Stack.Screen options={{headerShown:false}} name="ProfilePage" component={ProfilePage}/>
