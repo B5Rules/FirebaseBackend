@@ -32,7 +32,7 @@ const getStationData = httpsCallable(fireFunc, "getStationData");
     };
 
     useEffect(() => {
-      StatusBar.setBarStyle("dark-content");
+      StatusBar.setBarStyle("white-content");
       const back = BackHandler.addEventListener("hardwareBackPress", handleBackButton);
       return () => {
         back.remove();
@@ -67,7 +67,9 @@ const getStationData = httpsCallable(fireFunc, "getStationData");
   
             <TouchableOpacity
               style={styles.buttonCharge}
-              onPress={() => { navigation.navigate("Charging Page")
+              onPress={() => { navigation.navigate("Charging Page", {
+                kWh: parseInt(value, 10)
+              })
                 
                 // if ((!isNaN(value)) && (value >= 10) && (value <= parseFloat(getGlobalState('carData').chargingCap))) {
                 //   //todo this screen comes right after the car selection screen and instead of 100,

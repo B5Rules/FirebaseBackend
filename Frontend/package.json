@@ -39,6 +39,7 @@
     "react-native": "0.68.2",
     "react-native-animated-loader": "^0.0.9",
     "react-native-animated-progress": "^1.0.2",
+    "react-native-countdown-circle-timer": "^3.0.9",
     "react-native-credit-card-input": "^0.4.1",
     "react-native-dropdown-picker": "^5.4.2",
     "react-native-form-validator": "^0.5.1",
