@@ -23,7 +23,7 @@ import { httpsCallable } from "firebase/functions";
 import { fireFunc } from "../globals/firebase";
 const getNearbyStations = httpsCallable(fireFunc, "getNearbyStations");
 
-const renderNearbyStations = (nearbyStations) => {
+const renderNearbyStations = (nearbyStations, goToStation) => {
   return (
     <>
       {nearbyStations?.map((station) => (
@@ -181,7 +181,7 @@ function NearbyStations({ navigation }) {
     setNearByStaions([mockStations, mockStations, mockStations]);
   }, [loading]);
   return (
-    <View style={styles.container}>{renderNearbyStations(nearByStations)}</View>
+    <View style={styles.container}>{renderNearbyStations(nearByStations, goToStation)}</View>
   );
 }
 const styles = StyleSheet.create({
