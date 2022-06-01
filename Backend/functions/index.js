@@ -265,6 +265,7 @@ exports.changeStationStatus = functions
       id: Joi.string().required(),
       status: Joi.number().valid(0, 1, 2),
     }), data);
+    const expirationTime = 20;
     if(data.status !== 0) {
       data.reservedBy = context.auth.uid;
     } else {
@@ -276,12 +277,14 @@ exports.changeStationStatus = functions
     } else {
       await db.collection("station_reservations").add({
         stationId: data.id,
-        expireIn: 20, // TODO: Change this to 10 minutes
+        expireIn: expirationTime, // TODO: Change this to 10 minutes
       })
     }
 
     return {
-      result: null,
+      result: {
+        expirationTime
+      },
       message: 'Successfully changed status',
     }
   } catch(e){

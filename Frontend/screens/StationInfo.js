@@ -18,72 +18,96 @@ import { useNavigation } from "@react-navigation/native";
 import { Chip } from "react-native-paper";
 import { httpsCallable } from "firebase/functions";
 import { fireAuth, fireFunc } from "../globals/firebase";
-import { getGlobalState, setGlobalState } from '../globals/global';
-import { useBackButton } from '../hocs/backButtonHandler';
+import { getGlobalState, setGlobalState } from "../globals/global";
+import { useBackButton } from "../hocs/backButtonHandler";
 
 // import { NavigationContainer } from "@react-navigation/native";
 // import { createStackNavigator } from "@react-navigation/stack";
 // import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
-const getPubKey = httpsCallable(fireFunc,"getPubKey");
-
+const getPubKey = httpsCallable(fireFunc, "getPubKey");
 
 const { width } = Dimensions.get("screen");
 const { height } = Dimensions.get("screen");
-const getStationById = httpsCallable(
-  fireFunc,
-  "getStationById"
-);
-const changeStationStatus = httpsCallable(
-  fireFunc,
-  "changeStationStatus"
-)
+const getStationById = httpsCallable(fireFunc, "getStationById");
+const changeStationStatus = httpsCallable(fireFunc, "changeStationStatus");
 
 const getTextFromType = (type) => {
-  console.log('Station type:', type)
-  if(type === undefined) return "";
+  console.log("Station type:", type);
+  if (type === undefined) return "";
   return {
     0: "free",
     1: "busy",
     2: "reserved",
   }[type];
-
-}
-
+};
 
 const StationInfo = ({ navigation, route }) => {
   const [station, setStation] = useState({});
   const [shouldUpdate, setShouldUpdate] = useState(true);
+  const [reservationTime, setReservationTime] = useState({ mins: 0, secs: 0 });
 
   useEffect(() => {
-    if(shouldUpdate === false) return;
+    if (reservationTime.mins < 0) {
+      if (timerId) clearInterval(timerId);
+      return;
+    }
+    const timerId = setInterval(() => {
+      if (reservationTime.secs <= 0) {
+        if (reservationTime.mins <= 0) {
+          setReservationTime({ ...reservationTime, mins: reservationTime.mins - 1, secs: reservationTime.secs });
+          setShouldUpdate(true)
+        } else {
+          setReservationTime({ ...reservationTime, mins: reservationTime.mins - 1, secs: 59 });
+        }
+      } else setReservationTime({ ...reservationTime, mins: reservationTime.mins, secs: reservationTime.secs - 1 });
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, [reservationTime]);
+
+  useEffect(() => {
+    if (shouldUpdate === false) return;
 
     setShouldUpdate(false);
-    console.log(route?.params?.station?._fieldsProto?.id?.stringValue)
-    getStationById(route?.params?.station?._fieldsProto?.id?.stringValue).then(res => {
-      setStation(res.data.result);
-    }).catch(err => {
-      console.error('Error:', err);
-    })
+    console.log(route?.params?.station?._fieldsProto?.id?.stringValue);
+    getStationById(route?.params?.station?._fieldsProto?.id?.stringValue)
+      .then((res) => {
+        setStation(res.data.result);
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+      });
   }, [shouldUpdate]);
-  useBackButton(() => {navigation.goBack(); return true;})
+  useBackButton(() => {
+    navigation.goBack();
+    return true;
+  });
 
   const cancelReservation = async () => {
     const response = await changeStationStatus({
       id: station.id,
-      status: 0
-    })
-    console.log(response)
-    setShouldUpdate(true);    
-  }
+      status: 0,
+    });
+    console.log(response);
+    setShouldUpdate(true);
+  };
 
   const reserveStation = async () => {
     const response = await changeStationStatus({
       id: station.id,
-      status: 2
-    })
-    console.log(response)
+      status: 2,
+    });
+    console.log(response);
+    setReservationTime({ mins: 0, secs: 20 });
     setShouldUpdate(true);
+  };
+
+  const displayStatus = (status) => {
+    if(status == 2) {
+      return `${reservationTime.mins>=0 ? reservationTime.mins : 0}:${reservationTime.secs < 10 ? 0 : ''}${reservationTime.secs}`
+    }
+    return getTextFromType(station.status).toUpperCase()
   }
 
   return (
@@ -159,14 +183,14 @@ const StationInfo = ({ navigation, route }) => {
                 <View style={styles.chips}>
                   <View style={styles.chipsContent}>
                     {station?.services?.map((stationChip) => (
-                    <Chip
-                      key={`chip-${stationChip}`}
-                      style={styles.chip}
-                      mode="flat"
-                      selectedColor="#01A78F"
-                    >
-                      {` ${stationChip} `}
-                    </Chip>
+                      <Chip
+                        key={`chip-${stationChip}`}
+                        style={styles.chip}
+                        mode="flat"
+                        selectedColor="#01A78F"
+                      >
+                        {` ${stationChip} `}
+                      </Chip>
                     ))}
                   </View>
                 </View>
@@ -208,8 +232,18 @@ const StationInfo = ({ navigation, route }) => {
                   <View
                     style={{ alignItems: "center", justifyContent: "center" }}
                   >
-                    <Pressable style={[styles.stationStatus, styles[getTextFromType(station.status)]]}>
-                      <Text style={styles.textStyle}>{getTextFromType(station.status).toUpperCase()}</Text>
+                    <Pressable
+                      style={[
+                        styles.stationStatus,
+                        styles[getTextFromType(station.status)],
+                      ]}
+                    >
+                      <Text style={styles.textStyle}>
+                        {
+                          displayStatus(station.status)
+                        
+                        }
+                      </Text>
                     </Pressable>
                   </View>
                 </View>
@@ -219,44 +253,47 @@ const StationInfo = ({ navigation, route }) => {
                   activeOpacity={0.5}
                   style={styles.button2}
                   onPress={() => {
-                    setGlobalState('currentStationData',{
+                    setGlobalState("currentStationData", {
                       //rest of the data is irrelevant for now
-                      price:route?.params?.station?._fieldsProto?.price.doubleValue
-                    })
-                    getPubKey({ownerUid:route?.params?.station?._fieldsProto?.userID?.stringValue}).then(response =>{
-                      console.log(response.data['result'])
-                      setGlobalState("currentpubkey",response.data['result'])
-                      navigation.navigate("Car List Payment")
-                    })
+                      price:
+                        route?.params?.station?._fieldsProto?.price.doubleValue,
+                    });
+                    getPubKey({
+                      ownerUid:
+                        route?.params?.station?._fieldsProto?.userID
+                          ?.stringValue,
+                    }).then((response) => {
+                      console.log(response.data["result"]);
+                      setGlobalState("currentpubkey", response.data["result"]);
+                      navigation.navigate("Car List Payment");
+                    });
                   }}
                 >
                   <Text style={styles.textButton2}>Charge Now</Text>
                 </TouchableHighlight>
-                {
-                  station?.status === 0 ? (
-                    <TouchableHighlight
-                  accessible={true}
-                  activeOpacity={0.5}
-                  style={[styles.button2, styles.button3]}
-                  onPress={reserveStation}
-                >
-                  <Text style={[styles.textButton2, styles.textButton3]}>
-                    Reserve
-                  </Text>
-                </TouchableHighlight>
-                  ) : (
-                    <TouchableHighlight
-                  accessible={true}
-                  activeOpacity={0.5}
-                  style={[styles.button2, styles.button3]}
-                  onPress={cancelReservation}
-                >
-                  <Text style={[styles.textButton2, styles.textButton4]}>
-                    Cancel Reservation
-                  </Text>
-                </TouchableHighlight>
-                  )
-                }
+                {station?.status === 0 ? (
+                  <TouchableHighlight
+                    accessible={true}
+                    activeOpacity={0.5}
+                    style={[styles.button2, styles.button3]}
+                    onPress={reserveStation}
+                  >
+                    <Text style={[styles.textButton2, styles.textButton3]}>
+                      Reserve
+                    </Text>
+                  </TouchableHighlight>
+                ) : (
+                  <TouchableHighlight
+                    accessible={true}
+                    activeOpacity={0.5}
+                    style={[styles.button2, styles.button3]}
+                    onPress={cancelReservation}
+                  >
+                    <Text style={[styles.textButton2, styles.textButton4]}>
+                      Cancel Reservation
+                    </Text>
+                  </TouchableHighlight>
+                )}
               </View>
             </View>
           </ScrollView>
