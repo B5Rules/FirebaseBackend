@@ -28,7 +28,7 @@ export default class CarUpdate extends React.Component {
                 <View style={styles.container2}>
                     <View style={styles.container3}>
                         <Text style={styles.text1}>User cars</Text>
-                        <Text style={styles.text2}>Here are you can update your car details, {getGlobalState('userData').firstName.concat(" ",getGlobalState('userData').lastName,"!")}</Text>
+                        <Text style={styles.text2}>Here you can update your car details, {getGlobalState('userData').firstName.concat(" ",getGlobalState('userData').lastName,"!")}</Text>
                     </View>
                 </View>
                 <View style={styles.containerJos}>
