@@ -22,7 +22,7 @@ import { getGlobalState } from "../globals/global";
 
 //ADD localhost address of your server
 //const API_URL = "http://10.0.2.2:3000"; // emulator
-const API_URL = "http://192.168.52.1:3000"; // - telefon
+const API_URL = "http://192.168.7.1:3000"; // - telefon
 
 const StripeApp = ({ navigation }) => {
   const [email, setEmail] = useState(fireAuth.currentUser.email);
@@ -69,9 +69,18 @@ const StripeApp = ({ navigation }) => {
           billingDetails: billingDetails,
         }).then(({paymentIntent,error})=>{
           if(error){
+            console.log(error);
             Alert.alert("Error",error.message);
           }else{
-            navigation.navigate("MapNavigator",paymentIntent);
+            //alert of successful payment and redirect to home
+            Alert.alert("Success", "Your payment was successful", [
+              {
+                text: "OK",
+                onPress: () => {
+                  navigation.navigate("MapNavigator");
+                },
+              },
+            ]);
           }
         }).catch(err=>{
           console.log(err);

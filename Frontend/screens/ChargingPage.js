@@ -32,9 +32,7 @@ const ChargingPage = ({ navigation, route, props }) => {
 
   const completeCharging = () => {
     console.log('Completed')
-    navigation.navigate("Pay", {
-      kWh: kWh
-    });
+    navigation.navigate("Journal");
   }
   return (
     <ScrollView

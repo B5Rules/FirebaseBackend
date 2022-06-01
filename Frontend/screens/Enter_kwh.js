@@ -67,7 +67,9 @@ const getStationData = httpsCallable(fireFunc, "getStationData");
   
             <TouchableOpacity
               style={styles.buttonCharge}
-              onPress={() => { navigation.navigate("Charging Page", {
+              onPress={() => { 
+                setGlobalState('kwhToCharge',parseInt(value,10))
+                navigation.navigate("Charging Page", {
                 kWh: parseInt(value, 10)
               })
                 
