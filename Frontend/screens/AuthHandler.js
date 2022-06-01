@@ -32,14 +32,14 @@ const AuthHandler = ({navigation}) => {
     
 
     useEffect(() => {
+        onAuthStateChanged(fireAuth,(user) => {
+            if(user){
+                postAuth();
+            }
+        });
         Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#05CAAD')
         const back = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
         return () => {
-            onAuthStateChanged(fireAuth,(user) => {
-                if(user){
-                    postAuth();
-                }
-            });
             back.remove();
         };
     },[isFocused]);
