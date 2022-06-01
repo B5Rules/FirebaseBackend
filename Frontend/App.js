@@ -5,6 +5,7 @@ import { NavigationContainer,DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as NavigationBar from 'expo-navigation-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LogBox } from 'react-native';
 
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { Provider } from "react-redux";  // 
@@ -39,6 +40,12 @@ import { fireAuth } from './globals/firebase';
 
 import ChargingPage from './screens/ChargingPage';
 
+LogBox.ignoreLogs([
+  "AsyncStorage has been extracted from react-native core and will be removed in a future release. It can now be installed and imported from '@react-native-async-storage/async-storage' instead of 'react-native'. See https://github.com/react-native-async-storage/async-storage", 
+  "ViewPropTypes will be removed from React Native. Migrate to ViewPropTypes exported from 'deprecated-react-native-prop-types'.",
+  "Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.",
+  "Require cycle: screens/MapHomeScreen.js -> components/Map.js -> slices/routeCalculator.js -> screens/MapHomeScreen.js"
+]);
 
 const ComponentStripeProvider = () => {
   return (

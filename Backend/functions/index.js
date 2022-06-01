@@ -264,9 +264,11 @@ exports.changeStationStatus = functions
     validateObject(Joi.object({
       id: Joi.string().required(),
       status: Joi.number().valid(0, 1, 2),
+      chargekWh: Joi.number().default(-1),
     }), data);
-    const expirationTime = 20;
-    if(data.status !== 0) {
+    const expirationTime = data.chargekWh !== -1 ? data.chargekWh : 20;
+    delete data.chargekWh;
+    if(data.status === 2 || data.status === 1) {
       data.reservedBy = context.auth.uid;
     } else {
       data.reservedBy = '';

@@ -269,6 +269,7 @@ const StationInfo = ({ navigation, route }) => {
                       setGlobalState('currentStationData',{price:tmp1,owneruid:tmp2,owneruser:res1.data.result})
                       getPubKey({ownerUid:route?.params?.station?._fieldsProto?.userID?.stringValue}).then(response=>{
                         setGlobalState("currentpubkey",response.data['result'])
+                        setGlobalState('stationId', station.id)
                         navigation.navigate("Car List Payment")
                       })
                     }))                    
