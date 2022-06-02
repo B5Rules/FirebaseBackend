@@ -115,6 +115,8 @@ export const routeCalculator = async (startingPoint, destinationPoint) => {
     let listOfCoordonates=[];
     for(let i=stationsOnPath;i>=1;i--) {
         if(path[i] != nr+2 && path[i] != nr+1) {
+            if(!stationsId[path[i]]) continue;
+            console.log("Data: ",stationsId[path[i]])
             listOfCoordonates.push({latitude: stationsId[path[i]][0], longitude: stationsId[path[i]][1],id: stationsId[path[i]][2] });
         }
     }
