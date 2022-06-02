@@ -171,7 +171,7 @@ export default function Journal({ navigation }) {
             <Text style={styles.attachLabel}> Date: </Text>
             <TextInput
               editable={false}
-              defaultValue={String(new Date().getFullYear())}
+              defaultValue={String(new Date().getDate().toString().padStart(2,'0')+"/"+new Date().getMonth().toString().padStart(2,'0')+"/"+new Date().getFullYear())}
               style={styles.dataLabel}
             />
           </View>

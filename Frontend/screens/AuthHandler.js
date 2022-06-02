@@ -32,8 +32,20 @@ const AuthHandler = ({navigation}) => {
     
 
     useEffect(() => {
+        AsyncStorage.getItem('email').then(email=>{
+            console.log(email);
+            if(email){
+              AsyncStorage.getItem('password').then(password=>{
+                if(password){
+                  signInWithEmailAndPassword(fireAuth,email,password).then(()=>{
+                    console.log('signed in');
+                  });
+                } 
+              });
+            }
+          });
         onAuthStateChanged(fireAuth,(user) => {
-            if(user){
+            if(!!user){
                 postAuth();
             }
         });

@@ -67,18 +67,7 @@ const Stack = createNativeStackNavigator();
 
 
 export default function App() {
-  AsyncStorage.getItem('email').then(email=>{
-    console.log(email);
-    if(email){
-      AsyncStorage.getItem('password').then(password=>{
-        if(password){
-          signInWithEmailAndPassword(fireAuth,email,password).then(()=>{
-            console.log('signed in');
-          });
-        } 
-      });
-    }
-  });
+  
   
   useEffect(()=>{
     Platform.OS === 'android' && NavigationBar.setBackgroundColorAsync('#182724')
