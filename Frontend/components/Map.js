@@ -163,8 +163,17 @@ const Map = (props, ref) => {
       destination.location
     )
     console.log("Response is: ",response)
-    dispatch(setWaypoints(response))
-    setRouteDestination(destination);
+    if(response.needRoute == true) {
+      if(response.waypoints.length !== 0) {
+        dispatch(setWaypoints(response.waypoints))
+        setRouteDestination(destination);
+      } else {
+        alert("Couldn't find any route")
+      }
+    } else {
+      dispatch(setWaypoints([]))
+      setRouteDestination(destination);
+    }
   };
 
   //refocuseaza harta pe locul unde a fost apasata
@@ -290,7 +299,6 @@ const Map = (props, ref) => {
         {stations?.length > 0 &&
           stations.map((station, index) => {
             const str = `Station ${index}`;
-            console.log(station?._fieldsProto?.id?.stringValue, station?._fieldsProto?.coordinates?.geoPointValue)
             if (
               station?._fieldsProto?.coordinates?.geoPointValue.latitude !==
                 undefined &&
