@@ -24,7 +24,7 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
-const stripe = new Stripe("pk_test_51L2xjzAaEq4h44bRDHs8InXsG2Kiv2AStsAyTOmNrrRM0p9WeD1awNnEY2RsXq1xtqqib2KeoQSxwbEpHMMb8B9h00G0UHRzoY", { apiVersion: "2020-08-27" });
+const stripe = new Stripe("sk_test_51L2xjzAaEq4h44bRQAur5TA0mU21bXMmYWTfoy9RSiPMBsphqQT1opSqn9flAektQa1NoXkyNMhd3N9YoiHkog8000WLe3H7Mj", { apiVersion: "2020-08-27" });
 
 app.post("/create-payment-intent", async (req, res) => {
   console.log(req.body);
