@@ -556,6 +556,15 @@ exports.generateGraph = functions.runWith({
   return true;
 });
 
+exports.getStationsGraph = functions.region("europe-west1").https.onCall(async (data, context) => {
+  const stations = await db.collection('stationsGraph').get();
+  const stationGraph = {};
+  stations.docs.forEach(doc => {
+    stationGraph[doc.id] = doc.data();
+  })
+  return ({result: stationGraph});
+});
+
 exports.onCreateReservation = functions.region("europe-west1").firestore.document('/station_reservations/{id}').onCreate(async snapshot => {
   // Code discussed below!
   const data = snapshot.data();
