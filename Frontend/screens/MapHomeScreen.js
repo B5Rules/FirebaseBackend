@@ -177,6 +177,7 @@ const MapHomeScreen = ({ navigation }) => {
               underlineColorAndroid="transparent"
               placeholder="Introduce battery autonomy.."
               placeholderTextColor="white"
+	      keyboardType = 'numeric'
               autoCapitalize="none"
               onChangeText={(text) => setAutonomy(text)}
             />
